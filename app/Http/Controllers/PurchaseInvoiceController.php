@@ -31,5 +31,13 @@ class PurchaseInvoiceController extends Controller
         }
         return new PurchaseInvoiceResource($invoice);
     }
+    public function destroy($id)
+    {
+        $invoice = $this->purchaseInvoiceService->deleteInvoice($id);
+        if (!$invoice) {
+            return response()->json(['message' => 'Invoice not found'], 404);
+        }
+        return response()->json(['message' => 'Invoice deleted successfully']);
+    }
 
 }

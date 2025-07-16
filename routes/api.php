@@ -44,14 +44,21 @@ Route::put('/position/{id}', [PositionController::class, 'update']);
 Route::delete('/position/{id}', [PositionController::class, 'destroy']);
 
 
+
+
 Route::apiResource('products', ProductController::class);
 Route::apiResource('suppliers', SupplierController::class);
 Route::apiResource('customers', CustomerController::class);
 
-Route::post('/invoices', [SelesInvoiceController::class, 'store']);
-Route::get('/invoices', [SelesInvoiceController::class, 'index']);
-Route::get('/invoice/{id}', [SelesInvoiceController::class, 'show']);
-Route::post('/pruchase', [PurchaseInvoiceController::class, 'store']);
+Route::post('/sales', [SelesInvoiceController::class, 'store']);
+Route::get('/sales', [SelesInvoiceController::class, 'index']);
+Route::put('/sales/{id}', [SelesInvoiceController::class, 'update']);
+Route::get('/sales/{id}', [SelesInvoiceController::class, 'show']);
+
+
+Route::post('/pruchases', [PurchaseInvoiceController::class, 'store']);
 Route::get('/pruchases', [PurchaseInvoiceController::class, 'index']);
-Route::put('/pruchase/{id}', [PurchaseInvoiceController::class, 'update']);
+Route::put('/pruchases/{id}', [PurchaseInvoiceController::class, 'update']);
+Route::delete('/pruchases/{id}', [PurchaseInvoiceController::class, 'destroy']);
+
 

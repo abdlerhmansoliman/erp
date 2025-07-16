@@ -77,6 +77,4 @@ class PurchaseInvoiceService
             return $this->purchaseInvoiceRepository->delete($id);
         });
     }
-    
-   
 }

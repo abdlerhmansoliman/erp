@@ -51,11 +51,10 @@ class InvoiecItemService
     foreach ($invoice->items as $item) {
         $product = Product::findOrFail($item->product_id);
 
-        // رجّع الكمية
         if ($invoice instanceof PurchaseInvoice) {
-            $product->decrement('quantity', $item->quantity); // لإنك كنت زودتها في الفاتورة القديمة
+            $product->decrement('quantity', $item->quantity);
         } elseif ($invoice instanceof SalesInvoice) {
-            $product->increment('quantity', $item->quantity); // لو بيع
+            $product->increment('quantity', $item->quantity);
         }
 
         $item->delete();
