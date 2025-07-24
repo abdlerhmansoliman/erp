@@ -18,9 +18,9 @@ class SupplierService
     {
         $this->supplierRepository=$supplierRepository;
     }
-      public function getAll()
+      public function getAll(array $filters)
     {
-        return $this->supplierRepository->all();
+        return $this->supplierRepository->all($filters);
     }
 
     public function getById($id)

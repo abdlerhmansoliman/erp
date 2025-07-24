@@ -7,6 +7,7 @@ use App\Http\Requests\SupplierUpdateRequest;
 use App\Http\Resources\SupplierResource;
 use App\Services\SupplierService;
 use Illuminate\Http\Request;
+use Yajra\DataTables\Facades\DataTables;
 
 class SupplierController extends Controller
 {
@@ -14,10 +15,12 @@ class SupplierController extends Controller
     {
         
     }
-    public function index()
+    public function index(Request $request)
     {
-        $suplliers = $this->supplierService->getAll();
-        return SupplierResource::collection($suplliers);
+            $filters = $request->only(['search', 'sortBy', 'sortDir', 'perPage', 'page']);
+        $suppliers = $this->supplierService->getAll($filters);
+
+        return response()->json($suppliers);
     }
     public function show($id)
     {
