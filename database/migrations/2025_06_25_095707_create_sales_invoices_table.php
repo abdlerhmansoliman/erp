@@ -16,7 +16,7 @@ return new class extends Migration
             $table->foreignId('customer_id')->constrained()->onDelete('cascade');
             $table->decimal('total_price', 10, 2);
             $table->text('notes')->nullable();
-            $table->date('invoice_date')->after('customer_id');
+            $table->date('invoice_date');
             $table->timestamps();
         });
     }

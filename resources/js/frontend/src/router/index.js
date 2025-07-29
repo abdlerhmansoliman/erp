@@ -1,5 +1,6 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import MainLayout from '@/layouts/MainLayout.vue'
+import Suppliers from '@/views/Suppliers.vue'
 const routes = [
   {
     path: '/',
@@ -10,8 +11,14 @@ const routes = [
       { path: 'customers', component: () => import('@/views/Customers.vue') },
       { path: 'invoices', component: () => import('@/views/Invoices.vue') },
       { path: 'suppliers', component: () => import('@/views/Suppliers.vue') },
+{
+  path: 'suppliers/:id/edit',
+  name: 'SupplierEdit',
+  component: () => import('@/views/SupplierForm.vue')
+}
+
     ]
-  }
+  },
 ]
 
 const router = createRouter({
