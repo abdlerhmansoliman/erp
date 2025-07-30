@@ -33,10 +33,11 @@ class SupplierService
         return $this->supplierRepository->create($data);
     }
 
-    public function update(Supplier $supplier, array $data)
-    {
-        return $this->supplierRepository->update($supplier, $data);
-    }
+public function update(Supplier $supplier, array $data)
+{
+    return $this->supplierRepository->update($supplier, $data);
+}
+
 
     public function delete(Supplier $supplier)
     {

@@ -23,10 +23,12 @@ public function find($id){
 public function create(array $data){
     return Supplier::create($data);
 }
-public function update($id, array $data){
-    $supplier=Supplier::findOrfail($id);
-    return $supplier->update($data);
+public function update(Supplier $supplier, array $data)
+{
+    $supplier->update($data);
+    return $supplier;
 }
+
 
 public function delete(Supplier $supplier)
 {

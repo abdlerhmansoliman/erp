@@ -36,16 +36,20 @@ class SupplierController extends Controller
         $supplier = $this->supplierService->create($data);
         return new SupplierResource($supplier);
     }
-    public function update(SupplierUpdateRequest $request, $id)
-    {
-        $data = $request->validated();
-        $supplier = $this->supplierService->getById($id);
-        if (!$supplier) {
-            return response()->json(['message' => 'Supplier not found'], 404);
-        }
-        $updatedSupplier = $this->supplierService->update($supplier, $data);
-        return new SupplierResource($updatedSupplier);
+public function update(SupplierUpdateRequest $request, $id)
+{
+    $data = $request->validated();
+    $supplier = $this->supplierService->getById($id);
+
+    if (!$supplier) {
+        return response()->json(['message' => 'Supplier not found'], 404);
     }
+
+    $updatedSupplier = $this->supplierService->update($supplier, $data);
+
+    return new SupplierResource($updatedSupplier);
+}
+
     public function destroy($id)
     {
         $supplier = $this->supplierService->getById($id);

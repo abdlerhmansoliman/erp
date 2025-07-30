@@ -10,7 +10,6 @@ import { RouterLink, RouterView } from 'vue-router'
       <nav class="space-y-2">
         <RouterLink class="block px-3 py-2 rounded hover:bg-gray-200" to="/dashboard">Dashboard</RouterLink>
         <RouterLink class="block px-3 py-2 rounded hover:bg-gray-200" to="/customers">Customers</RouterLink>
-        <RouterLink class="block px-3 py-2 rounded hover:bg-gray-200" to="/invoices">Invoices</RouterLink>
         <RouterLink class="block px-3 py-2 rounded hover:bg-gray-200" to="/suppliers">Suppliers</RouterLink>
       </nav>
     </aside>

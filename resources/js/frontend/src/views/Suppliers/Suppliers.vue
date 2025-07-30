@@ -56,12 +56,6 @@ async function fetchSuppliers() {
 
 const router = useRouter()
 
-
-function goToEdit(item) {
-  router.push({ name: 'SupplierEdit', params: { id: item.id } });
-}
-
-
 function onSearch() {
   currentPage.value = 1;
   fetchSuppliers();
@@ -84,7 +78,9 @@ const deleteSupplier = async (item) => {
     }
   }
 };
-
+function goToEdit(item) {
+  router.push({ name: 'SupplierEdit', params: { id: item.id } });
+}
 watch([currentPage, rowsPerPage], () => {
   fetchSuppliers();
 });
