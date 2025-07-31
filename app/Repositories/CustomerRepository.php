@@ -9,9 +9,14 @@ use App\Repositories\Interfaces\CustomerRepositoryInterface;
 
 class CustomerRepository implements CustomerRepositoryInterface
 {
-    public function getAllCustomers()
+    public function getAllCustomers(array $filters)
     {
-        return User::all();
+        return Customer::query()
+        ->when($filters['search']??null,function($q,$search){
+            $q->where('name','like',"%$search%")
+            ->orWhere('email','like',"%$search%");
+        })->orderBy($filters['sortBy']??'id',$filters['sortDirection']??'desc')
+        ->paginate($filters['perPage']??10);
     }
     public function findById(int $id)
     {

@@ -13,9 +13,10 @@ class CustomerController extends Controller
     public function __construct(protected CustomerService $customerService)
     {
     }
-    public function index (){
-        $customers=$this->customerService->getAllCustomers();
-        return CustomerResource::collection($customers);
+    public function index (Request $request){
+        $filters=$request->only(['search','sortBy','sortDirection','perPage','page']);
+        $customers=$this->customerService->getAllCustomers($filters);
+        return response()->json($customers);
     }
     public function show($id)
     {

@@ -5,9 +5,14 @@ const props = defineProps({
   modelValue: Object,
   type: {
     type: String,
-    default: 'supplier' // أو 'customer'
+    default: 'customer'
+  },
+  errors: {
+    type: Object,
+    default: () => ({})
   }
 });
+
 const emit = defineEmits(['update:modelValue', 'submit', 'cancel']);
 
 const form = ref({ ...props.modelValue });
@@ -20,34 +25,35 @@ function handleSubmit() {
   emit('submit', form.value);
 }
 function handleCancel() {
-  emit('cancel');
+  router.push({name:'CustomerIndex'});
+
 }
 </script>
 
 <template>
   <form @submit.prevent="handleSubmit" class="space-y-4 p-4">
     <div>
-      <label>الاسم</label>
+      <label>Name</label>
       <input v-model="form.name" type="text" class="input" required />
     </div>
     <div>
-      <label>البريد الإلكتروني</label>
-      <input v-model="form.email" type="email" class="input" />
+      <label>Email</label>
+      <input v-model="form.email" type="email" class="input" required />
     </div>
     <div>
-      <label>رقم الهاتف</label>
-      <input v-model="form.phone" type="text" class="input" />
+      <label>Phone</label>
+      <input v-model="form.phone" type="number" class="input" required/>
     </div>
     <div>
-      <label>العنوان</label>
-      <input v-model="form.address" type="text" class="input" />
+      <label>Address</label>
+      <input v-model="form.address" type="text" class="input" required/>
     </div>
     <div class="flex gap-2 mt-4">
       <button type="submit" class="bg-blue-500 text-white px-4 py-2 rounded">
-        حفظ
+        Save
       </button>
       <button type="button" @click="handleCancel" class="bg-gray-300 px-4 py-2 rounded">
-        إلغاء
+        Cansel
       </button>
     </div>
   </form>

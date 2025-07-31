@@ -3,7 +3,9 @@ import PartyForm from '@/components/Forms/PartyForm.vue';
 import { ref, onMounted } from 'vue'; 
 import axios from 'axios';
 import { useRoute, useRouter } from 'vue-router';
+import { useToast } from "vue-toastification"
 
+const toast = useToast()
 const route = useRoute();
 const router = useRouter();
 
@@ -17,7 +19,7 @@ const formDate = ref({
 const fetchSuppliers = async () => {
     try {
         if (!route.params.id) {
-            alert('معرف المورد غير موجود');
+            alert('the supplier ID is missing');
             router.push({ name: 'SupplierIndex' });
             return;
         }
@@ -32,7 +34,7 @@ const fetchSuppliers = async () => {
         
     } catch (error) {
         if (error.response?.status === 404) {
-            alert('المورد غير موجود - ربما تم حذفه');
+            alert('The supplier is not found - maybe it was deleted');
             router.push({ name: 'SupplierIndex' });
         } else if (error.response?.status === 500) {
             alert('خطأ في الخادم');
@@ -47,7 +49,7 @@ onMounted(fetchSuppliers);
 const updateSupplier = async (updatedData) => {
     try {
         await axios.put(`http://localhost:8000/api/suppliers/${route.params.id}`, updatedData);
-        alert('تم التحديث بنجاح')
+        toast.success('the supplier updated successfully');
         
         try {
             router.push({ name: 'SupplierIndex' });

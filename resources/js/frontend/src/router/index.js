@@ -9,12 +9,29 @@ const routes = [
     { path: 'dashboard', component: () => import('@/views/Dashboard.vue') },
 
     // Customers
-    { path: 'customers', component: () => import('@/views/Customers/Customers.vue') },
-
+    { 
+      path: 'customers',
+      name: 'customers',
+      component: () => import('@/views/Customers/Customers.vue') 
+      },
+    { path: 'Customers/:id/edit', name: 'CustomerEdit', component: () => import('@/views/Customers/Edit.vue') },
+    {
+      path: '/customers/create',
+      name: 'CustomerCreate',
+      component: () => import('@/views/Customers/Create.vue'),
+    },
     // Suppliers
-    { path: 'suppliers', component: () => import('@/views/Suppliers/Suppliers.vue') },
-    { path: 'suppliers/create', name: 'SupplierCreate', component: () => import('@/views/SupplierForm.vue') },
+    { 
+      path: 'suppliers', 
+      name: 'suppliers', 
+      component: () => import('@/views/Suppliers/Suppliers.vue') 
+    },
     { path: 'suppliers/:id/edit', name: 'SupplierEdit', component: () => import('@/views/Suppliers/Edit.vue') },
+    {
+      path: '/suppliers/create',
+      name: 'SupplierCreate',
+      component: () => import('@/views/Suppliers/Create.vue'),
+    },
   ]
 }
 

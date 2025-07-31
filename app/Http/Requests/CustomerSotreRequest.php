@@ -24,7 +24,7 @@ class CustomerSotreRequest extends FormRequest
         return [
         'name' => 'required|string|max:255',
         'email' => 'nullable|email',
-        'phone' => 'nullable|string|max:20',
+        'phone' => 'nullable|numeric|max:20',
         'address' => 'nullable|string|max:255',
         ];
     }

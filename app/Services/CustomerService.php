@@ -15,9 +15,9 @@ class CustomerService
     {
         $this->customerRepository = $customerRepository;
     }
-    public function getAllCustomers()
+    public function getAllCustomers(array $filters)
     {
-        return $this->customerRepository->getAllCustomers();
+        return $this->customerRepository->getAllCustomers($filters);
     }
     public function findById(int $id)
     {

@@ -4,7 +4,7 @@ namespace App\Repositories\Interfaces;
 use App\Models\User;
 interface CustomerRepositoryInterface
 {
-    public function getAllCustomers();
+    public function getAllCustomers(array $filters);
 
     public function findById(int $id);
 

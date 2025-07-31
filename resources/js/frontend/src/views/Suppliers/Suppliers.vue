@@ -3,13 +3,19 @@ import { ref, watch, onMounted } from 'vue';
 import axios from 'axios';
 import EasyDataTable from 'vue3-easy-data-table';
 import { useRouter } from 'vue-router'
+import { useConfirmDialog } from '@/composables/useConfirmDialog'
+import { useToast } from 'vue-toastification'
 
+
+const { confirmDelete } = useConfirmDialog()
+const toast = useToast()
 const suppliers = ref([]);
 const total = ref(0);
 const loading = ref(false);
 const currentPage = ref(1);
 const rowsPerPage = ref(10);
 const search = ref('');
+
 
 const headers = [
   { text: 'Name', value: 'name', sortable: true },
@@ -44,9 +50,7 @@ async function fetchSuppliers() {
       suppliers.value = [];
       total.value = 0;
     }
-    
   } catch (error) {
-    console.error('Error fetching suppliers:', error);
     suppliers.value = [];
     total.value = 0;
   } finally {
@@ -63,19 +67,20 @@ function onSearch() {
 
 const deleteSupplier = async (item) => {
   if (!item || !item.id) {
-    alert('Error: Could not find supplier ID');
+    toast.error('Error: Could not find supplier');
     return;
   }
 
-  if (confirm(`Are you sure you want to delete supplier: ${item.name}?`)) {
-    try {
-      await axios.delete(`http://localhost:8000/api/suppliers/${item.id}`);
-      alert('Supplier deleted successfully!');
-      fetchSuppliers();
-    } catch (error) {
-      console.error('Delete error:', error);
-      alert('Error deleting supplier.');
-    }
+  const confirmed = await confirmDelete(`Supplier: ${item.name}`);
+  if (!confirmed) return;
+
+  try {
+    await axios.delete(`http://localhost:8000/api/suppliers/${item.id}`);
+    toast.error('The supplier deleted successfully!');
+    fetchSuppliers(); // تأكد إن دي موجودة في الكومبوننت
+  } catch (error) {
+    console.error('Delete error:', error);
+    toast.error('Error deleting supplier.');
   }
 };
 function goToEdit(item) {
@@ -92,17 +97,23 @@ onMounted(() => {
 
 <template>
   <div class="p-4">
-    <!-- Search input -->
-    <div class="mb-4">
-      <input
+    <div class="mb-4 flex items-center justify-between flex-wrap gap-2">
+    <input
         v-model="search"
         type="text"
         placeholder="البحث..."
         class="px-4 py-2 border rounded-md w-full max-w-md"
         @input="onSearch"
-      />
-    </div>
+    />
 
+  <router-link
+    to="/suppliers/Create" 
+    class="px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 transition text-center"
+  >
+    Add
+  </router-link>
+    </div>
+    
     <!-- Easy Data Table -->
     <EasyDataTable
       :headers="headers"
@@ -146,5 +157,4 @@ onMounted(() => {
 </template>
 
 <style>
-@import "vue3-easy-data-table/dist/style.css";
 </style>

@@ -33,7 +33,6 @@ public function update(Supplier $supplier, array $data)
 public function delete(Supplier $supplier)
 {
     $result = $supplier->delete();
-    Log::info('Deleting supplier: ', ['id' => $supplier->id, 'result' => $result]);
     return $result;
 }
 }
