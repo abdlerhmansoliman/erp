@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\UserRoleController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CustomerController;
 use App\Http\Controllers\DepartmentController;
@@ -7,6 +8,7 @@ use App\Http\Controllers\EmployerController;
 use App\Http\Controllers\PositionController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\PurchaseInvoiceController;
+use App\Http\Controllers\RoleController;
 use App\Http\Controllers\SelesInvoiceController;
 use App\Http\Controllers\SupplierController;
 use Illuminate\Http\Request;
@@ -61,4 +63,27 @@ Route::get('/pruchases', [PurchaseInvoiceController::class, 'index']);
 Route::put('/pruchases/{id}', [PurchaseInvoiceController::class, 'update']);
 Route::delete('/pruchases/{id}', [PurchaseInvoiceController::class, 'destroy']);
 
-
+    Route::prefix('roles')->group(function () {
+        Route::get('/', [RoleController::class, 'index'])->name('roles.index');
+        Route::post('/', [RoleController::class, 'store'])->name('roles.store');
+        Route::get('/{role}', [RoleController::class, 'show'])->name('roles.show');
+        Route::put('/{role}', [RoleController::class, 'update'])->name('roles.update');
+        Route::delete('/{role}', [RoleController::class, 'destroy'])->name('roles.destroy');
+        Route::post('/{role}/permissions', [RoleController::class, 'assignPermissions'])->name('roles.assign-permissions');
+    });
+    
+    // User Role Management Routes
+    Route::prefix('users')->group(function () {
+        Route::get('/{user}/permissions', [UserRoleController::class, 'getUserPermissions'])->name('users.permissions');
+        Route::post('/{user}/roles', [UserRoleController::class, 'assignRoles'])->name('users.assign-roles');
+        Route::put('/{user}/roles', [UserRoleController::class, 'syncRoles'])->name('users.sync-roles');
+        Route::delete('/{user}/roles', [UserRoleController::class, 'removeRoles'])->name('users.remove-roles');
+        Route::post('/{user}/permissions', [UserRoleController::class, 'assignPermissions'])->name('users.assign-permissions');
+        Route::put('/{user}/permissions', [UserRoleController::class, 'syncPermissions'])->name('users.sync-permissions');
+    });
+    
+    // Bulk Operations
+    Route::post('/bulk/assign-role', [UserRoleController::class, 'bulkAssignRole'])->name('users.bulk-assign-role');
+    
+    // Query Routes
+    Route::get('/roles/{role}/users', [UserRoleController::class, 'getUsersByRole'])->name('roles.users');
