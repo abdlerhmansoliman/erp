@@ -85,7 +85,7 @@ class RoleApiService {
             const response = await api.get(`/roles/${rolename}/users`);
             return{
                 success:true,
-                data:response.date,
+                data:response.data,
                 message: "Users fetched successfully"
             }
         } catch (error) {

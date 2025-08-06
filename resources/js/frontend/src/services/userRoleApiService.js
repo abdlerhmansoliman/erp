@@ -1,5 +1,5 @@
 import api from "@/plugins/axios";
-class USerRoleApiService{
+class UserRoleApiService{
     // get users permission
     async getUserPermissions(userId) {
         try {
@@ -78,5 +78,59 @@ class USerRoleApiService{
             return this.errorHandler(error);
         }
     }
-    
+    // assign permission to multiple user
+    async bulkAssignPermissions(userIds,permissions) {
+        try {
+            const response = await api.post(`/users/bulk/assign-roles`, { userIds, permissions });
+            return {
+                success: true,
+                data: response.data,
+                message: response.data.message || "Permissions assigned to users successfully"
+            }
+        } catch (error) {
+            return this.errorHandler(error);
+        }
+    }
+    // Error handler
+    handleError(error) {
+        let message = "An error occurred";
+        let validationErrors = {};
+        if(error.response){
+            const {status,data} = error.response;
+            error=data.response || `HTTP Error: ${status}`;
+            if (data.validationErrors) {
+                validationErrors = data.validationErrors;
+            }
+            switch (status) {
+                case 400:
+                    message = "Bad Request: " + (data.message || "Invalid data provided");
+                    break;
+                case 401:
+                    message = "Unauthorized: Please log in again";
+                    break;
+                case 403:
+                    message = "Forbidden: You do not have permission to perform this action";
+                    break;
+                case 404:
+                    message = "Not Found: The requested resource could not be found";
+                    break;
+                case 500:
+                    message = "Internal Server Error: Please try again later";
+                    break;
+                default:
+                    message = data.message || "An unexpected error occurred";
+            }
+        }
+            else if(error.request) {
+                error = "Network Error: Unable to reach the server";
+            }
+            return{
+                success: false,
+                message: message,
+                errors:validationErrors,
+                status: error.response?.status || 0
+            }
+        
+    }
 }
+export default new UserRoleApiService();

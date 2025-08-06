@@ -1,27 +1,51 @@
 import { defineStore } from "pinia";
-export const useAuthStore=defineStore("auth",{
+import api from "@/plugins/axios";
+
+export const useAuthStore=defineStore('auth',{
     state: () => ({
-        user:null,
-        token: null,
+        user: null,
+        token: localStorage.getItem('token'),
+        isAuthenticated: false,
+        error: null,
     }),
-    actions: {
-        setUSer(user){
-            this.user=user
-            this.isAuthenticated = !!user
+    getters: {
+        isLoggedIn: (state) => !!state.token && !!state.user
+    },
+    actions:{
+        async login(credentials) {
+            this.loading = true;
+            this.error = null;
+            try {
+                const response = await api.post('/auth/login', credentials);
+                if(response.data.success){
+                    this.user=response.data.user
+                    this.token=response.data.token
+                    this.isAuthenticated=true;
+                    localStorage.setItem('auth_token', this.token);
+                    return{
+                        success: true,
+                        message:'Login successful',
+                        data: response.data.data
+                    }
+                }
+                else{
+                    this.error=response.data.message
+                return {
+                    success: false,
+                    message: response.data.message
+                }
+                }
+            } catch (error) {
+                this.error=error.response?.data?.message || 'Login failed';
+                return{
+                    success: false,
+                    message: this.error,
+                    errors: error.response?.data?.errors || {}
+                }
+            }finally{
+                this.loading = false;
+            }
         },
-        setToken(token) {
-            this.token = token
-            if(token) {
-                localStorage.setItem("token", token)
-            }else {
-                localStorage.removeItem("auth_token")
-            }   
-        },
-        lougout() {
-            this.user = null
-            this.token = null
-            this.isAuthenticated = false
-            localStorage.removeItem("auth_token")
-        }
+        
     }
 })
