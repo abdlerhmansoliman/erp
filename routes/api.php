@@ -63,6 +63,10 @@ Route::get('/pruchases', [PurchaseInvoiceController::class, 'index']);
 Route::put('/pruchases/{id}', [PurchaseInvoiceController::class, 'update']);
 Route::delete('/pruchases/{id}', [PurchaseInvoiceController::class, 'destroy']);
 
+
+
+Route::middleware(['auth:sanctum'])->group(function () {
+
     Route::prefix('roles')->group(function () {
         Route::get('/', [RoleController::class, 'index'])->name('roles.index');
         Route::post('/', [RoleController::class, 'store'])->name('roles.store');
@@ -81,9 +85,9 @@ Route::delete('/pruchases/{id}', [PurchaseInvoiceController::class, 'destroy']);
         Route::post('/{user}/permissions', [UserRoleController::class, 'assignPermissions'])->name('users.assign-permissions');
         Route::put('/{user}/permissions', [UserRoleController::class, 'syncPermissions'])->name('users.sync-permissions');
     });
-    
     // Bulk Operations
-    Route::post('/bulk/assign-role', [UserRoleController::class, 'bulkAssignRole'])->name('users.bulk-assign-role');
-    
+        Route::post('/bulk/assign-role', [UserRoleController::class, 'bulkAssignRole'])->name('users.bulk-assign-role');
     // Query Routes
     Route::get('/roles/{role}/users', [UserRoleController::class, 'getUsersByRole'])->name('roles.users');
+});
+
