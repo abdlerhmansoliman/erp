@@ -1,5 +1,5 @@
 <script setup>
-import axios from 'axios';
+import api from '@/plugins/axios';
 import { ref, watch, onMounted } from 'vue';
 import EasyDataTable from 'vue3-easy-data-table';
 import { useRouter } from 'vue-router'
@@ -25,15 +25,11 @@ const headers = [
 async function fetchCustomers() {
     loading.value = true;
     try {
-        const response = await axios.get('http://localhost:8000/api/customers', {
+        const response = await api.get('/customers', {
             params: {
                 page: currentPage.value,
                 perPage: rowsPerPage.value,
                 search: search.value,
-            },
-            headers: {
-                'Accept': 'application/json',
-                'Content-Type': 'application/json',
             }
         });
 if (response.data && Array.isArray(response.data.data)) {
@@ -68,7 +64,7 @@ const deleteCustomer=async(item)=>{
 
     if (confirmed) {
         try {
-            await axios.delete(`http://localhost:8000/api/customers/${item.id}`);
+            await api.delete(`/customers/${item.id}`);
             toast.error('Customer deleted successfully!');
             fetchCustomers();
         } catch (error) {

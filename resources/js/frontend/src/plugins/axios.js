@@ -1,23 +1,24 @@
 import axios from "axios";
 const api = axios.create({
-    baseURL:'/api',
+    baseURL: '/api',
     timeout: 10000,
-    headers:{
-        'constent-type': 'application/json',
+    headers: {
+        'Content-Type': 'application/json',
         'Accept': 'application/json',
         'X-Requested-With': 'XMLHttpRequest',
-    }
+    },
+    withCredentials: true
 })
 api.interceptors.request.use(
-    (config)=>{
-        const token=localStorage.getItem("auth_token");
-        if(token){
-            config.headers.Authorization = `Bearer ${token}`;
+    (config) => {
+        const token = localStorage.getItem("auth_token");
+        if (token) {
+            config.headers['Authorization'] = `Bearer ${token}`;
         }
-    const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content')
-    if(csrfToken) {
-        config.headers['X-CSRF-TOKEN'] = csrfToken;
-    }
+        const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content');
+        if (csrfToken) {
+            config.headers['X-CSRF-TOKEN'] = csrfToken;
+        }
         return config;
     },
     (error) => {

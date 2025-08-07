@@ -4,9 +4,10 @@ import api from "@/plugins/axios";
 export const useAuthStore=defineStore('auth',{
     state: () => ({
         user: null,
-        token: localStorage.getItem('token'),
+        token: localStorage.getItem('auth_token'),
         isAuthenticated: false,
         error: null,
+        loading: false,
     }),
     getters: {
         isLoggedIn: (state) => !!state.token && !!state.user
@@ -17,32 +18,35 @@ export const useAuthStore=defineStore('auth',{
             this.error = null;
             try {
                 const response = await api.post('/auth/login', credentials);
-                if(response.data.success){
-                    this.user=response.data.user
-                    this.token=response.data.token
-                    this.isAuthenticated=true;
+                const data = response.data;
+
+                if(data && data.success){
+                    this.user = data.user;
+                    this.token = data.token;
+                    this.isAuthenticated = true;
                     localStorage.setItem('auth_token', this.token);
-                    return{
+                    
+                    return {
                         success: true,
-                        message:'Login successful',
-                        data: response.data.data
-                    }
+                        message: 'Login successful',
+                        data: data.user
+                    };
                 }
-                else{
-                    this.error=response.data.message
+                
+                this.error = data?.message || 'Invalid credentials';
                 return {
                     success: false,
-                    message: response.data.message
-                }
-                }
+                    message: this.error
+                };
             } catch (error) {
-                this.error=error.response?.data?.message || 'Login failed';
-                return{
+                const errorMessage = error.response?.data?.message || 'Login failed';
+                this.error = errorMessage;
+                return {
                     success: false,
-                    message: this.error,
+                    message: errorMessage,
                     errors: error.response?.data?.errors || {}
-                }
-            }finally{
+                };
+            } finally {
                 this.loading = false;
             }
         },
@@ -95,7 +99,7 @@ export const useAuthStore=defineStore('auth',{
                 this.loading = false;
             }
         },
-        async fetchUSer() {
+        async fetchUser() {
             if(!this.token) return;
             try {
                 const response=await api.get('/auth/user');
@@ -114,13 +118,18 @@ export const useAuthStore=defineStore('auth',{
                 this.loading = false;
             }
         },
-         initializeAuth() {
-      const token = localStorage.getItem('auth_token')
-      if (token) {
-        this.token = token
-        this.fetchUser()
-      }
-    },
+         async initializeAuth() {
+            const token = localStorage.getItem('auth_token')
+            if (token) {
+                this.token = token
+                this.isAuthenticated = true
+                await this.fetchUser()
+            } else {
+                this.token = null
+                this.user = null
+                this.isAuthenticated = false
+            }
+         },
 
     clearError() {
       this.error = null

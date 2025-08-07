@@ -54,6 +54,7 @@ Route::put('/position/{id}', [PositionController::class, 'update']);
 Route::delete('/position/{id}', [PositionController::class, 'destroy']);
 
 
+Route::middleware(['auth:sanctum'])->group(function () {
 
 
 Route::apiResource('products', ProductController::class);
@@ -70,7 +71,7 @@ Route::post('/pruchases', [PurchaseInvoiceController::class, 'store']);
 Route::get('/pruchases', [PurchaseInvoiceController::class, 'index']);
 Route::put('/pruchases/{id}', [PurchaseInvoiceController::class, 'update']);
 Route::delete('/pruchases/{id}', [PurchaseInvoiceController::class, 'destroy']);
-
+});
 
 
 Route::middleware(['auth:sanctum'])->group(function () {

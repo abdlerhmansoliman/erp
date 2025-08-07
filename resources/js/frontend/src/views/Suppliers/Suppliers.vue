@@ -1,6 +1,6 @@
 <script setup>
 import { ref, watch, onMounted } from 'vue';
-import axios from 'axios';
+import api from '@/plugins/axios';
 import EasyDataTable from 'vue3-easy-data-table';
 import { useRouter } from 'vue-router'
 import { useConfirmDialog } from '@/composables/useConfirmDialog'
@@ -29,15 +29,11 @@ async function fetchSuppliers() {
   loading.value = true;
   
   try {
-    const response = await axios.get('http://localhost:8000/api/suppliers', {
+    const response = await api.get('/suppliers', {
       params: {
         page: currentPage.value,
         perPage: rowsPerPage.value,
         search: search.value,
-      },
-      headers: {
-        'Accept': 'application/json',
-        'Content-Type': 'application/json',
       }
     });
 
@@ -75,7 +71,7 @@ const deleteSupplier = async (item) => {
   if (!confirmed) return;
 
   try {
-    await axios.delete(`http://localhost:8000/api/suppliers/${item.id}`);
+    await api.delete(`/suppliers/${item.id}`);
     toast.error('The supplier deleted successfully!');
     fetchSuppliers(); // تأكد إن دي موجودة في الكومبوننت
   } catch (error) {

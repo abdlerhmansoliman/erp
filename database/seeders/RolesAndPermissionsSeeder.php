@@ -29,12 +29,12 @@ class RolesAndPermissionsSeeder extends Seeder
             'delete-users',
             'manage-user-roles',
             
-            // Content management
-            'view-posts',
-            'create-posts',
-            'edit-posts',
-            'delete-posts',
-            'publish-posts',
+            // product management
+            'view-products',
+            'create-products',
+            'edit-products',
+            'delete-products',
+            'publish-products',
             
             // System administration
             'view-dashboard',
@@ -50,36 +50,35 @@ class RolesAndPermissionsSeeder extends Seeder
         // Create roles and assign permissions
         
         // Super Admin - has all permissions
-        $superAdminRole = Role::firstOrCreate(['name' => 'super-admin']);
-        $superAdminRole->givePermissionTo(Permission::all());
+        $superAdminRole = Role::firstOrCreate(['name' => 'super-admin', 'guard_name' => 'web']);        $superAdminRole->givePermissionTo(Permission::all());
         
         // Admin - has most permissions except system critical ones
-        $adminRole = Role::firstOrCreate(['name' => 'admin']);
+        $adminRole = Role::firstOrCreate(['name' => 'admin', 'guard_name' => 'web']);
         $adminRole->givePermissionTo([
             'view-roles', 'create-roles', 'edit-roles',
             'view-users', 'create-users', 'edit-users', 'manage-user-roles',
-            'view-posts', 'create-posts', 'edit-posts', 'delete-posts', 'publish-posts',
+            'view-products', 'create-products', 'edit-products', 'delete-products', 'publish-products',
             'view-dashboard', 'manage-settings'
         ]);
         
         // Editor - content management focused
-        $editorRole = Role::firstOrCreate(['name' => 'editor']);
+        $editorRole = Role::firstOrCreate(['name' => 'editor', 'guard_name' => 'web']);
         $editorRole->givePermissionTo([
-            'view-posts', 'create-posts', 'edit-posts', 'publish-posts',
+            'view-products', 'create-products', 'edit-products', 'publish-products',
             'view-dashboard'
         ]);
         
         // Author - limited content creation
-        $authorRole = Role::firstOrCreate(['name' => 'author']);
+        $authorRole = Role::firstOrCreate(['name' => 'author', 'guard_name' => 'web']);
         $authorRole->givePermissionTo([
-            'view-posts', 'create-posts', 'edit-posts',
+            'view-products', 'create-products', 'edit-products',
             'view-dashboard'
         ]);
         
         // User - basic permissions
-        $userRole = Role::firstOrCreate(['name' => 'user']);
+        $userRole = Role::firstOrCreate(['name' => 'user', 'guard_name' => 'web']);
         $userRole->givePermissionTo([
-            'view-posts', 'view-dashboard'
+            'view-products', 'view-dashboard'
         ]);
 
         // Create default super admin user if it doesn't exist
