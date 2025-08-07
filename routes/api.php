@@ -14,16 +14,24 @@ use App\Http\Controllers\SupplierController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
+Route::middleware('auth:sanctum')->get('/auth/user', function (Request $request) {
+    return response()->json([
+        'success' => true,
+        'data' => $request->user(),
+    ]);
+});
 Route::get('/user', function (Request $request) {
     return $request->user();
 })->middleware('auth:sanctum');
 Route::get('/hello', function () {
     return response()->json(['message' => 'Hello API']);
 });
+    Route::prefix('auth')->group(function () {
 Route::post('/register', [AuthController::class, 'register']);
 Route::post('/login',[AuthController::class,'login']);
 Route::post('/logout', [AuthController::class, 'logout'])->middleware('auth:sanctum');
-
+Route::get('/user', [AuthController::class, 'user'])->middleware('auth:sanctum');
+});
 
 Route::get('/employees',[EmployerController::class,'index']);
 Route::get('/employee/{id}',[EmployerController::class,'show']);
