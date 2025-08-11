@@ -1,4 +1,53 @@
-// views/auth/Login.vue
+<script setup>
+import { ref, reactive } from 'vue'
+import { useRouter } from 'vue-router'
+import { useAuthStore } from '@/stores/authStore'
+import { useI18n } from 'vue-i18n'
+
+const { t } = useI18n()
+const router = useRouter()
+const authStore = useAuthStore()
+
+// Form data
+const form = reactive({
+  email: '',
+  password: '',
+  remember: false
+})
+
+// Component state
+const showPassword = ref(false)
+const loading = ref(false)
+const error = ref('')
+const errors = ref({})
+
+// Methods
+const handleLogin = async () => {
+  loading.value = true
+  error.value = ''
+  errors.value = {}
+
+  try {
+    const result = await authStore.login({
+      email: form.email,
+      password: form.password,
+      remember: form.remember
+    })
+
+    if (result && result.success) {
+      router.push('/dashboard')
+    } else {
+      error.value = result?.message || 'Invalid credentials'
+      errors.value = result?.errors || {}
+    }
+  } catch (err) {
+    error.value = err.response?.data?.message || 'Login failed. Please try again.'
+  } finally {
+    loading.value = false
+  }
+}
+</script>
+
 <template>
   <div class="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
     <div class="max-w-md w-full space-y-8">
@@ -9,12 +58,12 @@
           </svg>
         </div>
         <h2 class="mt-6 text-center text-3xl font-extrabold text-gray-900">
-          Sign in to your account
+          {{t('Sign in to your account')}}
         </h2>
         <p class="mt-2 text-center text-sm text-gray-600">
-          Or
+          {{t('or')}}
           <router-link to="/register" class="font-medium text-blue-600 hover:text-blue-500">
-            create a new account
+            {{ t('register') }}
           </router-link>
         </p>
       </div>
@@ -38,7 +87,7 @@
           <!-- Email Field -->
           <div>
             <label for="email" class="block text-sm font-medium text-gray-700">
-              Email address
+             {{t('email')}}
             </label>
             <div class="mt-1 relative">
               <input
@@ -61,7 +110,7 @@
           <!-- Password Field -->
           <div>
             <label for="password" class="block text-sm font-medium text-gray-700">
-              Password
+              {{t('password')}}
             </label>
             <div class="mt-1 relative">
               <input
@@ -105,13 +154,13 @@
                 class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
               />
               <label for="remember-me" class="ml-2 block text-sm text-gray-900">
-                Remember me
+                {{t('remember_me')}}
               </label>
             </div>
 
             <div class="text-sm">
               <a href="#" class="font-medium text-blue-600 hover:text-blue-500">
-                Forgot your password?
+                {{ t('forgot_password') }}
               </a>
             </div>
           </div>
@@ -132,7 +181,7 @@
                 <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
               </svg>
             </span>
-            {{ loading ? 'Signing in...' : 'Sign in' }}
+            {{ loading ? $t('Signing in') : $t('login') }}
           </button>
         </div>
       </form>
@@ -140,50 +189,3 @@
   </div>
 </template>
 
-<script setup>
-import { ref, reactive } from 'vue'
-import { useRouter } from 'vue-router'
-import { useAuthStore } from '@/stores/authStore'
-
-const router = useRouter()
-const authStore = useAuthStore()
-
-// Form data
-const form = reactive({
-  email: '',
-  password: '',
-  remember: false
-})
-
-// Component state
-const showPassword = ref(false)
-const loading = ref(false)
-const error = ref('')
-const errors = ref({})
-
-// Methods
-const handleLogin = async () => {
-  loading.value = true
-  error.value = ''
-  errors.value = {}
-
-  try {
-    const result = await authStore.login({
-      email: form.email,
-      password: form.password,
-      remember: form.remember
-    })
-
-    if (result && result.success) {
-      router.push('/dashboard')
-    } else {
-      error.value = result?.message || 'Invalid credentials'
-      errors.value = result?.errors || {}
-    }
-  } catch (err) {
-    error.value = err.response?.data?.message || 'Login failed. Please try again.'
-  } finally {
-    loading.value = false
-  }
-}
-</script>
