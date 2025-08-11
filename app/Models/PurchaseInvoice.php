@@ -17,6 +17,6 @@ class PurchaseInvoice extends Model
         return $this->belongsTo(Supplier::class, 'supplier_id');
     }
     public function items(){
-        return $this->morphMany(InvoiceItem::class, 'invoiceable');
+        return $this->hasMany(PurchaseInvoiceItem::class);
     }
 }

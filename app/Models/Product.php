@@ -24,11 +24,16 @@ class Product extends Model
     public function category(){
         return $this->belongsTo(Category::class);
     }
-    public function invoiceItems(){
-        return $this->hasMany(InvoiceItem::class);         
-    }
+
     public function unit(){
         return $this->belongsTo(Unit::class);
     }
-    
+    public function purchaseInvoiceItems()
+    {
+        return $this->hasMany(PurchaseInvoiceItem::class);
+    }
+    public function salesInvoiceItems()
+    {
+        return $this->hasMany(SalesInvoiceItem::class);
+    }
 }
