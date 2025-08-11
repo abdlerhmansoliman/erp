@@ -11,8 +11,12 @@ use App\Http\Controllers\PurchaseInvoiceController;
 use App\Http\Controllers\RoleController;
 use App\Http\Controllers\SelesInvoiceController;
 use App\Http\Controllers\SupplierController;
+use App\Http\Controllers\UnitController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+
+
+Route::apiResource('units', UnitController::class);
 
 Route::middleware('auth:sanctum')->get('/auth/user', function (Request $request) {
     return response()->json([
@@ -54,10 +58,13 @@ Route::put('/position/{id}', [PositionController::class, 'update']);
 Route::delete('/position/{id}', [PositionController::class, 'destroy']);
 
 
+
+
+
 Route::middleware(['auth:sanctum'])->group(function () {
 
-
 Route::apiResource('products', ProductController::class);
+
 Route::apiResource('suppliers', SupplierController::class);
 Route::apiResource('customers', CustomerController::class);
 

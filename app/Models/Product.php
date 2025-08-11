@@ -17,6 +17,8 @@ class Product extends Model
         'purchase_price',
         'sale_price',
         'category_id',
+        'unit_id',
+        
     ];
 
     public function category(){
@@ -25,4 +27,8 @@ class Product extends Model
     public function invoiceItems(){
         return $this->hasMany(InvoiceItem::class);         
     }
+    public function unit(){
+        return $this->belongsTo(Unit::class);
+    }
+    
 }
