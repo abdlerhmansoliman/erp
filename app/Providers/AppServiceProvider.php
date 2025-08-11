@@ -2,7 +2,6 @@
 
 namespace App\Providers;
 
-use App\Models\Customer;
 use App\Repositories\AuthRepository;
 use App\Repositories\CustomerRepository;
 use App\Repositories\DepartmentRepository;
@@ -14,13 +13,19 @@ use App\Repositories\Interfaces\EmployeeRepositoryInterface;
 use App\Repositories\Interfaces\positionRepositoryInterface;
 use App\Repositories\Interfaces\ProductRepositoryInterface;
 use App\Repositories\Interfaces\PurchaseInvoiceRepositoryInterface;
+use App\Repositories\Interfaces\RoleRepositoryInterface;
 use App\Repositories\Interfaces\SalesInvoiceRepositoryInterface;
 use App\Repositories\Interfaces\SupplierRepositoryInterface;
+use App\Repositories\Interfaces\UnitRepositoryInterface;
+use App\Repositories\Interfaces\UserRoleRepositoryInterface;
 use App\Repositories\PositionRepository;
 use App\Repositories\ProducetRepository;
 use App\Repositories\PurchaseInvoiceRepository;
+use App\Repositories\RoleRepository;
 use App\Repositories\SalesInvoiceRepository;
 use App\Repositories\SupplierRepository;
+use App\Repositories\UnitRepository;
+use App\Repositories\UserRoleRepository;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
@@ -39,6 +44,9 @@ class AppServiceProvider extends ServiceProvider
         $this->app->bind(CustomerRepositoryInterface::class, CustomerRepository::class );
         $this->app->bind(PurchaseInvoiceRepositoryInterface::class, PurchaseInvoiceRepository::class);
         $this->app->bind(SalesInvoiceRepositoryInterface::class, SalesInvoiceRepository::class);
+        $this->app->bind(RoleRepositoryInterface::class, RoleRepository::class);
+        $this->app->bind(UserRoleRepositoryInterface::class, UserRoleRepository::class);
+        $this->app->bind(UnitRepositoryInterface::class,UnitRepository::class);
         
     }
 

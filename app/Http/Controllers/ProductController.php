@@ -4,13 +4,13 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\ProductStoreRequest;
 use App\Http\Requests\ProductUpdateRequest;
-use App\Services\ProducteService;
+use App\Services\ProductService;
 use Illuminate\Http\Request;
 
 class ProductController extends Controller
 {
     protected $productService;
-    public function __construct(ProducteService $productService)
+    public function __construct(ProductService $productService)
     {
         $this->productService = $productService;
     }

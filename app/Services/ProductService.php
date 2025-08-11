@@ -2,12 +2,13 @@
 
 namespace App\Services;
 
+use App\Models\Unit;
 use App\Repositories\Interfaces\AuthRepositoryInterface;
 use App\Repositories\Interfaces\ProductRepositoryInterface;
 use Illuminate\Container\Attributes\Auth;
 use Illuminate\Support\Facades\Hash;
 
-class ProducteService
+class ProductService
 {
     /**
      * Create a new class instance.

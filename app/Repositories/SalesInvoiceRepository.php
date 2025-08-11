@@ -14,7 +14,7 @@ class SalesInvoiceRepository implements SalesInvoiceRepositoryInterface
     }
     public function findById($id)
     {
-        return SalesInvoice::findOrFail($id);
+        return SalesInvoice::with(['items.product', 'customer'])->findOrFail($id);
     }
     public function create(array $data)
     {

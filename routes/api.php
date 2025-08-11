@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\UserRoleController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CustomerController;
 use App\Http\Controllers\DepartmentController;
@@ -7,21 +8,34 @@ use App\Http\Controllers\EmployerController;
 use App\Http\Controllers\PositionController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\PurchaseInvoiceController;
+use App\Http\Controllers\RoleController;
 use App\Http\Controllers\SelesInvoiceController;
 use App\Http\Controllers\SupplierController;
+use App\Http\Controllers\UnitController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
+
+Route::apiResource('units', UnitController::class);
+
+Route::middleware('auth:sanctum')->get('/auth/user', function (Request $request) {
+    return response()->json([
+        'success' => true,
+        'data' => $request->user(),
+    ]);
+});
 Route::get('/user', function (Request $request) {
     return $request->user();
 })->middleware('auth:sanctum');
 Route::get('/hello', function () {
     return response()->json(['message' => 'Hello API']);
 });
+    Route::prefix('auth')->group(function () {
 Route::post('/register', [AuthController::class, 'register']);
 Route::post('/login',[AuthController::class,'login']);
 Route::post('/logout', [AuthController::class, 'logout'])->middleware('auth:sanctum');
-
+Route::get('/user', [AuthController::class, 'user'])->middleware('auth:sanctum');
+});
 
 Route::get('/employees',[EmployerController::class,'index']);
 Route::get('/employee/{id}',[EmployerController::class,'show']);
@@ -46,7 +60,11 @@ Route::delete('/position/{id}', [PositionController::class, 'destroy']);
 
 
 
+
+Route::middleware(['auth:sanctum'])->group(function () {
+
 Route::apiResource('products', ProductController::class);
+
 Route::apiResource('suppliers', SupplierController::class);
 Route::apiResource('customers', CustomerController::class);
 
@@ -60,5 +78,32 @@ Route::post('/pruchases', [PurchaseInvoiceController::class, 'store']);
 Route::get('/pruchases', [PurchaseInvoiceController::class, 'index']);
 Route::put('/pruchases/{id}', [PurchaseInvoiceController::class, 'update']);
 Route::delete('/pruchases/{id}', [PurchaseInvoiceController::class, 'destroy']);
+});
 
+
+Route::middleware(['auth:sanctum'])->group(function () {
+
+    Route::prefix('roles')->group(function () {
+        Route::get('/', [RoleController::class, 'index'])->name('roles.index');
+        Route::post('/', [RoleController::class, 'store'])->name('roles.store');
+        Route::get('/{role}', [RoleController::class, 'show'])->name('roles.show');
+        Route::put('/{role}', [RoleController::class, 'update'])->name('roles.update');
+        Route::delete('/{role}', [RoleController::class, 'destroy'])->name('roles.destroy');
+        Route::post('/{role}/permissions', [RoleController::class, 'assignPermissions'])->name('roles.assign-permissions');
+    });
+    
+    // User Role Management Routes
+    Route::prefix('users')->group(function () {
+        Route::get('/{user}/permissions', [UserRoleController::class, 'getUserPermissions'])->name('users.permissions');
+        Route::post('/{user}/roles', [UserRoleController::class, 'assignRoles'])->name('users.assign-roles');
+        Route::put('/{user}/roles', [UserRoleController::class, 'syncRoles'])->name('users.sync-roles');
+        Route::delete('/{user}/roles', [UserRoleController::class, 'removeRoles'])->name('users.remove-roles');
+        Route::post('/{user}/permissions', [UserRoleController::class, 'assignPermissions'])->name('users.assign-permissions');
+        Route::put('/{user}/permissions', [UserRoleController::class, 'syncPermissions'])->name('users.sync-permissions');
+    });
+    // Bulk Operations
+        Route::post('/bulk/assign-role', [UserRoleController::class, 'bulkAssignRole'])->name('users.bulk-assign-role');
+    // Query Routes
+    Route::get('/roles/{role}/users', [UserRoleController::class, 'getUsersByRole'])->name('roles.users');
+});
 

@@ -20,7 +20,7 @@ class SelesInvoiceController extends Controller
         $invoices = $this->salesInvoiceService->getAllInvoices();
         return SalesInvoiceResource::collection($invoices);
     }
-
+    
   public function store(StoreSalesInvoiceRequest $request)
     {
         $invoice = $this->salesInvoiceService->createInvoice($request->validated());

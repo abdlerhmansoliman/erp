@@ -28,12 +28,17 @@ class AuthService
     public function login(array $data){
         $user=$this->authRepository->findByEmail($data['email']);
         if(!$user || ! Hash::check($data['password'],$user->password)){
-            return response()->json(['message'=>'invalid email or password'],401);
+            return response()->json([
+                'success' => false,
+                'message' => 'Invalid email or password'
+            ], 401);
         }
         $token=$user->createToken('auth_token')->plainTextToken;
         return response()->json([
-            'user'=>$user,
-            'token'=>$token,
+            'success' => true,
+            'user' => $user,
+            'token' => $token,
+            'message' => 'Login successful'
         ]);
     }
     public function logout($user){

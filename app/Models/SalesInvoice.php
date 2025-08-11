@@ -19,6 +19,7 @@ class SalesInvoice extends Model
     }
     public function items()
     {
-        return $this->morphMany(InvoiceItem::class, 'invoiceable');
+        return $this->hasMany(SalesInvoiceItem::class);
     }
+
 }

@@ -1,6 +1,10 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import MainLayout from '@/layouts/MainLayout.vue'
+import { authRoutes } from './auth'
+
 const routes = [
+  ...authRoutes,
+
 {
   path: '/',
   component: MainLayout,
