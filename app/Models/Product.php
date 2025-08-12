@@ -11,16 +11,17 @@ class Product extends Model
     protected $fillable=[
         'name',
         'description',
-        'quantity',
         'price',
         'sku',
         'purchase_price',
-        'sale_price',
         'category_id',
         'unit_id',
         
     ];
-
+protected $with=['category','unit'];
+    public function stocks() {
+        return $this->hasMany(Stock::class);
+    }
     public function category(){
         return $this->belongsTo(Category::class);
     }

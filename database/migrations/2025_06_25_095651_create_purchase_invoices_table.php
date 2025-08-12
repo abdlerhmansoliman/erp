@@ -14,9 +14,8 @@ return new class extends Migration
         Schema::create('purchase_invoices', function (Blueprint $table) {
             $table->id();
             $table->foreignId('supplier_id')->constrained()->onDelete('cascade');
-            $table->decimal('total_price', 10, 2);
-            $table->text('notes')->nullable();
-            $table->date('invoice_date');
+            $table->enum('status', ['draft', 'ordered', 'received', 'cancelled'])->default('draft');
+            $table->decimal('total_amount', 10, 2)->default(0);
             $table->timestamps();
         });
     }

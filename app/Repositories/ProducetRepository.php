@@ -10,18 +10,11 @@ class ProducetRepository implements ProductRepositoryInterface
 {
     public function getAllProducts()
     {
-        return Product::with(['category:id,name','unit:id,name,symbol'])->get([
-        'id', 'name', 'price', 'description', 'quantity', 'sku', 'category_id', 'unit_id'
-        ]);;
+        return Product::select('id', 'name', 'price', 'description','sku', 'category_id', 'unit_id','purchase_price')->get();
     }
     public function getProductById($id)
     {
-        return Product::with([
-                'category:id,name',
-                'unit:id,name,symbol'
-            ])
-            ->select('id', 'name', 'price', 'description', 'quantity', 'sku', 'category_id', 'unit_id')
-            ->findOrFail($id);
+        return Product::select('id', 'name', 'price', 'description','sku', 'category_id', 'unit_id','purchase_price')->findOrFail($id);
     }
 
     public function createProduct(array $data)
