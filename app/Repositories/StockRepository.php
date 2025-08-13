@@ -32,14 +32,15 @@ public function findById(int $id)
 
 public function create(array $data)
 {
-    return;
+    return Stock::create($data);
 }
-public function update(int $id, array $data)
+public function update(Stock $stock, array $data)
 {
-    return;
+    $stock->update($data);
+    return $stock;
 }
-public function delete(int $id)
+public function delete(Stock $stock)
 {
-    return;
+    return $stock->delete();
 }
 }

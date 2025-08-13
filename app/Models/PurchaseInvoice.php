@@ -8,15 +8,18 @@ class PurchaseInvoice extends Model
 {
     protected $fillable =[
         'supplier_id',
-        'total_price',
-        'notes',
-        'invoice_date',
+        'status',
+        'total_amount',
     ];
 
     public function supplier(){
         return $this->belongsTo(Supplier::class, 'supplier_id');
     }
     public function items(){
-        return $this->hasMany(PurchaseInvoiceItem::class);
+        return $this->hasMany(PurchaseItems::class);
     }
+    public function getInvoiceNumberAttribute()
+{
+    return 'INV-' . str_pad($this->id, 6, '0', STR_PAD_LEFT);
+}
 }

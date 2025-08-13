@@ -15,12 +15,15 @@ class PurchaseInvoiceResource extends JsonResource
     public function toArray(Request $request): array
     {
     return [
+    
         'id' => $this->id,
-        'invoice_date' => $this->invoice_date,
-        'notes' => $this->notes,
+        'invoice_number' => $this->invoice_number, // ده هيظهر بالشكل INV-000{id}
         'supplier_id' => $this->supplier_id,
-        'supplier' => new SupplierResource($this->whenLoaded('supplier')),
-        'items' => InvoiceItemResource::collection($this->whenLoaded('items')),
+        'status' => $this->status,
+        'total_amount' => $this->total_amount,
         'created_at' => $this->created_at,
+        'updated_at' => $this->updated_at,
+        
+        'supplier' => new SupplierResource($this->whenLoaded('supplier')),
     ];    }
 }

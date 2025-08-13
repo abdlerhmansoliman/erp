@@ -12,32 +12,35 @@ use App\Services\PurchaseInvoiceService;
 class PurchaseInvoiceController extends Controller
 {
     public function __construct(protected PurchaseInvoiceService $purchaseInvoiceService){}
-    public function index()
-    {
-        $invoices = $this->purchaseInvoiceService->getAllInvoices();
-        return PurchaseInvoiceResource::collection($invoices);
+   public function index()
+{
+    $filters = request()->only(['search', 'sortBy', 'sortDir', 'perPage', 'page']);
+    $invoices = $this->purchaseInvoiceService->getAllInvoices($filters);
+    return PurchaseInvoiceResource::collection($invoices);
+}
+
+public function store(PurchaseInvoiceRequest $request)
+{
+    
+    $invoice = $this->purchaseInvoiceService->createInvoice($request->validated())
+        ->load(['supplier', 'items']);
+    return new PurchaseInvoiceResource($invoice);
+}
+
+public function update(UpdatePurchaseRequest $request, $id)
+{
+    $invoice = $this->purchaseInvoiceService->updateInvoice($id, $request->validated());
+
+    if (!$invoice) {
+        return response()->json(['message' => 'Invoice not found'], 404);
     }
 
-  public function store(PurchaseInvoiceRequest $request)
-    {
-        $invoice = $this->purchaseInvoiceService->createInvoice($request->validated());
-        return new PurchaseInvoiceResource($invoice);
-    }
-    public function update(UpdatePurchaseRequest $request, $id)
-    {
-        $invoice = $this->purchaseInvoiceService->updateInvoice($id, $request->validated());
-        if (!$invoice) {
-            return response()->json(['message' => 'Invoice not found'], 404);        
-        }
-        return new PurchaseInvoiceResource($invoice);
-    }
+    $invoice->load(['supplier', 'items']);
+    return new PurchaseInvoiceResource($invoice);
+}
     public function destroy($id)
     {
-        $invoice = $this->purchaseInvoiceService->deleteInvoice($id);
-        if (!$invoice) {
-            return response()->json(['message' => 'Invoice not found'], 404);
-        }
-        return response()->json(['message' => 'Invoice deleted successfully']);
+        $this->purchaseInvoiceService->deletePurchase($id);
+        return response()->json(['message' => 'Purchase deleted successfully']);
     }
-
 }

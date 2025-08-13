@@ -19,9 +19,9 @@ class PurchaseInvoiceService
         $this->purchaseInvoiceRepository = $purchaseInvoiceRepository;
         $this->invoiceItemService = $invoiceItemService;
     }
-    public function getAllInvoices()
+    public function getAllInvoices(array $filters )
     {
-        return $this->purchaseInvoiceRepository->all();
+        return $this->purchaseInvoiceRepository->all($filters);
     }
     public function getInvoiceById($id)
     {
@@ -30,15 +30,22 @@ class PurchaseInvoiceService
     public function createInvoice(array $data)
     {
         return DB::transaction(function()use($data) {
-            $items=$data['items'];
-            unset($data['items']);
-            $total=$this->invoiceItemService->calculateTotal($items);
-            $data['total_price']=$total;
-            $invoice = $this->purchaseInvoiceRepository->create($data);
-            foreach ($items as $item) {
-                $this->invoiceItemService->createItemForInvoice($invoice, $item);
+            
+            $purchase=$this->purchaseInvoiceRepository->create([
+                'supplier_id'=>$data['supplier_id'],
+                'status'=>$data['status']??'pending',
+                'total_amount' => 0
+            ]);
+            $total=0;
+            foreach($data['items'] as $item){
+                $total +=$item['quantity'] * $item['unit_price'];
             }
-            return $invoice->load('supplier','items');
+            $this->purchaseInvoiceRepository->addItems($purchase->id,$data['items']);
+            $purchase->update([
+                'total_amount' => $total,
+            ]);
+
+            return $purchase;
         });
     }
 
@@ -67,13 +74,10 @@ class PurchaseInvoiceService
 
     }
 
-    public function deleteInvoice($id)
+    public function deletePurchase($id)
     {
         return DB::transaction(function () use ($id) {
-            $invoice = $this->purchaseInvoiceRepository->findById($id);
-            if (!$invoice) return false;
-
-            $this->invoiceItemService->deleteItemsForInvoice($invoice);
+            $this->purchaseInvoiceRepository->deleteItems($id);
             return $this->purchaseInvoiceRepository->delete($id);
         });
     }

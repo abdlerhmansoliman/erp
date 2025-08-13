@@ -4,7 +4,7 @@ namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class PurchaseInvoiceRequest extends FormRequest
+class StockUpdateRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -21,11 +21,10 @@ class PurchaseInvoiceRequest extends FormRequest
      */
     public function rules(): array
     {
-  return [
-        'supplier_id' => 'required|exists:suppliers,id',
-        'items' => 'required|array|min:1',
-        'status' => 'nullable|string|in:draft,ordered,received',
-        'total_amount' => 'nullable|numeric|min:0',
-    ];
+        return [
+            'product_id' => 'sometimes|exists:products,id',
+            'warehouse_id' => 'sometimes|exists:warehouses,id',
+            'quantity' => 'sometimes|integer|min:0',
+        ];
     }
 }
