@@ -27,27 +27,50 @@ class PurchaseInvoiceService
     {
         return $this->purchaseInvoiceRepository->findById($id);
     }
-    public function createInvoice(array $data)
-    {
-        return DB::transaction(function()use($data) {
-            
-            $purchase=$this->purchaseInvoiceRepository->create([
-                'supplier_id'=>$data['supplier_id'],
-                'status'=>$data['status']??'pending',
-                'total_amount' => 0
-            ]);
-            $total=0;
-            foreach($data['items'] as $item){
-                $total +=$item['quantity'] * $item['unit_price'];
-            }
-            $this->purchaseInvoiceRepository->addItems($purchase->id,$data['items']);
-            $purchase->update([
-                'total_amount' => $total,
-            ]);
+  public function createInvoice(array $data)
+{
+    return DB::transaction(function() use ($data) {
 
-            return $purchase;
-        });
-    }
+        // 1️⃣ إنشاء الفاتورة
+        $purchase = $this->purchaseInvoiceRepository->create([
+            'supplier_id' => $data['supplier_id'],
+            'status' => $data['status'] ?? 'pending',
+            'total_amount' => 0
+        ]);
+
+        $total = 0;
+
+        foreach ($data['items'] as $item) {
+            $quantity = $item['quantity'];
+            $unitPrice = $item['unit_price'];
+            $warehouseId = $item['warehouse_id'];
+
+            $total += $quantity * $unitPrice;
+
+            $stock = \App\Models\Stock::firstOrCreate(
+                ['product_id' => $item['product_id'], 'warehouse_id' => $warehouseId],
+                ['quantity' => 0]
+            );
+            $stock->quantity += $quantity;
+            $stock->save();
+
+            \App\Models\PurchaseItems::create([
+                'purchase_invoice_id' => $purchase->id,
+                'product_id' => $item['product_id'],
+                'warehouse_id' => $warehouseId,
+                'quantity' => $quantity,
+                'unit_price' => $unitPrice,
+                'total_price' => $quantity * $unitPrice,
+            ]);
+        }
+
+        $purchase->update([
+            'total_amount' => $total,
+        ]);
+
+        return $purchase;
+    });
+}
 
     public function updateInvoice($id, array $data)
     {

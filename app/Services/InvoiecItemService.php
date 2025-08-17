@@ -6,38 +6,53 @@ use App\Models\InvoiceItem;
 use App\Models\Product;
 use App\Models\PurchaseInvoice;
 use App\Models\SalesInvoice;
+use App\Models\Stock;
 use Illuminate\Support\Facades\DB;
 
 class InvoiecItemService
 {
-  public function createItemForInvoice($invoice, array $itemData): InvoiceItem
-    {
-        return DB::transaction(function () use ($invoice, $itemData) {
-            $product = Product::findOrFail($itemData['product_id']);
-            $quantity = $itemData['quantity'];
+ public function createItemForInvoice($invoice, array $itemData): InvoiceItem
+{
+    return DB::transaction(function () use ($invoice, $itemData) {
+        $product = Product::findOrFail($itemData['product_id']);
+        $quantity = $itemData['quantity'];
+        $warehouseId = $itemData['warehouse_id'] ; 
 
-            if ($invoice instanceof SalesInvoice) {
-                if ($product->quantity < $quantity) {
-                    throw new \Exception("out of stock{$product->name}");
-                }
+        if ($invoice instanceof SalesInvoice) {
+            $stock = Stock::where('product_id', $product->id)
+                          ->where('warehouse_id', $warehouseId)
+                          ->firstOrFail();
 
-                $product->decrement('quantity', $quantity);
-                $price = $product->price;
-            } elseif ($invoice instanceof PurchaseInvoice) {
-                $product->increment('quantity', $quantity);
-                $price = $itemData['price'] ?? $product->purchase_price;
+            if ($stock->quantity < $quantity) {
+                throw new \Exception("Out of stock: {$product->name}");
             }
 
-            return InvoiceItem::create([
-                'product_id' => $product->id,
-                'quantity' => $quantity,
-                'price' => $price,
-                'total_price' => $quantity * $price,
-                'invoiceable_type' => get_class($invoice),
-                'invoiceable_id' => $invoice->id,
-            ]);
-        });
-    }
+            $stock->quantity -= $quantity;
+            $stock->save();
+            $price = $product->price;
+
+        } elseif ($invoice instanceof PurchaseInvoice) {
+            $stock = Stock::firstOrCreate(
+                ['product_id' => $product->id, 'warehouse_id' => $warehouseId],
+                ['quantity' => 0]
+            );
+
+            $stock->quantity += $quantity;
+            $stock->save();
+            $price = $itemData['price'] ?? $product->purchase_price;
+        }
+
+        return InvoiceItem::create([
+            'product_id' => $product->id,
+            'quantity' => $quantity,
+            'price' => $price,
+            'total_price' => $quantity * $price,
+            'invoiceable_type' => get_class($invoice),
+            'invoiceable_id' => $invoice->id,
+            
+        ]);
+    });
+}
 
     public function calculateTotal(array $items): float
     {

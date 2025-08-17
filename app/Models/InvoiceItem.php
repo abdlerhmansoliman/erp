@@ -6,22 +6,24 @@ use Illuminate\Database\Eloquent\Model;
 
 class InvoiceItem extends Model
 {
-    protected $fillable=[
-        'invoice_id',
+    protected $table = 'purchase_items'; 
+    protected $fillable = [
+        'purchase_invoice_id',
         'product_id',
+        'warehouse_id', 
         'quantity',
-        'price',
-        'total',
+        'unit_price',
         'total_price',
-        'invoiceable_type',
-        'invoiceable_id',
     ];
 
-    public function invoiceable(){
-        return $this->morphTo();
+    public function purchaseInvoice()
+    {
+        return $this->belongsTo(\App\Models\PurchaseInvoice::class, 'purchase_invoice_id');
     }
+
     public function product()
-{
-    return $this->belongsTo(\App\Models\Product::class);
+    {
+        return $this->belongsTo(\App\Models\Product::class);
+    }
 }
-}
+
