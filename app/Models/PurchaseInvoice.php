@@ -9,7 +9,9 @@ class PurchaseInvoice extends Model
     protected $fillable =[
         'supplier_id',
         'status',
-        'total_amount',
+        'sub_total',
+        'tax_amount',
+        'grand_total',
     ];
 
     public function supplier(){

@@ -12,7 +12,10 @@ class PurchaseItems extends Model
     'warehouse_id',
     'quantity',
     'unit_price',
-    'total_price'
+    'tax_percentage',
+    'discount_percentage',
+    'total_price',
+    'net_price',
 ];
 
 

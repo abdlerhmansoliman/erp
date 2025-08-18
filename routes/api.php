@@ -20,10 +20,9 @@ use Illuminate\Support\Facades\Route;
 
 
 Route::apiResource('units', UnitController::class);
-Route::post('/pruchases', [PurchaseInvoiceController::class, 'store']);
-Route::get('/pruchases', [PurchaseInvoiceController::class, 'index']);
-Route::put('/pruchases/{id}', [PurchaseInvoiceController::class, 'update']);
-Route::delete('/pruchases/{id}', [PurchaseInvoiceController::class, 'destroy']);
+
+Route::apiResource('pruchases', PurchaseInvoiceController::class);
+
 Route::middleware('auth:sanctum')->get('/auth/user', function (Request $request) {
     return response()->json([
         'success' => true,

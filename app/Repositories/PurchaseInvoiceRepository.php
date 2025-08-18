@@ -40,13 +40,7 @@ class PurchaseInvoiceRepository implements PurchaseInvoiceRepositoryInterface
         $invoice = $this->findById($id);
         return PurchaseInvoice::destroy($id);
     }
-    public function addITems($productId, array $items){
-        foreach ($items as $item){
-            $item['purchase_invoice_id'] = $productId;
-            $item['total_price'] = $item['quantity'] * $item['unit_price'];
-            PurchaseItems::create($item);
-        }
-    }
+
     public function deleteItems($productId)
     {
         return PurchaseItems::where('purchase_invoice_id', $productId)->delete();

@@ -31,10 +31,14 @@ protected $with=['category','unit'];
     }
     public function purchaseInvoiceItems()
     {
-        return $this->hasMany(PurchaseInvoiceItem::class);
+        return $this->hasMany(PurchaseItems::class);
     }
     public function salesInvoiceItems()
     {
         return $this->hasMany(SalesInvoiceItem::class);
+    }
+    public function taxes()
+    {
+        return $this->belongsToMany(Tax::class, 'product_tax');
     }
 }

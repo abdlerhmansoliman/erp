@@ -20,6 +20,9 @@ return new class extends Migration
             $table->decimal('total_sale_price', 15, 2);
             $table->decimal('total_cost_price', 15, 2);            
             $table->decimal('total_price', 10, 2);
+            $table->decimal('tax_percentage', 5, 2)->default(0)->after('unit_price');
+            $table->decimal('discount_percentage', 5, 2)->default(0)->after('tax_percentage');
+            $table->decimal('net_price', 10, 2)->nullable()->after('total_price');
             $table->timestamps();
         });
     }
