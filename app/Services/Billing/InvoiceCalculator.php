@@ -15,7 +15,6 @@ class InvoiceCalculator
         $productTaxRate = TaxHelper::productTaxRate($productId);
         $productTaxAmount = round($lineAfterDiscount * ($productTaxRate / 100), 2);
         $netPrice = $lineAfterDiscount + $productTaxAmount;
-
         return [
             'line_base'=> $lineBase,
             'discount_amount'=> $discountAmount,

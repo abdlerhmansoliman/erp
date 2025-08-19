@@ -8,8 +8,9 @@ class Discount extends Model
 {
     protected $fillable = [
         'name',
-        'type', // invoice or product
-        'is_percentage', // true for percentage, false for fixed amount
+        'type',
+        'is_percentage', 
+        'value', // Added to store the discount value
     ];
 
     public function products()

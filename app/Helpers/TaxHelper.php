@@ -12,7 +12,6 @@ public static function productTaxRate($productId) {
     }])->find($productId);
     
     if (!$product) return 0;
-
 return $product->taxes->sum(fn($tax) => (float) $tax->rate);
 
 }
