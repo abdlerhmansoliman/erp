@@ -19,8 +19,8 @@ return new class extends Migration
             $table->foreignId('warehouse_id')->constrained()->onDelete('cascade');
             $table->integer('quantity');
             $table->decimal('unit_price', 10, 2);
-            $table->decimal('tax_percentage', 5, 2)->default(0.00);
-            $table->decimal('discount_percentage', 5, 2)->default(0.00);
+            $table->decimal('tax_amount', 5, 2)->default(0.00);
+            $table->decimal('discount_amount', 5, 2)->default(0.00);
             $table->decimal('total_price', 10, 2); 
             $table->decimal('net_price', 10, 2)->nullable(); 
             $table->timestamps();

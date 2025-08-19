@@ -22,14 +22,12 @@ class UpdatePurchaseRequest extends FormRequest
     public function rules(): array
     {
   return [
-        'invoice_date' => 'sometimes|date',
-        'notes' => 'nullable|string',
         'supplier_id' => 'sometimes|exists:suppliers,id',
         'items' => 'sometimes|array|min:1',
-        'items.*.product_id' => 'nullable|numeric', 
-        'items.*.quantity' => 'sometimes|numeric|min:1',
-        'items.*.price' => 'sometimes|numeric|min:0',
-        'items.*.name' => 'nullable|string|max:255',
+        'status' => 'nullable|string|in:draft,ordered,received',
+        'grand_total' => 'nullable|numeric|min:0',
+        'sub_total' => 'nullable|numeric|min:0',
+        'tax_amount' => 'nullable|numeric|min:0',
     ];
     }
 }

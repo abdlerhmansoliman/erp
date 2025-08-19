@@ -45,4 +45,8 @@ class PurchaseInvoiceRepository implements PurchaseInvoiceRepositoryInterface
     {
         return PurchaseItems::where('purchase_invoice_id', $productId)->delete();
     }
+    public function findWithItems(int $id): ?PurchaseInvoice
+    {
+        return PurchaseInvoice::with('items')->find($id);
+    }
 }

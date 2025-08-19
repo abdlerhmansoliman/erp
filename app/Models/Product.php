@@ -41,4 +41,8 @@ protected $with=['category','unit'];
     {
         return $this->belongsToMany(Tax::class, 'product_tax');
     }
+    public function discounts()
+    {
+        return $this->belongsToMany(Discount::class, 'product_discount');
+    }
 }

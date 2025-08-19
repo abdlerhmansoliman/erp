@@ -13,9 +13,8 @@ public static function productTaxRate($productId) {
     
     if (!$product) return 0;
 
-    return $product->taxes->sum(function($tax) {
-        return (float) $tax->rate; // تحويل من string لـ float
-    });
+return $product->taxes->sum(fn($tax) => (float) $tax->rate);
+
 }
 
 
@@ -24,4 +23,5 @@ public static function invoiceTaxRate(){
         return (float) $tax->rate;
     });
 }
+
 }

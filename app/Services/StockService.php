@@ -36,4 +36,23 @@ class StockService
     {
         return $this->stockRepository->delete($stock);
     }
+        public function increase(int $productId, int $warehouseId, int $qty): void
+    {
+        $stock = Stock::firstOrCreate(
+            ['product_id' => $productId, 'warehouse_id' => $warehouseId],
+            ['quantity' => 0]
+        );
+        $stock->increment('quantity', $qty);
+    }
+
+    public function decrease(int $productId, int $warehouseId, int $qty): void
+    {
+        $stock = Stock::where('product_id', $productId)
+            ->where('warehouse_id', $warehouseId)
+            ->first();
+
+        if ($stock) {
+            $stock->decrement('quantity', $qty);
+        }
+    }
 }

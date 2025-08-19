@@ -25,7 +25,6 @@ class PurchaseInvoiceRequest extends FormRequest
         'supplier_id' => 'required|exists:suppliers,id',
         'items' => 'required|array|min:1',
         'status' => 'nullable|string|in:draft,ordered,received',
-        'total_amount' => 'nullable|numeric|min:0',
         'grand_total' => 'nullable|numeric|min:0',
         'sub_total' => 'nullable|numeric|min:0',
         'tax_amount' => 'nullable|numeric|min:0',
