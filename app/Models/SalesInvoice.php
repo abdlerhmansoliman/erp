@@ -19,7 +19,7 @@ class SalesInvoice extends Model
     }
     public function items()
     {
-        return $this->hasMany(SalesInvoiceItem::class);
+        return $this->hasMany(SalesItem::class);
     }
 
 }

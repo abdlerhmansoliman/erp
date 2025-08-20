@@ -50,9 +50,7 @@ class StockService
         $stock = Stock::where('product_id', $productId)
             ->where('warehouse_id', $warehouseId)
             ->first();
-
-        if ($stock) {
             $stock->decrement('quantity', $qty);
-        }
+        
     }
 }

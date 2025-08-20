@@ -16,6 +16,7 @@ return new class extends Migration
             $table->string('name');
             $table->decimal('rate', 5, 2);
             $table->enum('type', ['invoice', 'product']);
+            $table->enum('applies_to', ['sales', 'purchase','both'])->default('sales');
             $table->timestamps();
         });
     }

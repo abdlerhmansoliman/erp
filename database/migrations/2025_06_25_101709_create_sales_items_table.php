@@ -11,18 +11,17 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('sales_invoice_items', function (Blueprint $table) {
+        Schema::create('sales_items', function (Blueprint $table) {
             $table->id();
             $table->foreignId('sales_invoice_id')->constrained()->onDelete('cascade');
             $table->foreignId('product_id')->constrained()->onDelete('cascade');
-            $table->decimal('unit_sale_price', 15, 2);            
-            $table->decimal('unit_cost_price', 15, 2);
-            $table->decimal('total_sale_price', 15, 2);
-            $table->decimal('total_cost_price', 15, 2);            
-            $table->decimal('total_price', 10, 2);
-            $table->decimal('tax_amount', 5, 2)->default(0)->after('unit_price');
-            $table->decimal('discount_percentage', 5, 2)->default(0);
-            $table->decimal('net_price', 10, 2)->nullable()->after('total_price');
+            $table->foreignId('warehouse_id')->constrained()->onDelete('cascade');
+            $table->integer('quantity');
+            $table->decimal('unit_price', 10, 2);
+            $table->decimal('tax_amount', 5, 2)->default(0.00);
+            $table->decimal('discount_amount', 5, 2)->default(0.00);
+            $table->decimal('total_price', 10, 2); 
+            $table->decimal('net_price', 10, 2)->nullable(); 
             $table->timestamps();
         });
     }

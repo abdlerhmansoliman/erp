@@ -33,9 +33,9 @@ protected $with=['category','unit'];
     {
         return $this->hasMany(PurchaseItems::class);
     }
-    public function salesInvoiceItems()
+    public function SalesItems()
     {
-        return $this->hasMany(SalesInvoiceItem::class);
+        return $this->hasMany(SalesItem::class);
     }
     public function taxes()
     {

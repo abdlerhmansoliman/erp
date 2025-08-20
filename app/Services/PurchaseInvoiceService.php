@@ -65,7 +65,7 @@ class PurchaseInvoiceService
                 $unitPrice   = (float) $item['unit_price'];
                 $warehouseId = (int) $item['warehouse_id'];
 
-                $line = InvoiceCalculator::computeLine($productId, $qty, $unitPrice);
+                $line = InvoiceCalculator::computeLine($productId, $qty, $unitPrice,'purchase');
 
                 $subTotalAfterProductDiscount+= $line['line_after_discount'];
                 $itemsProductDiscount += $line['discount_amount'];
@@ -93,7 +93,8 @@ class PurchaseInvoiceService
             $totals = InvoiceCalculator::computeInvoiceTotals(
                 $subTotalAfterProductDiscount,
                 $itemsProductTax,
-                $data['discount_id'] ?? null
+                $data['discount_id'] ?? null,
+                'purchase'
             );
 
             $invoice ->update( [
@@ -136,7 +137,7 @@ public function updateInvoice(int $id, array $data)
             $unitPrice  = (float) $item['unit_price'];
             $warehouseId = (int) $item['warehouse_id'];
 
-            $line = InvoiceCalculator::computeLine($productId, $qty, $unitPrice);
+            $line = InvoiceCalculator::computeLine($productId, $qty, $unitPrice,'purchase');
 
             $subTotalAfterProductDiscount+= $line['line_after_discount'];
             $itemsProductDiscount += $line['discount_amount'];
@@ -163,7 +164,8 @@ public function updateInvoice(int $id, array $data)
         $totals = InvoiceCalculator::computeInvoiceTotals(
             $subTotalAfterProductDiscount,
             $itemsProductTax,
-            $data['discount_id'] ?? null
+            $data['discount_id'] ?? null,
+            'purchase'
         );
 
         $invoice ->update( [

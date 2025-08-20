@@ -11,8 +11,7 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('purchase_items', function (Blueprint $table) {
-     Schema::create('purchase_items', function (Blueprint $table) {
+     Schema::create('purchase_items', callback: function (Blueprint $table) {
             $table->id();
             $table->foreignId('purchase_invoice_id')->constrained()->onDelete('cascade');
             $table->foreignId('product_id')->constrained()->onDelete('cascade');
@@ -25,7 +24,7 @@ return new class extends Migration
             $table->decimal('net_price', 10, 2)->nullable(); 
             $table->timestamps();
         });
-        });
+        
     }
 
     /**
