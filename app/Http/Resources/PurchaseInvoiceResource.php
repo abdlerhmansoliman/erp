@@ -17,7 +17,7 @@ class PurchaseInvoiceResource extends JsonResource
     return [
     
         'id' => $this->id,
-        'invoice_number' => $this->invoice_number, // ده هيظهر بالشكل INV-000{id}
+        'invoice_number' => $this->invoice_number,
         'supplier_id' => $this->supplier_id,
         'status' => $this->status,
         'total_amount' => $this->total_amount,

@@ -10,7 +10,15 @@ class SalesInvoiceRepository implements SalesInvoiceRepositoryInterface
 {
     public function all()
     {
-        return SalesInvoice::all();
+                return SalesInvoice::query()
+        ->when($filters['search']??null, function ($q,$search) {
+            return $q->where('invoice_number', 'like', "%{$search}%")
+            ->orWhereHas('customer', function ($query) use ($search) {
+                $query->where('name', 'like', "%{$search}%");
+            });
+        })
+        ->orderBy($filters['sortBy']??'id', $filters['sortDir']??'desc')
+        ->paginate($filters['per_page'] ?? 10);
     }
     public function findById($id)
     {

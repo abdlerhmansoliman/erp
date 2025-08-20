@@ -22,12 +22,12 @@ class StoreSalesInvoiceRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'customer_id' => 'required|exists:customers,id',
-            'invoice_date' => 'required|date',
-            'notes' => 'nullable|string',
-            'items' => 'required|array|min:1',
-            'items.*.product_id' => 'required|exists:products,id',
-            'items.*.quantity' => 'required|numeric|min:1',
+        'customer_id' => 'required|exists:suppliers,id',
+        'items' => 'required|array|min:1',
+        'status' => 'nullable|string|in:draft,ordered,received',
+        'grand_total' => 'nullable|numeric|min:0',
+        'sub_total' => 'nullable|numeric|min:0',
+        'tax_amount' => 'nullable|numeric|min:0',
         ];
     }
 }

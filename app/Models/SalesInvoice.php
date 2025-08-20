@@ -8,10 +8,10 @@ class SalesInvoice extends Model
 {
     protected $fillable=[
         'customer_id',
-        'total_price',
-        'notes',
-        'invoice_date',
-
+        'sub_total',
+        'tax_amount',
+        'grand_total',
+        'discount_amount',
     ];
     public function customer()
     {
@@ -21,5 +21,8 @@ class SalesInvoice extends Model
     {
         return $this->hasMany(SalesItem::class);
     }
-
+    public function getInvoiceNumberAttribute()
+    {
+        return 'INV-' . str_pad($this->id, 6, '0', STR_PAD_LEFT);
+    }
 }

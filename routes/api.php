@@ -22,6 +22,7 @@ use Illuminate\Support\Facades\Route;
 Route::apiResource('units', UnitController::class);
 
 Route::apiResource('pruchases', PurchaseInvoiceController::class);
+Route::apiResource('sales', SelesInvoiceController::class);
 
 Route::middleware('auth:sanctum')->get('/auth/user', function (Request $request) {
     return response()->json([
@@ -77,10 +78,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
 
 Route::apiResource('customers', CustomerController::class);
 
-Route::post('/sales', [SelesInvoiceController::class, 'store']);
-Route::get('/sales', [SelesInvoiceController::class, 'index']);
-Route::put('/sales/{id}', [SelesInvoiceController::class, 'update']);
-Route::get('/sales/{id}', [SelesInvoiceController::class, 'show']);
+
 
 
 

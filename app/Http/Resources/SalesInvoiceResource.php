@@ -15,12 +15,14 @@ class SalesInvoiceResource extends JsonResource
     public function toArray(Request $request): array
     {
         return [
-            'id' => $this->id,
-            'customer_id' => $this->customer_id,
-            'invoice_date' => $this->invoice_date,
-            'notes' => $this->notes,
-            'items' => InvoiceItemResource::collection($this->whenLoaded('items')),
-            'created_at' => $this->created_at,
+        'id' => $this->id,
+        'invoice_number' => $this->invoice_number,
+        'customer_id' => $this->supplier_id,
+        'status' => $this->status,
+        'total_amount' => $this->total_amount,
+        'created_at' => $this->created_at,
+        'updated_at' => $this->updated_at,
+        'customer' => new CustomerResource($this->whenLoaded('customer')),
         ];
     }
 }

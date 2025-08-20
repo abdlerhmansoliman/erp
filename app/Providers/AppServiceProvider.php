@@ -17,6 +17,7 @@ use App\Repositories\Interfaces\PurchaseInvoiceRepositoryInterface;
 use App\Repositories\Interfaces\PurchaseItemRepositoryInterface;
 use App\Repositories\Interfaces\RoleRepositoryInterface;
 use App\Repositories\Interfaces\SalesInvoiceRepositoryInterface;
+use App\Repositories\Interfaces\SalesItemRepositoryInterface;
 use App\Repositories\Interfaces\StockRepositoryInterface;
 use App\Repositories\Interfaces\SupplierRepositoryInterface;
 use App\Repositories\Interfaces\UnitRepositoryInterface;
@@ -28,6 +29,7 @@ use App\Repositories\PurchaseInvoiceRepository;
 use App\Repositories\PurchaseItemRepository;
 use App\Repositories\RoleRepository;
 use App\Repositories\SalesInvoiceRepository;
+use App\Repositories\SalesItemRepository;
 use App\Repositories\StockRepository;
 use App\Repositories\SupplierRepository;
 use App\Repositories\UnitRepository;
@@ -57,6 +59,7 @@ class AppServiceProvider extends ServiceProvider
         $this->app->bind(WarehouseRepositoryInterface::class,WarehouseRepository::class);
         $this->app->bind(StockRepositoryInterface::class,StockRepository::class);
         $this->app->bind(PurchaseItemRepositoryInterface::class,PurchaseItemRepository::class);
+        $this->app->bind(SalesItemRepositoryInterface::class,SalesItemRepository::class);
         
     }
 
