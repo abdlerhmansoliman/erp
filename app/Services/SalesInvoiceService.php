@@ -101,9 +101,9 @@ class SalesInvoiceService
                 $this->stockService->increase($old->product_id, $old->warehouse_id, $old->quantity);
             }
             $this->itemRepo->deleteByInvoice($invoice->id);
-            $subTotalAfterProductDiscount = 0.0;
-            $itemsProductDiscount = 0.0;
-            $itemsProductTax = 0.0;
+            $subTotalAfterProductDiscount = 0;
+            $itemsProductDiscount = 0;
+            $itemsProductTax = 0;
             $rows = [];
             foreach ($data['items'] as $item) {
                 $productId= (int) $item['product_id'];
