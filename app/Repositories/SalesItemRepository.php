@@ -11,12 +11,12 @@ class SalesItemRepository implements SalesItemRepositoryInterface
 {
     public function deleteByInvoice(int $invoiceId)
 {
-        SalesItem::where('purchase_invoice_id', $invoiceId)->delete();
+        SalesItem::where('sales_invoice_id', $invoiceId)->delete();
     }
 
     public function getByInvoice(int $invoiceId)
     {
-        return SalesItem::where('purchase_invoice_id', $invoiceId)->get();
+        return SalesItem::where('sales_invoice_id', $invoiceId)->get();
     }
 
     public function create(array $data)

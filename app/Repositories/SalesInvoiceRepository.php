@@ -3,6 +3,7 @@
 namespace App\Repositories;
 
 use App\Models\SalesInvoice;
+use App\Models\SalesItem;
 use App\Models\User;
 use App\Repositories\Interfaces\SalesInvoiceRepositoryInterface;
 
@@ -22,7 +23,7 @@ class SalesInvoiceRepository implements SalesInvoiceRepositoryInterface
     }
     public function findById($id)
     {
-        return SalesInvoice::with(['items.product', 'customer'])->findOrFail($id);
+        return SalesInvoice::with('items')->find($id);
     }
     public function create(array $data)
     {

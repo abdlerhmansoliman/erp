@@ -22,12 +22,11 @@ class UpdateSalesInvoiceRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'invoice_date' => 'sometimes|date',
-            'notes' => 'nullable|string',
-            'customer_id' => 'sometimes|exists:customers,id',
-            'items' => 'sometimes|array|min:1',
-            'items.*.product_id' => 'sometimes|exists:products,id',
-            'items.*.quantity' => 'sometimes|numeric|min:1',
+        'customer_id' => 'sometimes|exists:customers,id',
+        'items' => 'sometimes|array|min:1',
+        'grand_total' => 'nullable|numeric|min:0',
+        'sub_total' => 'nullable|numeric|min:0',
+        'tax_amount' => 'nullable|numeric|min:0',
         ];
     }
 }

@@ -178,9 +178,9 @@ public function updateInvoice(int $id, array $data)
             'grand_total'=> $totals['grand_total'],
         ]);
 
-        return $invoice->load('supplier', 'items.product');
-    });
-}
+            return $invoice->load('supplier', 'items.product');
+        });
+    }
 
 
 
