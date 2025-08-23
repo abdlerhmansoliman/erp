@@ -13,6 +13,7 @@ class PurchaseInvoice extends Model
         'tax_amount',
         'grand_total',
         'discount_amount',
+        'invoice_number'
     ];
 
     public function supplier(){

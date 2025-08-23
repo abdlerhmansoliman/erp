@@ -12,8 +12,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('taxes', function (Blueprint $table) {
-            $table->enum('applies_to', ['sales', 'purchase','both'])->default('sales')->after('rate');
-        });
+       });
     }
 
     /**

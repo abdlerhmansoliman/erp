@@ -43,70 +43,53 @@ class PurchaseInvoiceService
     {
         return DB::transaction(function () use ($data) {
 
-            $invoice = $this->invoiceRepo->create([
-                'supplier_id' => $data['supplier_id'],
-                'status'  => $data['status'] ?? 'pending',
-                'sub_total'   => 0,
-                'discount_amount' => 0,
-                'tax_amount' => 0,
-                'grand_total'  => 0,
-                'invoice_number'=> $data['invoice_number'] ?? null,
-            ]);
 
-            $subTotalAfterProductDiscount = 0;
-            $itemsProductDiscount = 0;
-            $itemsProductTax = 0;
+            $invoice = $this->invoiceRepo->create([
+                'supplier_id'    => $data['supplier_id'],
+                'status'         => $data['status'] ?? 'draft',
+                'sub_total'      => $data['sub_total'] ?? 0,
+                'discount_amount'=> $data['discount_amount'] ?? 0,
+                'tax_amount'     => $data['tax_amount'] ?? 0,
+                'grand_total'    => $data['grand_total'] ?? 0,
+                'total_amount'   => $data['total_amount'] ?? 0,
+                'invoice_number' => $data['invoice_number'] ?? null,
+            ]);
 
             $rows = [];
 
             foreach ($data['items'] as $item) {
+
                 $productId   = (int) $item['product_id'];
+                $warehouseId = (int) $item['warehouse_id'];
                 $qty         = (int) $item['quantity'];
                 $unitPrice   = (float) $item['unit_price'];
-                $warehouseId = (int) $item['warehouse_id'];
-
-                $line = InvoiceCalculator::computeLine($productId, $qty, $unitPrice,'purchase');
-
-                $subTotalAfterProductDiscount+= $line['line_after_discount'];
-                $itemsProductDiscount += $line['discount_amount'];
-                $itemsProductTax+= $line['tax_amount'];
+                $discount_amount    = (float) $item['discount_amount'] ?? 0;
+                $tax         = (float) $item['tax_amount'] ?? 0;
+                $net_price   = (float) $item['net_price'];
 
                 $this->stockService->increase($productId, $warehouseId, $qty);
 
                 $rows[] = [
                     'purchase_invoice_id' => $invoice->id,
-                    'product_id' => $productId,
-                    'warehouse_id'=> $warehouseId,
-                    'quantity' => $qty,
-                    'unit_price' => $unitPrice,
-                    'discount_amount' => $line['discount_amount'],
-                    'tax_amount' => $line['tax_amount'],
-                    'total_price'=> $line['line_base'],
-                    'net_price' => $line['net_price'],
-                    'created_at'=> now(),
-                    
+                    'product_id'          => $productId,
+                    'warehouse_id'        => $warehouseId,
+                    'quantity'            => $qty,
+                    'unit_price'          => $unitPrice,
+                    'discount_amount'     => $discount_amount,
+                    'tax_amount'          => $tax,
+                    'total_price'         => $net_price,
+                    'net_price'           => $net_price - $discount_amount + $tax,
+                    'created_at'          => now(),
                 ];
             }
 
             $this->itemRepo->bulkInsert($rows);
 
-            $totals = InvoiceCalculator::computeInvoiceTotals(
-                $subTotalAfterProductDiscount,
-                $itemsProductTax,
-                $data['discount_id'] ?? null,
-                'purchase'
-            );
-
-            $invoice ->update( [
-                'sub_total' => $subTotalAfterProductDiscount,
-                'discount_amount' => $itemsProductDiscount + $totals['invoice_discount_amount'],
-                'tax_amount' => $itemsProductTax + $totals['invoice_tax_amount'],
-                'grand_total' => $totals['grand_total'],
-            ]);
-
-            return $invoice->load('supplier', 'items.product');
+            // 3. إعادة الفاتورة مع العناصر
+            return $this->invoiceRepo->findByIdWithItems($invoice->id);
         });
     }
+    
 
 
 public function updateInvoice(int $id, array $data)

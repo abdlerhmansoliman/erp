@@ -12,10 +12,6 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('sales_invoices', function (Blueprint $table) {
-            $table->decimal('sub_total', 10, 2)->default(0)->after('invoice_number');
-            $table->decimal('tax_amount', 10, 2)->default(0)->after('sub_total');
-            $table->decimal('grand_total', 10, 2)->default(0)->after('tax_amount');
-            $table->decimal('discount_amount', 15, 2)->default(0)->after('grand_total');  
         });
     }
 
