@@ -8,9 +8,15 @@ use App\Repositories\Interfaces\ProductRepositoryInterface;
 
 class ProducetRepository implements ProductRepositoryInterface
 {
-    public function getAllProducts()
+    public function getAllProducts(array $filters )
     {
-        return Product::select('id', 'name', 'price', 'description','sku', 'category_id', 'unit_id','purchase_price')->get();
+    return Product::query()
+    ->when($filters['search']??null,function($q,$search){
+        $q->where('name','like',"%$search%")
+        ->orWhere('product_code','like',"%$search%");
+    })->orderBY($filters['sortBy']??'id',$filters['sortDirection']??'desc')
+    ->paginate($filters['perPage']??10);
+        
     }
     public function getProductById($id)
     {

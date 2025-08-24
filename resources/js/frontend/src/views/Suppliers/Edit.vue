@@ -68,15 +68,15 @@ const updateSupplier = async (updatedData) => {
                 }
             }
         }
-        
     } catch (error) {
-        if (error.response?.status === 404) {
-            alert('المورد غير موجود');
-        } else if (error.response?.status === 422) {
-            alert('خطأ في البيانات المدخلة');
-        } else {
-            alert(`حدث خطأ أثناء التحديث: ${error.response?.status || 'خطأ في الشبكة'}`);
-        }
+        if (error.response && error.response.data && error.response.data.errors) {
+    const errors = error.response.data.errors
+    Object.values(errors).forEach(errArr => {
+      toast.error(errArr[0])
+    })
+  } else {
+    toast.error(error.message)
+  }
     }
 }
 </script>

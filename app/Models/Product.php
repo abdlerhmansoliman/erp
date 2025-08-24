@@ -16,8 +16,16 @@ class Product extends Model
         'purchase_price',
         'category_id',
         'unit_id',
+        'product_code'
         
     ];
+    protected static function booted()
+    {
+        static::creating(function ($product) {
+            $latestId = self::max('id') + 1;
+            $product->product_code = 'PRD-' . str_pad($latestId, 4, '0', STR_PAD_LEFT);
+        });
+    }
 protected $with=['category','unit'];
     public function stocks() {
         return $this->hasMany(Stock::class);

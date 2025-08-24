@@ -12,14 +12,15 @@ class PurchaseInvoiceRepository implements PurchaseInvoiceRepositoryInterface
     public function all(array $filters)
     {
         return PurchaseInvoice::query()
-        ->when($filters['search']??null, function ($q,$search) {
-            return $q->where('invoice_number', 'like', "%{$search}%")
-            ->orWhereHas('supplier', function ($query) use ($search) {
-                $query->where('name', 'like', "%{$search}%");
-            });
-        })
-        ->orderBy($filters['sortBy']??'id', $filters['sortDir']??'desc')
-        ->paginate($filters['per_page'] ?? 10);
+            ->with('supplier') 
+            ->when($filters['search'] ?? null, function ($q, $search) {
+                return $q->where('id', 'like', "%{$search}%")
+                    ->orWhereHas('supplier', function ($query) use ($search) {
+                        $query->where('name', 'like', "%{$search}%");
+                    });
+            })
+            ->orderBy($filters['sortBy'] ?? 'id', $filters['sortDir'] ?? 'desc')
+            ->paginate($filters['perPage'] ?? 10);
     }
     public function findById($id)
     {

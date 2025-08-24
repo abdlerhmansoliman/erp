@@ -36,6 +36,37 @@ const routes = [
       name: 'SupplierCreate',
       component: () => import('@/views/Suppliers/Create.vue'),
     },
+    {
+      path:'purchases',
+      name:'purchases',
+      component: () => import('@/views/Purchases/Purchases.vue') 
+    },
+    {
+      path: '/purchases/create',
+      name: 'PurchaseCreate',
+      component: () => import('@/views/Purchases/Create.vue')
+    },
+    {
+      path: '/purchases/:id/edit',
+      name: 'PurchaseEdit',
+      component: () => import('@/views/Purchases/Edit.vue')
+    },
+
+    {
+      path:'products',
+      name:'products',
+      component: () => import('@/views/products/Products.vue')
+    },
+    {
+      path: '/products/create',
+      name: 'ProductCreate',
+      component: () => import('@/views/products/Create.vue')
+    },
+    {
+      path: '/products/:id/edit',
+      name: 'ProductEdit',
+      component: () => import('@/views/products/Edit.vue')
+    }
   ]
 }
 

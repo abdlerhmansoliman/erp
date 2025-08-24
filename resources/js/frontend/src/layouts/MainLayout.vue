@@ -23,6 +23,8 @@ async function logoutUser() {
         <RouterLink class="block px-3 py-2 rounded hover:bg-gray-200" to="/dashboard">{{t('dashboard')}}</RouterLink>
         <RouterLink class="block px-3 py-2 rounded hover:bg-gray-200" to="/customers">{{t('customers')}}</RouterLink>
         <RouterLink class="block px-3 py-2 rounded hover:bg-gray-200" to="/suppliers">{{t('suppliers')}}</RouterLink>
+        <RouterLink class="block px-3 py-2 rounded hover:bg-gray-200" to="/purchases">{{t('purchases')}}</RouterLink>
+        <RouterLink class="block px-3 py-2 rounded hover:bg-gray-200" to="/products">{{t('products')}}</RouterLink>
       </nav>
     </aside>
 

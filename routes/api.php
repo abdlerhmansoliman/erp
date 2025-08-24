@@ -21,7 +21,8 @@ use Illuminate\Support\Facades\Route;
 
 Route::apiResource('units', UnitController::class);
 
-Route::apiResource('pruchases', PurchaseInvoiceController::class);
+Route::apiResource('purchases', PurchaseInvoiceController::class);
+
 Route::apiResource('sales', SelesInvoiceController::class);
 
 Route::middleware('auth:sanctum')->get('/auth/user', function (Request $request) {
@@ -69,6 +70,7 @@ Route::apiResource('products', ProductController::class);
 Route::apiResource('warehouses', WarehouseController::class);
 Route::apiResource('stocks', StockController::class);
 Route::apiResource('suppliers', SupplierController::class);
+Route::apiResource('customers', CustomerController::class);
 
 
 
@@ -76,7 +78,6 @@ Route::apiResource('suppliers', SupplierController::class);
 Route::middleware(['auth:sanctum'])->group(function () {
 
 
-Route::apiResource('customers', CustomerController::class);
 
 
 

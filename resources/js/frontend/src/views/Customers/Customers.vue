@@ -1,41 +1,43 @@
 <script setup>
-import { ref } from 'vue'
-import BaseCrudTable from '@/components/BaseCrudTable.vue'
+import ReusableDataTable from '@/components/BaseCrudTable.vue'
 
-const tableRef = ref()
-
-const fields = [
-  { value: 'name' },
-  { value: 'email' },
-  { value: 'phone' },
-  { value: 'address' },
-  { value: 'controller', sortable: false }
+const customerHeaders = [
+  { text: 'Name', value: 'name', sortable: true },
+  { text: 'Email', value: 'email', sortable: true },
+  { text: 'Phone', value: 'phone', sortable: true },
+  { text: 'Address', value: 'address', sortable: true },
 ]
 
-function editRow(item) {
-  tableRef.value.goToEdit(item)
+// Handle custom events if needed
+const handleItemSelected = (event) => {
+  console.log('Item selected:', event)
+  // Handle create/edit events if not using routes
 }
-function deleteRow(item) {
-  tableRef.value.deleteItem(item)
+
+const handleCustomAction = (event) => {
+  console.log('Custom action:', event)
+  // Handle any custom actions
 }
 </script>
 
 <template>
-  <BaseCrudTable
-    ref="tableRef"
-    :fields="fields"
-    endpoint="/customers"
-    item-label="customer"
-    edit-route="CustomerEdit"
-    create-route="/customers/create"
-  >
-    <template #item-controller="{ item }">
-      <button @click="editRow(item)" class="bg-blue-500 text-white px-2 py-1 rounded">
-        Edit
-      </button>
-      <button @click="deleteRow(item)" class="bg-red-500 text-white px-2 py-1 rounded">
-        Delete
-      </button>
-    </template>
-  </BaseCrudTable>
+  <div>
+    <ReusableDataTable
+      endpoint="/customers"
+      :headers="customerHeaders"
+      resource-name="customer"
+      edit-route-name="CustomerEdit"
+      create-route="/customers/Create"
+      search-placeholder="البحث..."
+      empty-message="لا توجد بيانات متاحة"
+      delete-confirmation-key="name"
+      @item-selected="handleItemSelected"
+      @custom-action="handleCustomAction"
+    >
+      <!-- Custom create button text if needed -->
+      <template #create-button-text>
+        Add Customer
+      </template>
+    </ReusableDataTable>
+  </div>
 </template>

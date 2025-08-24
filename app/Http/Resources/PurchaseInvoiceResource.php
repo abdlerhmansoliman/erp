@@ -16,14 +16,13 @@ class PurchaseInvoiceResource extends JsonResource
     {
     return [
     
-        'id' => $this->id,
-        'invoice_number' => $this->invoice_number,
-        'supplier_id' => $this->supplier_id,
-        'status' => $this->status,
-        'total_amount' => $this->total_amount,
-        'created_at' => $this->created_at,
-        'updated_at' => $this->updated_at,
-        
-        'supplier' => new SupplierResource($this->whenLoaded('supplier')),
-    ];    }
+    'id' => $this->id,
+    'invoice_number' => $this->invoice_number,
+    'supplier_name' => $this->supplier?->name,
+    'status' => $this->status,
+    'grand_total' => $this->grand_total,
+    'created_at' => $this->created_at ? $this->created_at->format('Y-m-d H:i') : null, // تاريخ + ساعة
+    'updated_at' => $this->updated_at,
+    ];   
+ }
 }

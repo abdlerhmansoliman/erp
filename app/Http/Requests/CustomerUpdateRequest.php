@@ -24,7 +24,7 @@ class CustomerUpdateRequest extends FormRequest
         return [
         'name' => 'sometimes|string|max:255',
         'email' => 'nullable|email',
-        'phone' => 'nullable|numeric|max:20',
+        'phone' => 'nullable|string|max:20',
         'address' => 'nullable|string|max:255',
         ];
     }

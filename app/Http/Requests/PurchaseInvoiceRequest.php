@@ -29,7 +29,6 @@ class PurchaseInvoiceRequest extends FormRequest
     'tax_amount' => 'nullable|numeric|min:0',
     'grand_total' => 'required|numeric|min:0',
     'invoice_number' => 'nullable|string|max:255|unique:purchase_invoices,invoice_number',
-
     'items' => 'required|array|min:1',
     'items.*.product_id' => 'required|exists:products,id',
     'items.*.quantity' => 'required|numeric|min:1',

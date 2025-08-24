@@ -4,7 +4,7 @@ namespace App\Repositories\Interfaces;
 use App\Models\User;
 interface ProductRepositoryInterface
 {
-    public function getAllProducts();
+    public function getAllProducts(array $filters );
 
     public function getProductById($id);
 

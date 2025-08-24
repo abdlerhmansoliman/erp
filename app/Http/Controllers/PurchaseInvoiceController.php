@@ -7,7 +7,7 @@ use App\Http\Requests\UpdatePurchaseRequest;
 use App\Http\Resources\PurchaseInvoiceResource;
 use App\Http\Resources\SalesInvoiceResource;
 use App\Services\PurchaseInvoiceService;
-
+use Illuminate\Support\Facades\Log;
 
 class PurchaseInvoiceController extends Controller
 {
@@ -15,7 +15,12 @@ class PurchaseInvoiceController extends Controller
    public function index()
 {
     $filters = request()->only(['search', 'sortBy', 'sortDir', 'perPage', 'page']);
+            Log::info('Purchase API - Filters:', $filters);
+
     $invoices = $this->purchaseInvoiceService->getAllInvoices($filters);
+            Log::info('Purchase API - Raw data count:', ['count' => $invoices->count()]);
+        
+        
     return PurchaseInvoiceResource::collection($invoices);
 }
 

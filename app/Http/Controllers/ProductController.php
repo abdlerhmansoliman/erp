@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\ProductStoreRequest;
 use App\Http\Requests\ProductUpdateRequest;
+use App\Http\Resources\ProductResource;
 use App\Services\ProductService;
 use Illuminate\Http\Request;
 
@@ -14,15 +15,14 @@ class ProductController extends Controller
     {
         $this->productService = $productService;
     }
-    public function index(){
-        $products=$this->productService->getAllProducts();
-        return response()->json(
-            [
-                'status' => 'success',
-                'data' => $products
-            ],
-            200
-        );
+    public function index(Request $request){
+    $filters = $request->only(['search', 'sortBy', 'sortDirection', 'perPage', 'page']);
+    $products = $this->productService->getAllProducts($filters);
+
+    return response()->json([
+        'status' => 'success',
+        'data'   => ProductResource::collection($products)
+    ]);
     }
     public function show($id){
         $product = $this->productService->getProductById($id);

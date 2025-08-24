@@ -16,10 +16,10 @@ return new class extends Migration
             $table->string('name');
             $table->text('description')->nullable();
             $table->decimal('price', 10, 2);
-            $table->string('sku')->unique();
             $table->decimal('purchase_price', 10, 2);
             $table->foreignId('category_id')->constrained('categories')->onDelete('cascade');
             $table->foreignId('unit_id')->constrained()->cascadeOnDelete();
+            $table->string('product_code')->unique();
             $table->timestamps();
         });
     }

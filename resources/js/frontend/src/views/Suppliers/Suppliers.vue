@@ -1,60 +1,44 @@
 <script setup>
-import BaseCrudTable from '@/components/Table.vue'
-import { useRouter } from 'vue-router'
-import { useConfirmDialog } from '@/composables/useConfirmDialog'
-import { useToast } from 'vue-toastification'
-import { useI18n } from 'vue-i18n'
-import { computed } from 'vue'
-const { t, locale } = useI18n()
+import ReusableDataTable from '@/components/BaseCrudTable.vue'
 
-const { confirmDelete } = useConfirmDialog()
-const toast = useToast()
-const router = useRouter()
+// Define headers for suppliers
+const supplierHeaders = [
+  { text: 'Name', value: 'name', sortable: true },
+  { text: 'Email', value: 'email', sortable: true },
+  { text: 'Phone', value: 'phone', sortable: true },
+  { text: 'Address', value: 'address', sortable: true },
+]
 
-const headers = computed(() => {
-  // This makes the computed re-run when locale changes
-  locale.value
+// Handle custom events if needed
+const handleItemSelected = (event) => {
+  console.log('Item selected:', event)
+  // Handle create/edit events if not using routes
+}
 
-  return [
-    { text: t('name'), value: 'name', sortable: true },
-    { text: t('email'), value: 'email', sortable: true },
-    { text: t('phone'), value: 'phone', sortable: true },
-    { text: t('address'), value: 'address', sortable: true },
-    { text: t('action'), value: 'controller', sortable: false },
-  ]
-})
-async function deleteSupplier(item) {
-  if (!item?.id) return
-  const confirmed = await confirmDelete(`Supplier: ${item.name}`)
-  if (!confirmed) return
-  await api.delete(`/suppliers/${item.id}`)
-  toast.success(t('deleted successfully'))
+const handleCustomAction = (event) => {
+  console.log('Custom action:', event)
+  // Handle any custom actions
 }
 </script>
 
 <template>
-  <BaseCrudTable
-    :headers="headers"
-    endpoint="/suppliers"
-  >
-    <template #add-button>
-      <router-link
-        to="/suppliers/create"
-        class="px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700"
-      >
-        {{ t('add') }}
-      </router-link>
-    </template>
-
-    <template #actions="{ item }">
-      <div class="flex gap-2">
-        <button @click="$router.push({ name: 'SupplierEdit', params: { id: item.id } })" class="bg-blue-500 px-3 py-1 text-white rounded">
-          {{ t('edit') }}
-        </button>
-        <button @click="deleteSupplier(item)" class="bg-red-500 px-3 py-1 text-white rounded">
-          {{ t('delete') }}
-        </button>
-      </div>
-    </template>
-  </BaseCrudTable>
+  <div>
+    <ReusableDataTable
+      endpoint="/suppliers"
+      :headers="supplierHeaders"
+      resource-name="supplier"
+      edit-route-name="SupplierEdit"
+      create-route="/suppliers/Create"
+      search-placeholder="البحث..."
+      empty-message="لا توجد بيانات متاحة"
+      delete-confirmation-key="name"
+      @item-selected="handleItemSelected"
+      @custom-action="handleCustomAction"
+    >
+      <!-- Custom create button text if needed -->
+      <template #create-button-text>
+        Add Supplier
+      </template>
+    </ReusableDataTable>
+  </div>
 </template>
