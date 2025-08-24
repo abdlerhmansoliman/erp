@@ -26,6 +26,7 @@ class ProductService
     return $this->ProductRepository->getProductById($id);
    }
     public function createProduct(array $data){
+    $data['product_code'] = strtoupper(uniqid('PROD_'));
      return $this->ProductRepository->createProduct($data);
     }
     public function updateProduct($id, array $data){

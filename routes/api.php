@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\UserRoleController;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\CustomerController;
 use App\Http\Controllers\DepartmentController;
 use App\Http\Controllers\EmployerController;
@@ -67,6 +68,7 @@ Route::delete('/position/{id}', [PositionController::class, 'destroy']);
 
 
 Route::apiResource('products', ProductController::class);
+Route::apiResource('categories', CategoryController::class);
 Route::apiResource('warehouses', WarehouseController::class);
 Route::apiResource('stocks', StockController::class);
 Route::apiResource('suppliers', SupplierController::class);
