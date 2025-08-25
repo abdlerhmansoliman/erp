@@ -22,6 +22,8 @@ use Illuminate\Support\Facades\Route;
 
 
 Route::apiResource('units', UnitController::class);
+Route::get('purchases/create', [PurchaseInvoiceController::class, 'create']);
+Route::get('/products/search', [ProductController::class, 'search']);
 
 Route::apiResource('purchases', PurchaseInvoiceController::class);
 

@@ -35,4 +35,8 @@ public function delete(Warehouse $warehouse)
    $result = $warehouse->delete();
     return $result;
 }
+public function allWarehouses()
+{
+    return Warehouse::all();
+}
 }

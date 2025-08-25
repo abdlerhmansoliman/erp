@@ -38,4 +38,8 @@ class ProductService
     public function deleteMultipleProducts(array $ids){
         return $this->ProductRepository->deleteMultipleProducts($ids);
     }
+    public function searchProducts($query)
+    {
+        return $this->ProductRepository->search($query);
+    }
 }

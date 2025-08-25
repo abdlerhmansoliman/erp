@@ -48,4 +48,8 @@ class SupplierService
     {
         return $this->supplierRepository->deleteMultiple($ids);
     }
+    public function getSuppliers()
+    {
+        return $this->supplierRepository->allSuppliers();
+    }
 }

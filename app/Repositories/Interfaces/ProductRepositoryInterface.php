@@ -15,5 +15,5 @@ interface ProductRepositoryInterface
     public function deleteProduct($id);
 
     public function deleteMultipleProducts(array $ids);
-    public function findForLookup(?string $search, int $limit = 20);
+    public function search($query, $limit = 20);
 }

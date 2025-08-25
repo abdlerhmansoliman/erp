@@ -75,4 +75,15 @@ class ProductController extends Controller
             'message' => "$deletedCount products deleted successfully"
         ]);
     }
-}
+
+    public function search(Request $request)
+    {
+        $query = $request->input('q');
+
+        $products = $this->productService->searchProducts($query);
+
+        return response()->json([
+            'status' => 'success',
+            'data' => $products
+        ]);
+    }}

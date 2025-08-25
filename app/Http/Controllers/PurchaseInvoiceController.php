@@ -23,7 +23,15 @@ class PurchaseInvoiceController extends Controller
         
     return PurchaseInvoiceResource::collection($invoices);
 }
+    public function create()
+    {
+        $data = $this->purchaseInvoiceService->getCreateData();
 
+        return response()->json([
+            'status' => 'success',
+            'data' => $data
+        ]);
+    }
 public function store(PurchaseInvoiceRequest $request)
 {
     
@@ -48,4 +56,5 @@ public function update(UpdatePurchaseRequest $request, $id)
         $this->purchaseInvoiceService->deletePurchase($id);
         return response()->json(['message' => 'Purchase deleted successfully']);
     }
+
 }

@@ -37,5 +37,8 @@ class WarehouseService
     public function delete(Warehouse $warehouse){
         return $this->warehouseRepository->delete($warehouse);
     }
-    
+    public function getWarehouses()
+    {
+        return $this->warehouseRepository->allWarehouses();
+    }
 }

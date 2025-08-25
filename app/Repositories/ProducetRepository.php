@@ -40,16 +40,13 @@ class ProducetRepository implements ProductRepositoryInterface
     public function deleteMultipleProducts(array $ids){
         return Product::whereIn('id',$ids)->delete();
     }
-    public function findForLookup(?string $search, int $limit = 20)
+    public function search($query, $limit = 20)
     {
         return Product::query()
-            ->when($search, function ($q) use ($search) {
-                $q->where(function ($qq) use ($search) {
-                    $qq->where('name', 'like', "%$search%")
-                       ->orWhere('product_code', 'like', "%$search%");
-                });
-            })
-            ->select('id', 'name', 'product_code', 'purchase_price', 'price')
+            ->where('name', 'like', "%{$query}%")
+            ->orWhere('product_code', 'like', "%{$query}%")
+            ->with( 'tax:id,name,rate')
+            ->select('id', 'product_code', 'name', 'price','description','purchase_price','category_id','unit_id')
             ->limit($limit)
             ->get();
     }

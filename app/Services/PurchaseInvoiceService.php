@@ -29,7 +29,9 @@ class PurchaseInvoiceService
     public function __construct(
         protected PurchaseInvoiceRepository $invoiceRepo,
         protected PurchaseItemRepository $itemRepo,
-        protected StockService $stockService
+        protected StockService $stockService,
+        protected SupplierService $supplierService,
+        protected WarehouseService $warehouseService,
     ) {}
     public function getAllInvoices(array $filters )
     {
@@ -38,6 +40,24 @@ class PurchaseInvoiceService
     public function getInvoiceById($id)
     {
         return $this->invoiceRepo->findById($id);
+    }
+        public function getCreateData()
+    {
+        $suppliers = $this->supplierService->getSuppliers();
+        $warehouses = $this->warehouseService->getWarehouses();
+
+        $statuses = [
+            ['key' => 'draft', 'label' => 'Draft'],
+            ['key' => 'ordered', 'label' => 'Ordered'],
+            ['key' => 'received', 'label' => 'Received'],
+        ];
+
+        return [
+            'suppliers' => $suppliers,
+            'warehouses' => $warehouses,
+            'statuses' => $statuses,
+            'date' => now()->toDateString(),
+        ];
     }
   public function createInvoice(array $data)
     {
