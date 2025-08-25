@@ -16,6 +16,7 @@ use App\Http\Controllers\SupplierController;
 use App\Http\Controllers\UnitController;
 use App\Http\Controllers\WarehouseController;
 use App\Models\Stock;
+use App\Models\Supplier;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -25,6 +26,7 @@ Route::apiResource('units', UnitController::class);
 Route::apiResource('purchases', PurchaseInvoiceController::class);
 
 Route::apiResource('sales', SelesInvoiceController::class);
+Route::apiResource('products', ProductController::class);
 
 Route::middleware('auth:sanctum')->get('/auth/user', function (Request $request) {
     return response()->json([
@@ -67,7 +69,6 @@ Route::delete('/position/{id}', [PositionController::class, 'destroy']);
 
 
 
-Route::apiResource('products', ProductController::class);
 Route::apiResource('categories', CategoryController::class);
 Route::apiResource('warehouses', WarehouseController::class);
 Route::apiResource('stocks', StockController::class);
@@ -75,7 +76,9 @@ Route::apiResource('suppliers', SupplierController::class);
 Route::apiResource('customers', CustomerController::class);
 
 
-
+Route::post('products/delete-multiple', [ProductController::class, 'deleteMultiple']);
+Route::post('customers/delete-multiple', [CustomerController::class, 'deleteMultiple']);
+Route::post('suppliers/delete-multiple', [SupplierController::class, 'deleteMultiple']);
 
 Route::middleware(['auth:sanctum'])->group(function () {
 

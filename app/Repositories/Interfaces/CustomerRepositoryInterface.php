@@ -13,6 +13,6 @@ interface CustomerRepositoryInterface
     public function delete(int $id): bool;
 
     public function update(int $id, array $data);
-
+    public function deleteMultiple(array $ids): int;
 
 }

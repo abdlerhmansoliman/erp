@@ -51,5 +51,14 @@ class CustomerController extends Controller
         $this->customerService->delete($id);
         return response()->json(['message' => 'Customer deleted successfully']);
     }
+    public function deleteMultiple(Request $request)
+    {
+        $ids = $request->input('ids');
+        if (!is_array($ids) || empty($ids)) {
+            return response()->json(['message' => 'Invalid IDs provided'], 400);
+        }
+        $this->customerService->deleteMultiple($ids);
+        return response()->json(['message' => 'Customers deleted successfully']);
+    }
 }
 

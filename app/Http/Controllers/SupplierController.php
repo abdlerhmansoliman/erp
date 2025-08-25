@@ -59,4 +59,13 @@ public function update(SupplierUpdateRequest $request, $id)
         $this->supplierService->delete($supplier);
         return response()->json(['message' => 'Supplier deleted successfully']);
     }
+    public function deleteMultiple(Request $request)
+    {
+        $ids = $request->input('ids');
+        if (!is_array($ids) || empty($ids)) {
+            return response()->json(['message' => 'Invalid IDs provided'], 400);
+        }
+        $this->supplierService->deleteMultiple($ids);
+        return response()->json(['message' => 'Suppliers deleted successfully']);
+    }
 }

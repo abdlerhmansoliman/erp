@@ -20,7 +20,7 @@ class ProducetRepository implements ProductRepositoryInterface
     }
     public function getProductById($id)
     {
-        return Product::select('id', 'name', 'price', 'description','sku', 'category_id', 'unit_id','purchase_price')->findOrFail($id);
+        return Product::select('id', 'name', 'price', 'description','product_code', 'category_id', 'unit_id','purchase_price')->findOrFail($id);
     }
 
     public function createProduct(array $data)
@@ -36,9 +36,21 @@ class ProducetRepository implements ProductRepositoryInterface
     {
         return Product::destroy($id);
     }
-    public function searchProducts($query)
-    {
-        // Implementation for searching products
-    }
 
+    public function deleteMultipleProducts(array $ids){
+        return Product::whereIn('id',$ids)->delete();
+    }
+    public function findForLookup(?string $search, int $limit = 20)
+    {
+        return Product::query()
+            ->when($search, function ($q) use ($search) {
+                $q->where(function ($qq) use ($search) {
+                    $qq->where('name', 'like', "%$search%")
+                       ->orWhere('product_code', 'like', "%$search%");
+                });
+            })
+            ->select('id', 'name', 'product_code', 'purchase_price', 'price')
+            ->limit($limit)
+            ->get();
+    }
 }

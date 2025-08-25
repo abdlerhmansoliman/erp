@@ -35,4 +35,9 @@ public function delete(Supplier $supplier)
     $result = $supplier->delete();
     return $result;
 }
+public function deleteMultiple(array $ids): int
+{
+    return Supplier::whereIn('id', $ids)->delete();
+}
+
 }

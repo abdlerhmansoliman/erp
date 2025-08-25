@@ -58,5 +58,21 @@ class ProductController extends Controller
             'message' => 'Product deleted successfully'
         ]);
     }
+    public function deleteMultiple(Request $request)
+    {
+        $ids = $request->input('ids', []);
+        if (empty($ids) || !is_array($ids)) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'No valid IDs provided'
+            ], 400);
+        }
 
+        $deletedCount = $this->productService->deleteMultipleProducts($ids);
+
+        return response()->json([
+            'status' => 'success',
+            'message' => "$deletedCount products deleted successfully"
+        ]);
+    }
 }

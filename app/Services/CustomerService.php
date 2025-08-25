@@ -35,6 +35,9 @@ class CustomerService
     {
         return $this->customerRepository->update($id, $data);
     }
-    
+    public function deleteMultiple(array $ids): int
+    {
+        return $this->customerRepository->deleteMultiple($ids);
+    }
 
 }

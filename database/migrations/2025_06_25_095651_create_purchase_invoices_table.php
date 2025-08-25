@@ -19,6 +19,7 @@ return new class extends Migration
             $table->decimal('tax_amount', 10, 2)->default(0);
             $table->decimal('discount_amount', 15, 2)->default(0);  
             $table->decimal('grand_total', 10, 2)->default(0);
+            $table->foreignId('warehouse_id')->constrained()->onDelete('cascade');
             $table->timestamps();
         });
     }

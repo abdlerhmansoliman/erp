@@ -48,6 +48,7 @@ class PurchaseInvoiceService
                 'supplier_id'    => $data['supplier_id'],
                 'status'         => $data['status'] ?? 'draft',
                 'sub_total'      => $data['sub_total'] ?? 0,
+                'warehouse_id'    => $data['warehouse_id'],
                 'discount_amount'=> $data['discount_amount'] ?? 0,
                 'tax_amount'     => $data['tax_amount'] ?? 0,
                 'grand_total'    => $data['grand_total'] ?? 0,
@@ -60,19 +61,17 @@ class PurchaseInvoiceService
             foreach ($data['items'] as $item) {
 
                 $productId   = (int) $item['product_id'];
-                $warehouseId = (int) $item['warehouse_id'];
                 $qty         = (int) $item['quantity'];
                 $unitPrice   = (float) $item['unit_price'];
                 $discount_amount    = (float) $item['discount_amount'] ?? 0;
                 $tax         = (float) $item['tax_amount'] ?? 0;
                 $net_price   = (float) $item['net_price'];
 
-                $this->stockService->increase($productId, $warehouseId, $qty);
+                $this->stockService->increase($productId, $invoice->warehouse_id, $qty);
 
                 $rows[] = [
                     'purchase_invoice_id' => $invoice->id,
                     'product_id'          => $productId,
-                    'warehouse_id'        => $warehouseId,
                     'quantity'            => $qty,
                     'unit_price'          => $unitPrice,
                     'discount_amount'     => $discount_amount,

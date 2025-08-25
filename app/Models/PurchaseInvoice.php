@@ -13,7 +13,8 @@ class PurchaseInvoice extends Model
         'tax_amount',
         'grand_total',
         'discount_amount',
-        'invoice_number'
+        'invoice_number',
+        'warehouse_id',
     ];
 
     public function supplier(){
@@ -25,5 +26,9 @@ class PurchaseInvoice extends Model
     public function getInvoiceNumberAttribute()
 {
     return 'INV-' . str_pad($this->id, 6, '0', STR_PAD_LEFT);
+}
+public function warehouse()
+{
+    return $this->belongsTo(Warehouse::class);
 }
 }

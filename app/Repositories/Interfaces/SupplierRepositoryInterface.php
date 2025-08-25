@@ -10,4 +10,5 @@ public function find($id);
 public function create(array $data);
 public function update(Supplier $supplier, array $data);
 public function delete(Supplier $supplier);
+public function deleteMultiple(array $ids): int;
 }

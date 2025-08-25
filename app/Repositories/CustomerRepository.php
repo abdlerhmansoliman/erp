@@ -37,5 +37,8 @@ class CustomerRepository implements CustomerRepositoryInterface
         $customer->update($data);
         return $customer;
     }
-
+    public function deleteMultiple(array $ids): int
+    {
+        return Customer::whereIn('id', $ids)->delete();
+    }
 }

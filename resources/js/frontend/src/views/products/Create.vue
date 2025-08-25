@@ -2,9 +2,10 @@
 import { ref, onMounted } from 'vue';
 import api from '@/plugins/axios';
 import { useRouter } from 'vue-router';
+import { useToast } from 'vue-toastification';
 
 const router = useRouter();
-
+const toast = useToast();
 const product = ref({
     name: '',
     description: '',
@@ -20,10 +21,9 @@ const units = ref([]);
 const fetchCategories = async () => {
   try {
     const response = await api.get('/categories');
-    console.log('Categories API response:', response.data);
-    categories.value = response.data.data; // adjust if nested
+    categories.value = response.data.data; 
   } catch (error) {
-    console.error('Failed to fetch categories:', error);
+    
   }
 }
 
@@ -48,7 +48,7 @@ const submitForm = async () => {
     console.log('Product created:', response.data);
     router.push('/products');
   } catch (error) {
-    console.error('Failed to create product:', error.response?.data || error);
+    useToast('Failed to create product:', error.response?.data || error);
   }
 };
 </script>
