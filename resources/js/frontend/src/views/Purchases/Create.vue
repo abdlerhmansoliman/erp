@@ -1,6 +1,6 @@
 <script setup>
 import { ref, onMounted } from 'vue';
-import axios from 'axios';
+import api from '@/plugins/axios';
 import InvoiceHeader from '@/components/Invoice/InvoiceHeader.vue';
 import ProductSearch from '@/components/Invoice/ProductSearch.vue';
 import EasyDataTable from 'vue3-easy-data-table';
@@ -17,21 +17,20 @@ const warehouses = ref([]);
 // جلب الموردين
 onMounted(async () => {
   try {
-    const { data } = await axios.get('/api/suppliers');
+    const { data } = await api.get('/suppliers');
     suppliers.value = data.data;
   } catch (error) { console.error(error); }
 
   // لو محتاج تجيب المخازن من API
   try {
-    const { data } = await axios.get('/api/warehouses');
+    const { data } = await api.get('/warehouses');
     warehouses.value = data.data;
   } catch (error) { console.error(error); }
 });
 
 // إضافة منتج من البحث
 function handleSelectProduct(product) {
-  const exists = invoiceItems.value.find(item => item.id === product.id);
-  if (!exists) {
+  if (!invoiceItems.value.find(item => item.id === product.id)) {
     invoiceItems.value.push({
       ...product,
       qty: 1,

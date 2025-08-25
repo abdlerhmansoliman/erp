@@ -45,7 +45,7 @@ class ProducetRepository implements ProductRepositoryInterface
         return Product::query()
             ->where('name', 'like', "%{$query}%")
             ->orWhere('product_code', 'like', "%{$query}%")
-            ->with( 'tax:id,name,rate')
+            ->with( 'taxes:id,name,rate')
             ->select('id', 'product_code', 'name', 'price','description','purchase_price','category_id','unit_id')
             ->limit($limit)
             ->get();
