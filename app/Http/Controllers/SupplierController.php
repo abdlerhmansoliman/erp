@@ -7,7 +7,6 @@ use App\Http\Requests\SupplierUpdateRequest;
 use App\Http\Resources\SupplierResource;
 use App\Services\SupplierService;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Log;
 use Yajra\DataTables\Facades\DataTables;
 
 class SupplierController extends Controller

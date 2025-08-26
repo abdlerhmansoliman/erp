@@ -7,7 +7,6 @@ use App\Http\Requests\ProductUpdateRequest;
 use App\Http\Resources\ProductResource;
 use App\Services\ProductService;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Log;
 
 class ProductController extends Controller
 {
@@ -97,7 +96,6 @@ class ProductController extends Controller
             ]);
             
         } catch (\Exception $e) {
-            Log::error('Product search error: ' . $e->getMessage());
             
             return response()->json([
                 'status' => 'error',

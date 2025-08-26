@@ -5,7 +5,6 @@ namespace App\Repositories;
 use App\Models\Supplier;
 use App\Models\User;
 use App\Repositories\Interfaces\SupplierRepositoryInterface;
-use Illuminate\Support\Facades\Log;
 
 class SupplierRepository implements SupplierRepositoryInterface
 {

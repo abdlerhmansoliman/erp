@@ -1,6 +1,6 @@
 <script setup>
 import { RouterLink, RouterView, useRouter } from 'vue-router'
-import { useAuthStore } from '@/stores/authStore'  // عدل المسار حسب مشروعك
+import { useAuthStore } from '@/stores/authStore'  
 import { useI18n } from 'vue-i18n'
 import LanguageSelector from '@/components/LanguageSelector.vue'
 import { ref } from 'vue'

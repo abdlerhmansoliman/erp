@@ -8,7 +8,6 @@ use App\Http\Resources\PurchaseInvoiceResource;
 use App\Http\Resources\SalesInvoiceResource;
 use App\Services\PurchaseInvoiceService;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Log;
 
 class PurchaseInvoiceController extends Controller
 {
@@ -16,10 +15,8 @@ class PurchaseInvoiceController extends Controller
    public function index()
 {
     $filters = request()->only(['search', 'sortBy', 'sortDir', 'perPage', 'page']);
-            Log::info('Purchase API - Filters:', $filters);
 
     $invoices = $this->purchaseInvoiceService->getAllInvoices($filters);
-            Log::info('Purchase API - Raw data count:', ['count' => $invoices->count()]);
         
         
     return PurchaseInvoiceResource::collection($invoices);
@@ -45,7 +42,6 @@ public function store(PurchaseInvoiceRequest $request)
             'data' => new PurchaseInvoiceResource($invoice)
         ], 201);
     } catch (\Exception $e) {
-        Log::error('Purchase Invoice Creation Error: ' . $e->getMessage());
         return response()->json([
             'status' => 'error',
             'message' => 'Failed to create purchase invoice',
@@ -73,7 +69,6 @@ public function update(UpdatePurchaseRequest $request, $id)
             'data' => new PurchaseInvoiceResource($invoice)
         ]);
     } catch (\Exception $e) {
-        Log::error('Purchase Invoice Update Error: ' . $e->getMessage());
         return response()->json([
             'status' => 'error',
             'message' => 'Failed to update purchase invoice',

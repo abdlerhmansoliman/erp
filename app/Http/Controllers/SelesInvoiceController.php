@@ -10,7 +10,7 @@ use App\Models\Product;
 use App\Models\SalesInvoice;
 use App\Services\SalesInvoiceService;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Log;
+
 
 class SelesInvoiceController extends Controller
 {

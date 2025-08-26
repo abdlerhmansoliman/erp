@@ -6,7 +6,6 @@ use App\Models\Unit;
 use App\Repositories\Interfaces\AuthRepositoryInterface;
 use App\Repositories\Interfaces\ProductRepositoryInterface;
 use Illuminate\Container\Attributes\Auth;
-use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Hash;
 
 class ProductService
@@ -59,7 +58,6 @@ class ProductService
             
             return $products;
         } catch (\Exception $e) {
-            Log::error('Error searching products: ' . $e->getMessage());
             throw $e;
         }
     }
