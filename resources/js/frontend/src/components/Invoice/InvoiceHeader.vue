@@ -1,5 +1,4 @@
 <script setup>
-import { defineEmits } from 'vue';
 
 const props = defineProps({
   partyList: { type: Array, default: () => [] },         // suppliers أو customers

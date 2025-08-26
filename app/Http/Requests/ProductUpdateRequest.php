@@ -28,6 +28,7 @@ class ProductUpdateRequest extends FormRequest
             'quantity' => 'sometimes|integer',
             'sku' => 'sometimes|string|max:100|unique:products,sku',
             'category_id' => 'sometimes|exists:categories,id',
+            'tax_id' => 'sometimes|nullable|exists:taxes,id',
             'purchase_price' => 'sometimes|numeric',
             'sale_price' => 'sometimes|numeric',
         ];

@@ -23,8 +23,16 @@ class ProductResource extends JsonResource
     'purchase_price' => $this->purchase_price,
     'category_id' => $this->category_id,
     'unit_id' => $this->unit_id,
+    'tax_id' => $this->tax_id,
     'category_name' => $this->category?->name,
     'unit_name' => $this->unit?->name,
+    'tax' => $this->whenLoaded('tax', function() {
+        return [
+            'id' => $this->tax->id,
+            'name' => $this->tax->name,
+            'rate' => $this->tax->rate
+        ];
+    }),
     'created_at' => $this->created_at,
     'updated_at' => $this->updated_at,
         ];

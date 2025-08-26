@@ -16,8 +16,8 @@ class Product extends Model
         'purchase_price',
         'category_id',
         'unit_id',
-        'product_code'
-        
+        'product_code',
+        'tax_id'
     ];
     protected static function booted()
     {
@@ -45,9 +45,9 @@ protected $with=['category','unit'];
     {
         return $this->hasMany(SalesItem::class);
     }
-    public function taxes()
+    public function tax()
     {
-        return $this->belongsToMany(Tax::class, 'product_tax');
+        return $this->belongsTo(Tax::class);
     }
     public function discounts()
     {

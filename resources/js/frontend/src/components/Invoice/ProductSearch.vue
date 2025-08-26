@@ -1,5 +1,5 @@
 <script setup>
-import {  defineEmits, ref, watch } from 'vue';
+import {   ref, watch } from 'vue';
 import axios from 'axios';
 
 const props = defineProps({
@@ -21,10 +21,18 @@ async function searchProducts() {
 
   loading.value = true;
   try {
-    const { data } = await axios.get(props.apiUrl, { params: { q: searchQuery.value } });
-    searchResults.value = data.data || [];
+    // Use the API URL relative to the backend
+    const url = `/api/products/search?q=${encodeURIComponent(searchQuery.value)}`;
+    const { data } = await axios.get(url);
+    if (data.status === 'success' && Array.isArray(data.data)) {
+      searchResults.value = data.data;
+    } else {
+      searchResults.value = [];
+      console.error('Unexpected response format:', data);
+    }
   } catch (error) {
     console.error('Error fetching products:', error);
+    searchResults.value = [];
   } finally {
     loading.value = false;
   }

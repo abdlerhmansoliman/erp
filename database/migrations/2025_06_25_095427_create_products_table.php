@@ -20,6 +20,7 @@ return new class extends Migration
             $table->foreignId('category_id')->constrained('categories')->onDelete('cascade');
             $table->foreignId('unit_id')->constrained()->cascadeOnDelete();
             $table->string('product_code')->unique();
+            $table->foreignId('tax_id')->nullable()->constrained(table: 'taxes')->onDelete('cascade');
             $table->timestamps();
         });
     }

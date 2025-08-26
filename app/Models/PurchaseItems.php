@@ -15,6 +15,7 @@ class PurchaseItems extends Model
     'discount_amount',
     'total_price',
     'net_price',
+    'tax_id'
 ];
 
 
@@ -23,5 +24,8 @@ class PurchaseItems extends Model
     }
     public function PurchaseInvoice(){
         return $this->belongsTo(PurchaseInvoice::class);
+    }
+    public function tax(){
+        return $this->belongsTo(Tax::class);
     }
 }

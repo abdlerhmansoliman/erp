@@ -4,6 +4,7 @@ use App\Http\Controllers\UserRoleController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\CustomerController;
+use App\Http\Controllers\TaxController;
 use App\Http\Controllers\DepartmentController;
 use App\Http\Controllers\EmployerController;
 use App\Http\Controllers\PositionController;
@@ -24,8 +25,10 @@ use Illuminate\Support\Facades\Route;
 Route::apiResource('units', UnitController::class);
 Route::get('purchases/create', [PurchaseInvoiceController::class, 'create']);
 Route::get('/products/search', [ProductController::class, 'search']);
+Route::get('/products/{id}/tax', [ProductController::class, 'getTax']);
 
 Route::apiResource('purchases', PurchaseInvoiceController::class);
+Route::post('purchases/delete-multiple', [PurchaseInvoiceController::class, 'deleteMultiple']);
 
 Route::apiResource('sales', SelesInvoiceController::class);
 Route::apiResource('products', ProductController::class);
@@ -76,6 +79,7 @@ Route::apiResource('warehouses', WarehouseController::class);
 Route::apiResource('stocks', StockController::class);
 Route::apiResource('suppliers', SupplierController::class);
 Route::apiResource('customers', CustomerController::class);
+Route::apiResource('taxes', TaxController::class);
 
 
 Route::post('products/delete-multiple', [ProductController::class, 'deleteMultiple']);

@@ -6,11 +6,16 @@ use Illuminate\Database\Eloquent\Model;
 
 class Tax extends Model
 {
-    protected $fillable = ['name', 'rate','type','applies_to'];
+    protected $fillable = ['name', 'rate'];
 
-    public function product()
+    public function products()
     {
-        return $this->belongsToMany(Product::class);
+        return $this->hasMany(Product::class);
+    }
+
+    public function purchaseItems()
+    {
+        return $this->hasMany(PurchaseItems::class);
     }
 
     

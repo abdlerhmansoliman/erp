@@ -73,7 +73,6 @@ class PurchaseInvoiceService
                 'tax_amount'     => $data['tax_amount'] ?? 0,
                 'grand_total'    => $data['grand_total'] ?? 0,
                 'total_amount'   => $data['total_amount'] ?? 0,
-                'invoice_number' => $data['invoice_number'] ?? null,
             ]);
 
             $rows = [];
@@ -84,7 +83,9 @@ class PurchaseInvoiceService
                 $qty         = (int) $item['quantity'];
                 $unitPrice   = (float) $item['unit_price'];
                 $discount_amount    = (float) $item['discount_amount'] ?? 0;
-                $tax         = (float) $item['tax_amount'] ?? 0;
+                $tax_id     = $item['tax_id'] ?? null;
+                $tax_amount = (float) $item['tax_amount'] ?? 0;
+                $total_price = (float) $item['total_price'];
                 $net_price   = (float) $item['net_price'];
 
                 $this->stockService->increase($productId, $invoice->warehouse_id, $qty);
@@ -95,9 +96,10 @@ class PurchaseInvoiceService
                     'quantity'            => $qty,
                     'unit_price'          => $unitPrice,
                     'discount_amount'     => $discount_amount,
-                    'tax_amount'          => $tax,
-                    'total_price'         => $net_price,
-                    'net_price'           => $net_price - $discount_amount + $tax,
+                    'tax_id'             => $tax_id,
+                    'tax_amount'          => $tax_amount,
+                    'total_price'         => $total_price,
+                    'net_price'           => $net_price,
                     'created_at'          => now(),
                 ];
             }
@@ -154,6 +156,7 @@ public function updateInvoice(int $id, array $data)
                 'quantity'=> $qty,
                 'unit_price'=> $unitPrice,
                 'discount_amount'=> $line['discount_amount'],
+                'tax_id' => $item['tax_id'] ?? null,
                 'tax_amount'=> $line['tax_amount'],
                 'total_price'=> $line['line_base'],
                 'net_price'=> $line['net_price'],
@@ -191,6 +194,16 @@ public function updateInvoice(int $id, array $data)
         return DB::transaction(function () use ($id) {
             $this->invoiceRepo->deleteItems($id);
             return $this->invoiceRepo->delete($id);
+        });
+    }
+    public function deleteMultiplePurchases(array $ids)
+    {
+        return DB::transaction(function () use ($ids) {
+            foreach ($ids as $id) {
+                $this->invoiceRepo->deleteItems($id);
+                $this->invoiceRepo->delete($id);
+            }
+            return true;
         });
     }
 }

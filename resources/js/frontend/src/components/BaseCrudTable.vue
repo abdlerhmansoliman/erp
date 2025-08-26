@@ -219,6 +219,7 @@ defineExpose({
     </div>
 
     <!-- EasyDataTable -->
+     <div class="overflow-x-auto">
     <EasyDataTable
       :headers="computedHeaders"
       :items="items"
@@ -260,6 +261,7 @@ defineExpose({
         <div class="text-center p-4">{{ emptyMessage }}</div>
       </template>
     </EasyDataTable>
+    </div>
   </div>
 </template>
 

@@ -7,6 +7,7 @@ use App\Http\Requests\ProductUpdateRequest;
 use App\Http\Resources\ProductResource;
 use App\Services\ProductService;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 
 class ProductController extends Controller
 {
@@ -78,12 +79,50 @@ class ProductController extends Controller
 
     public function search(Request $request)
     {
-        $query = $request->input('q');
+        try {
+            $query = $request->input('q');
+            
+            if (empty($query)) {
+                return response()->json([
+                    'status' => 'success',
+                    'data' => []
+                ]);
+            }
 
-        $products = $this->productService->searchProducts($query);
+            $products = $this->productService->searchProducts($query);
+            
+            return response()->json([
+                'status' => 'success',
+                'data' => ProductResource::collection($products)
+            ]);
+            
+        } catch (\Exception $e) {
+            Log::error('Product search error: ' . $e->getMessage());
+            
+            return response()->json([
+                'status' => 'error',
+                'message' => 'An error occurred while searching for products'
+            ], 500);
+        }
+    }
+
+    /**
+     * Get product's tax information
+     */
+    public function getTax($id)
+    {
+        $product = $this->productService->getProductById($id);
+        if (!$product) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Product not found'
+            ], 404);
+        }
 
         return response()->json([
             'status' => 'success',
-            'data' => $products
+            'data' => [
+                'tax' => $product->tax
+            ]
         ]);
     }}

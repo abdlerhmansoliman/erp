@@ -16,19 +16,28 @@ class PurchaseInvoice extends Model
         'invoice_number',
         'warehouse_id',
     ];
+protected static function boot()
+{
+    parent::boot();
 
+    static::creating(function ($model) {
+        if (empty($model->invoice_number)) {
+            $lastInvoice = self::latest('id')->first();
+            $nextNumber = $lastInvoice ? $lastInvoice->id + 1 : 1;
+            $model->invoice_number = 'PO-' . str_pad($nextNumber, 5, '0', STR_PAD_LEFT);
+        }
+    });
+}
     public function supplier(){
         return $this->belongsTo(Supplier::class, 'supplier_id');
     }
     public function items(){
         return $this->hasMany(PurchaseItems::class);
     }
-    public function getInvoiceNumberAttribute()
-{
-    return 'INV-' . str_pad($this->id, 6, '0', STR_PAD_LEFT);
-}
+
 public function warehouse()
 {
     return $this->belongsTo(Warehouse::class);
 }
+
 }
