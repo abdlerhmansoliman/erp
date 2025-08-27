@@ -50,32 +50,7 @@ public function store(PurchaseInvoiceRequest $request)
     }
 }
 
-public function update(UpdatePurchaseRequest $request, $id)
-{
-    try {
-        $invoice = $this->purchaseInvoiceService->updateInvoice($id, $request->validated());
 
-        if (!$invoice) {
-            return response()->json([
-                'status' => 'error',
-                'message' => 'Invoice not found'
-            ], 404);
-        }
-
-        $invoice->load(['supplier', 'items', 'warehouse']);
-        return response()->json([
-            'status' => 'success',
-            'message' => 'Purchase invoice updated successfully',
-            'data' => new PurchaseInvoiceResource($invoice)
-        ]);
-    } catch (\Exception $e) {
-        return response()->json([
-            'status' => 'error',
-            'message' => 'Failed to update purchase invoice',
-            'errors' => [$e->getMessage()]
-        ], 500);
-    }
-}
     public function destroy($id)
     {
         $this->purchaseInvoiceService->deletePurchase($id);
