@@ -16,17 +16,7 @@ use Illuminate\Support\Facades\DB;
 
 class PurchaseInvoiceService
 {
-    /**
-     * Create a new class instance.
-     */
-//   protected $purchaseInvoiceRepository;
-//     protected InvoiecItemService $invoiceItemService;
 
-//     public function __construct( purchaseInvoiceRepositoryInterface $purchaseInvoiceRepository, InvoiecItemService $invoiceItemService)
-//      {
-//         $this->purchaseInvoiceRepository = $purchaseInvoiceRepository;
-//         $this->invoiceItemService = $invoiceItemService;
-//     }
     public function __construct(
         protected PurchaseInvoiceRepository $invoiceRepo,
         protected PurchaseItemRepository $itemRepo,
@@ -137,5 +127,9 @@ class PurchaseInvoiceService
             }
             return true;
         });
+    }
+    public function getInvoiceByIdWithItems($id)
+    {
+        return $this->invoiceRepo->findByIdWithItems($id);
     }
 }

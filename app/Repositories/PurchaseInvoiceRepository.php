@@ -52,6 +52,6 @@ class PurchaseInvoiceRepository implements PurchaseInvoiceRepositoryInterface
     }
     public function findByIdWithItems($id)
     {
-        return PurchaseInvoice::with('items.product', 'supplier')->findOrFail($id);
+        return PurchaseInvoice::with('items.product', 'supplier','warehouse')->findOrFail($id);
     }
 }

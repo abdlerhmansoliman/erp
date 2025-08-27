@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Requests\PurchaseInvoiceRequest;
 use App\Http\Requests\UpdatePurchaseRequest;
 use App\Http\Resources\PurchaseInvoiceResource;
+use App\Http\Resources\PurchaseItemResource;
 use App\Http\Resources\SalesInvoiceResource;
 use App\Services\PurchaseInvoiceService;
 use Illuminate\Http\Request;
@@ -20,7 +21,30 @@ class PurchaseInvoiceController extends Controller
         
         
     return PurchaseInvoiceResource::collection($invoices);
-}
+    }
+    public function show($id)
+    {
+        try {
+            $invoice = $this->purchaseInvoiceService->getInvoiceByIdWithItems($id);
+            if(!$invoice) {
+                return response()->json([
+                    'status' => 'error',
+                    'message' => 'Purchase invoice not found',
+                ], 404);
+            }
+            return response()->json([
+                'status' => 'success',
+                'data' => new PurchaseItemResource($invoice)
+            ]);
+
+        } catch (\Throwable $e) {
+            return response()->json([
+            'status' => 'error',
+            'message' => 'Failed to fetch purchase invoice',
+            'errors' => [$e->getMessage()],
+        ], 500);
+        }
+    }
     public function create()
     {
         $data = $this->purchaseInvoiceService->getCreateData();
@@ -30,8 +54,8 @@ class PurchaseInvoiceController extends Controller
             'data' => $data
         ]);
     }
-public function store(PurchaseInvoiceRequest $request)
-{
+    public function store(PurchaseInvoiceRequest $request)
+    {
     try {
         $invoice = $this->purchaseInvoiceService->createInvoice($request->validated())
             ->load(['supplier', 'items', 'warehouse']);
@@ -48,7 +72,7 @@ public function store(PurchaseInvoiceRequest $request)
             'errors' => [$e->getMessage()]
         ], 500);
     }
-}
+    }
 
 
     public function destroy($id)
