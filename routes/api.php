@@ -24,10 +24,10 @@ use Illuminate\Support\Facades\Route;
 Route::apiResource('stocks', StockController::class);
 
 Route::apiResource('units', UnitController::class);
-Route::get('purchases/create', [PurchaseInvoiceController::class, 'create']);
 Route::get('/products/search', [ProductController::class, 'search']);
 Route::get('/products/{id}/tax', [ProductController::class, 'getTax']);
 
+Route::get('purchases/create', [PurchaseInvoiceController::class, 'create']);
 Route::apiResource('purchases', PurchaseInvoiceController::class);
 Route::post('purchases/delete-multiple', [PurchaseInvoiceController::class, 'deleteMultiple']);
 

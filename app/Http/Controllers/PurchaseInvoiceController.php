@@ -34,7 +34,7 @@ class PurchaseInvoiceController extends Controller
             }
             return response()->json([
                 'status' => 'success',
-                'data' => new PurchaseItemResource($invoice)
+                'data' => new PurchaseInvoiceResource($invoice)
             ]);
 
         } catch (\Throwable $e) {
