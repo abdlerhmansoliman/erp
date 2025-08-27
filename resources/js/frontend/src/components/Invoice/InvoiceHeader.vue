@@ -1,7 +1,7 @@
 <script setup>
 
 const props = defineProps({
-  partyList: { type: Array, default: () => [] },         // suppliers أو customers
+  partyList: { type: Array, default: () => [] },    
   selectedParty: { type: Object, default: null },
   warehouseList: { type: Array, default: () => [] },
   selectedWarehouse: { type: Object, default: null },
@@ -16,7 +16,6 @@ const emit = defineEmits([
   'update-status'
 ]);
 
-// Handlers لتحديث الـ parent
 function onPartyChange(e) {
   const party = props.partyList.find(p => p.id == e.target.value)
   emit('update-selected-party', party)

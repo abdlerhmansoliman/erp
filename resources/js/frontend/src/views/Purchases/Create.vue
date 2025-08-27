@@ -21,7 +21,7 @@ const suppliers = ref([]);
 const warehouses = ref([]);
 const taxes = ref([]);
 
-// Define available statuses
+
 const availableStatuses = [
   { value: 'draft', label: 'مسودة' },
   { value: 'ordered', label: 'تم الطلب' },
@@ -29,7 +29,7 @@ const availableStatuses = [
   { value: 'cancelled', label: 'ملغي' }
 ];
 
-// Invoice totals
+
 const invoiceSummary = ref({
   subTotal: 0,
   totalDiscount: 0,
@@ -51,14 +51,14 @@ const headers = [
   { text: "الإجراءات", value: "actions" }
 ];
 
-// جلب الموردين
+
 onMounted(async () => {
   try {
-    // Fetch initial data from create endpoint
+
     const { data } = await api.get('/purchases/create');
     suppliers.value = data.data.suppliers;
     warehouses.value = data.data.warehouses;
-    // Set default warehouse if available
+
     if (warehouses.value.length > 0) {
       selectedWarehouse.value = warehouses.value[0];
     }
@@ -66,7 +66,7 @@ onMounted(async () => {
     toast.error('Error fetching initial data:', error); 
   }
 
-  // Fetch taxes
+
   try {
     const { data } = await api.get('/taxes');
     taxes.value = data.data;
@@ -77,7 +77,7 @@ onMounted(async () => {
 
 function handleSelectProduct(product) {
   if (!invoiceItems.value.find(item => item.id === product.id)) {
-    // Get the product's assigned tax if it has one
+
     const productTax = taxes.value.find(tax => tax.id === product.tax_id);
     
     const newItem = {
@@ -105,11 +105,11 @@ function removeItem(id) {
   invoiceItems.value = invoiceItems.value.filter(item => item.id !== id);
 }
 
-// تحديث قيمة داخل الجدول (qty/price/discount/tax)
+
 function updateItem(id, key, value) {
   const item = invoiceItems.value.find(i => i.id === id);
   if (item) {
-    // Ensure the value is a number and not less than 0
+
     const numValue = Math.max(0, Number(value) || 0);
     item[key] = numValue;
     
@@ -131,28 +131,24 @@ function handleTaxChange(itemId, taxId) {
 }
 
 function calculateItemTotals(item) {
-  // Get the effective quantity after discount
-  const effectiveQty = Math.max(0, (item.qty || 0) - (item.discount || 0));
-  
-  // Calculate subtotal based on effective quantity
-  const subtotal = (item.price || 0) * effectiveQty;
-  
-  // Calculate the discount amount
-  const discount_amount = (item.price || 0) * (item.discount || 0);
-  
-  // Calculate tax amount on the subtotal
+  const qty = Math.max(0, item.qty || 0);
+  const unitPrice = item.price || 0;
+
+  const subtotal = unitPrice * qty;
+
   const tax_amount = item.tax_rate ? (subtotal * item.tax_rate) / 100 : 0;
-  
-  // Update item totals
+  const discount_amount = Math.min(item.discount || 0, subtotal + tax_amount);
+
+  const total = subtotal + tax_amount - discount_amount;
+
   item.subtotal = subtotal;
-  item.total = subtotal - discount_amount + tax_amount;
-  item.discount_amount = discount_amount;
   item.tax_amount = tax_amount;
-  item.effectiveQty = effectiveQty; // Store effective quantity for display
+  item.discount_amount = discount_amount;
+  item.total = total;
 }
 
 
-// Computed property for total quantity
+
 const getTotalQuantity = computed(() => {
   return invoiceItems.value.reduce((total, item) => total + (item.qty || 0), 0);
 });
@@ -161,11 +157,10 @@ const getTotalEffectiveQuantity = computed(() => {
   return invoiceItems.value.reduce((total, item) => total + (item.effectiveQty || 0), 0);
 });
 
-// Computed property for used taxes with their totals
+
 const usedTaxes = computed(() => {
   const taxTotals = {};
   
-  // Initialize tax totals
   taxes.value.forEach(tax => {
     taxTotals[tax.id] = {
       id: tax.id,
@@ -174,15 +169,13 @@ const usedTaxes = computed(() => {
       total: 0
     };
   });
-  
-  // Calculate totals for each tax
+
   invoiceItems.value.forEach(item => {
     if (item.tax_id && taxTotals[item.tax_id]) {
       taxTotals[item.tax_id].total += item.tax_amount || 0;
     }
   });
   
-  // Return only used taxes
   return Object.values(taxTotals).filter(tax => tax.total > 0);
 });
 
@@ -247,7 +240,7 @@ async function savePurchase() {
     
     if (data.status === 'success') {
       toast.success(data.message || 'تم حفظ الفاتورة بنجاح');
-      // Reset form
+
       selectedSupplier.value = null;
       date.value = new Date().toISOString().slice(0,10);
       status.value = 'draft';

@@ -70,21 +70,19 @@ function handleRemoveItem(id) {
               @input="handleItemUpdate(item.id, 'price', $event.target.value)" 
             />
           </td>
-          <td class="px-4 text-center py-4" style="width: 12%">
-            <div class="space-y-1">
+            <td class="px-4 text-center py-4" style="width: 12%">
               <input 
                 type="number" 
                 class="block w-full px-3 py-1.5 text-xl border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-150"
                 :value="item.discount"
                 min="0"
-                :max="item.qty"
+                step="0.01"
                 @input="handleItemUpdate(item.id, 'discount', $event.target.value)" 
               />
-              <div class="text-sx    text-gray-500">
-                الكمية الفعلية: <span class="font-medium">{{ item.effectiveQty }}</span>
+              <div class="text-sm text-gray-500">
+                قيمة الخصم: <span class="font-medium">{{ item.discount_amount?.toFixed(2) }}</span>
               </div>
-            </div>
-          </td>
+            </td>
           <td class="px-4 text-center py-4" style="width: 15%">
             <div class="space-y-1">
               <select 

@@ -5,6 +5,7 @@ namespace App\Services;
 use App\Helpers\DiscountHelper;
 use App\Helpers\TaxHelper;
 use App\Models\InvoiceItem;
+use App\Models\PurchaseInvoice;
 use App\Models\PurchaseItems;
 use App\Models\Stock;
 use App\Repositories\Interfaces\PurchaseInvoiceRepositoryInterface;
@@ -88,7 +89,16 @@ class PurchaseInvoiceService
                 $total_price = (float) $item['total_price'];
                 $net_price   = (float) $item['net_price'];
 
-                $this->stockService->increase($productId, $invoice->warehouse_id, $qty);
+                $this->stockService->create([
+                'product_id'    => $productId,
+                'warehouse_id'  => $invoice->warehouse_id,
+                'product_unit_id'=> $item['product_unit_id'] ?? null,
+                'qty'           => $qty,
+                'remaining'     => $qty, 
+                'net_unit_price'=> $unitPrice,
+                'model_id'      => $invoice->id,
+                'model_type'    => PurchaseInvoice::class,
+                ]);
 
                 $rows[] = [
                     'purchase_invoice_id' => $invoice->id,

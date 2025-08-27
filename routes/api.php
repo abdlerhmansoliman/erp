@@ -21,6 +21,7 @@ use App\Models\Supplier;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
+Route::apiResource('stocks', StockController::class);
 
 Route::apiResource('units', UnitController::class);
 Route::get('purchases/create', [PurchaseInvoiceController::class, 'create']);
@@ -76,7 +77,6 @@ Route::delete('/position/{id}', [PositionController::class, 'destroy']);
 
 Route::apiResource('categories', CategoryController::class);
 Route::apiResource('warehouses', WarehouseController::class);
-Route::apiResource('stocks', StockController::class);
 Route::apiResource('suppliers', SupplierController::class);
 Route::apiResource('customers', CustomerController::class);
 Route::apiResource('taxes', TaxController::class);

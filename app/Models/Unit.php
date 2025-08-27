@@ -11,4 +11,8 @@ class Unit extends Model
     public function products(){
         return $this->hasMany(Product::class);
     }
+        public function stocks()
+    {
+        return $this->hasMany(Stock::class);
+    }
 }

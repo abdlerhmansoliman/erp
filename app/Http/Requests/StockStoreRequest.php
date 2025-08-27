@@ -24,7 +24,12 @@ class StockStoreRequest extends FormRequest
         return [
             'product_id' => 'required|exists:products,id',
             'warehouse_id' => 'required|exists:warehouses,id',
-            'quantity' => 'required|integer|min:0',
+            'qty' => 'required|integer|min:0',
+            'product_unit_id' => 'required|exists:units,id',
+            'model_type' => 'required|string',
+            'model_id' => 'required|integer|min:1',
+            'remaining' => 'required|integer|min:0',
+            'net_unit_price' => 'required|numeric|min:0',
         ];
     }
 }

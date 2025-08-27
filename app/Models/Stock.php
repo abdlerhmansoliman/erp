@@ -8,14 +8,28 @@ class Stock extends Model
 {
     protected $fillable = [
         'product_id',
+        'product_unit_id',
         'warehouse_id',
-        'quantity',
+        'model_type',
+        'model_id',
+        'qty',
+        'remaining',
+        'net_unit_price'
     ];
-    public function product(){
+    public function product()
+    {
         return $this->belongsTo(Product::class);
     }
-    public function warehouse(){
+
+    public function warehouse()
+    {
         return $this->belongsTo(Warehouse::class);
+    }
+
+    // Polymorphic relation: source of transaction (invoice, return, transfer...)
+    public function model()
+    {
+        return $this->morphTo();
     }
     
 }

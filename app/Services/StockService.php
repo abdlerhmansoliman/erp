@@ -38,7 +38,7 @@ class StockService
     }
         public function increase(int $productId, int $warehouseId, int $qty): void
     {
-        $stock = Stock::firstOrCreate(
+        $stock = Stock::where(
             ['product_id' => $productId, 'warehouse_id' => $warehouseId],
             ['quantity' => 0]
         );
