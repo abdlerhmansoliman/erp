@@ -35,9 +35,13 @@ protected static function boot()
         return $this->hasMany(PurchaseItems::class);
     }
 
-public function warehouse()
-{
-    return $this->belongsTo(Warehouse::class);
-}
+    public function warehouse()
+    {
+        return $this->belongsTo(Warehouse::class);
+    }
+    public function returns(){
+        return $this->hasMany(PurchaseReturn::class);
+    }
+    
 
 }

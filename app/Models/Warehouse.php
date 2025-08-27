@@ -18,5 +18,9 @@ class Warehouse extends Model
     {
         return $this->hasMany(PurchaseInvoice::class);
     }
+    public function returns()
+    {
+        return $this->hasMany(PurchaseReturn::class);
+    }
     
 }

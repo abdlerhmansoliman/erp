@@ -53,4 +53,8 @@ protected $with=['category','unit'];
     {
         return $this->belongsToMany(Discount::class, 'product_discount');
     }
+    public function returns(){
+        return $this->hasMany(PurchaseReturnItem::class);
+    }
+    
 }
