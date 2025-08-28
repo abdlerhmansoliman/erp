@@ -16,8 +16,6 @@ use App\Http\Controllers\StockController;
 use App\Http\Controllers\SupplierController;
 use App\Http\Controllers\UnitController;
 use App\Http\Controllers\WarehouseController;
-use App\Models\Stock;
-use App\Models\Supplier;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -30,6 +28,7 @@ Route::get('/products/{id}/tax', [ProductController::class, 'getTax']);
 Route::get('purchases/create', [PurchaseInvoiceController::class, 'create']);
 Route::apiResource('purchases', PurchaseInvoiceController::class);
 Route::post('purchases/delete-multiple', [PurchaseInvoiceController::class, 'deleteMultiple']);
+Route::get('/purchases/{id}/pdf', [PurchaseInvoiceController::class, 'downloadPdf']);
 
 Route::apiResource('sales', SelesInvoiceController::class);
 Route::apiResource('products', ProductController::class);

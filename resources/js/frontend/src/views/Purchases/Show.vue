@@ -1,3 +1,100 @@
+<script setup>
+import ShowInvoiceTable from '@/components/ShowInvoiceTable.vue'
+import { ref, onMounted, computed } from 'vue'
+import api from '@/plugins/axios'
+import { useRoute, useRouter } from 'vue-router'
+import { useToast } from 'vue-toastification'
+
+const route = useRoute()
+const router = useRouter()
+const toast = useToast()
+
+const invoice = ref(null)
+const loading = ref(true)
+
+// Computed summary object for the invoice table
+const invoiceSummary = computed(() => {
+  if (!invoice.value) return null
+  
+  return {
+    subtotal: invoice.value.subtotal || 0,
+    total_tax: invoice.value.total_tax || invoice.value.tax_amount || 0,
+    total_discount: invoice.value.total_discount || invoice.value.discount_amount || 0,
+    shipping_amount: invoice.value.shipping_amount || 0,
+    additional_charges: invoice.value.additional_charges || 0,
+    grand_total: invoice.value.grand_total || 0
+  }
+})
+
+// Helper functions
+function getStatusClass(status) {
+  const classes = {
+    'pending': 'bg-yellow-100 text-yellow-800',
+    'completed': 'bg-green-100 text-green-800',
+    'approved': 'bg-blue-100 text-blue-800',
+    'cancelled': 'bg-red-100 text-red-800',
+    'draft': 'bg-gray-100 text-gray-800'
+  }
+  return classes[status?.toLowerCase()] || 'bg-gray-100 text-gray-800'
+}
+
+function formatCurrency(value) {
+  return new Intl.NumberFormat('en-US', {
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2
+  }).format(parseFloat(value || 0))
+}
+
+// Actions
+function goBack() {
+  router.push({ name: 'purchases' }) // Adjust route name as needed
+}
+
+function editInvoice() {
+  router.push({ name: 'purchase-edit', params: { id: invoice.value.id } }) // Adjust route name as needed
+}
+
+function printInvoice() {
+  window.print()
+}
+
+// Lifecycle
+onMounted(async () => {
+  try {
+    const { data } = await api.get(`/purchases/${route.params.id}`)
+    invoice.value = data.data
+    
+    // Debug log
+    console.log('Invoice loaded:', invoice.value)
+    console.log('Items:', invoice.value.items)
+  } catch (error) {
+    console.error('Error fetching purchase invoice:', error)
+    toast.error('Failed to load purchase invoice')
+  } finally {
+    loading.value = false
+  }
+})
+async function downloadPdf() {
+  try {
+    const response = await api.get(`purchases/${route.params.id}/pdf`, {
+      responseType: 'blob'
+    })
+
+    const blob = new Blob([response.data], { type: 'application/pdf' })
+    const link = document.createElement('a')
+    link.href = URL.createObjectURL(blob)
+    link.download = `Invoice-${route.params.id}.pdf`
+    link.click()
+    URL.revokeObjectURL(link.href)
+  } catch (error) {
+    console.error('Error downloading PDF:', error)
+  }
+}
+</script>
+
+
+
+
 <template>
   <div class="p-6 max-w-7xl mx-auto">
     <!-- Loading State -->
@@ -93,9 +190,9 @@
           Back to List
         </button>
         <button 
-          @click="printInvoice"
+          @click="downloadPdf"
           class="px-6 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2">
-          Print Invoice
+          Download PDF
         </button>
         <button 
           @click="editInvoice"
@@ -123,80 +220,3 @@
   </div>
 </template>
 
-<script setup>
-import ShowInvoiceTable from '@/components/ShowInvoiceTable.vue'
-import { ref, onMounted, computed } from 'vue'
-import api from '@/plugins/axios'
-import { useRoute, useRouter } from 'vue-router'
-import { useToast } from 'vue-toastification'
-
-const route = useRoute()
-const router = useRouter()
-const toast = useToast()
-
-const invoice = ref(null)
-const loading = ref(true)
-
-// Computed summary object for the invoice table
-const invoiceSummary = computed(() => {
-  if (!invoice.value) return null
-  
-  return {
-    subtotal: invoice.value.subtotal || 0,
-    total_tax: invoice.value.total_tax || invoice.value.tax_amount || 0,
-    total_discount: invoice.value.total_discount || invoice.value.discount_amount || 0,
-    shipping_amount: invoice.value.shipping_amount || 0,
-    additional_charges: invoice.value.additional_charges || 0,
-    grand_total: invoice.value.grand_total || 0
-  }
-})
-
-// Helper functions
-function getStatusClass(status) {
-  const classes = {
-    'pending': 'bg-yellow-100 text-yellow-800',
-    'completed': 'bg-green-100 text-green-800',
-    'approved': 'bg-blue-100 text-blue-800',
-    'cancelled': 'bg-red-100 text-red-800',
-    'draft': 'bg-gray-100 text-gray-800'
-  }
-  return classes[status?.toLowerCase()] || 'bg-gray-100 text-gray-800'
-}
-
-function formatCurrency(value) {
-  return new Intl.NumberFormat('en-US', {
-    minimumFractionDigits: 2,
-    maximumFractionDigits: 2
-  }).format(parseFloat(value || 0))
-}
-
-// Actions
-function goBack() {
-  router.push({ name: 'purchases' }) // Adjust route name as needed
-}
-
-function editInvoice() {
-  router.push({ name: 'purchase-edit', params: { id: invoice.value.id } }) // Adjust route name as needed
-}
-
-function printInvoice() {
-  window.print()
-}
-
-// Lifecycle
-onMounted(async () => {
-  try {
-    const { data } = await api.get(`/purchases/${route.params.id}`)
-    invoice.value = data.data
-    
-    // Debug log
-    console.log('Invoice loaded:', invoice.value)
-    console.log('Items:', invoice.value.items)
-  } catch (error) {
-    console.error('Error fetching purchase invoice:', error)
-    toast.error('Failed to load purchase invoice')
-  } finally {
-    loading.value = false
-  }
-})
-</script>
