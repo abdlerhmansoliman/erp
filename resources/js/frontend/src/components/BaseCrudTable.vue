@@ -17,11 +17,14 @@ const props = defineProps({
   resourceName: { type: String, required: true },
   editRouteName: { type: String, default: null },
   createRoute: { type: String, default: null },
+  showRouteName: { type: String, default: null },
   searchPlaceholder: { type: String, default: 'البحث...' },
   customActions: { type: Array, default: () => [] },
+  showSearch: { type: Boolean, default: true },
   showEdit: { type: Boolean, default: true },
   showDelete: { type: Boolean, default: true },
   showCreate: { type: Boolean, default: true },
+  showView: { type: Boolean, default: false },
   emptyMessage: { type: String, default: 'لا توجد بيانات متاحة' },
   deleteConfirmationKey: { type: String, default: 'name' }
 });
@@ -42,13 +45,11 @@ const selectedIds = ref([]);
 const computedHeaders = computed(() => {
   const baseHeaders = [...props.headers];
 
-  // Add selection column at the start
-  baseHeaders.unshift({
-    text: '', value: 'select', sortable: false, width: '50px'
-  });
+  // Add selection column
+  baseHeaders.unshift({ text: '', value: 'select', sortable: false, width: '50px' });
 
   // Add actions column if needed
-  const hasActions = props.showEdit || props.showDelete || props.customActions.length > 0;
+  const hasActions = props.showEdit || props.showDelete || props.showView || props.customActions.length > 0;
   if (hasActions) {
     const actionsHeader = baseHeaders.find(h => h.value === 'controller');
     if (!actionsHeader) {
@@ -71,7 +72,6 @@ async function fetchData() {
     if (data.data && Array.isArray(data.data)) {
       items.value = data.data;
       total.value = data.total;
-      // Keep only selected IDs present in current page
       selectedIds.value = selectedIds.value.filter(id => items.value.some(i => i.id === id));
       emit('selection-changed', selectedIds.value);
     } else {
@@ -115,7 +115,7 @@ const deleteItem = async (item) => {
   }
 };
 
-// Batch delete selected
+// Batch delete
 const deleteSelected = async () => {
   if (selectedIds.value.length === 0) return;
   const confirmed = await confirmDelete(`Are you sure you want to delete ${selectedIds.value.length} items?`);
@@ -148,6 +148,15 @@ function goToCreate() {
   }
 }
 
+// View
+function goToView(item) {
+  if (props.showRouteName) {
+    router.push({ name: props.showRouteName, params: { id: item.id } });
+  } else {
+    emit('item-selected', { action: 'view', item });
+  }
+}
+
 // Custom action
 function handleCustomAction(action, item) {
   emit('custom-action', { action, item });
@@ -170,18 +179,15 @@ watch([currentPage, rowsPerPage], fetchData);
 onMounted(fetchData);
 
 // Expose
-defineExpose({
-  fetchData,
-  refresh: fetchData,
-  selectedIds
-});
+defineExpose({ fetchData, refresh: fetchData, selectedIds });
 </script>
 
 <template>
   <div class="p-4">
     <!-- Search & Create -->
-    <div class="mb-4 flex items-center justify-between flex-wrap gap-2">
+    <div v-if="showSearch || showCreate" class="mb-4 flex items-center justify-between flex-wrap gap-2">
       <input
+        v-if="showSearch"
         v-model="search"
         type="text"
         :placeholder="searchPlaceholder"
@@ -196,8 +202,8 @@ defineExpose({
         >
           <slot name="create-button-text">Add {{ resourceName }}</slot>
         </button>
-
         <button
+          v-if="showDelete"
           class="px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700"
           :disabled="selectedIds.length === 0"
           @click="deleteSelected"
@@ -207,8 +213,8 @@ defineExpose({
       </div>
     </div>
 
-    <!-- Select All checkbox -->
-    <div class="mb-2">
+    <!-- Select All -->
+    <div v-if="items.length > 0" class="mb-2">
       <input
         type="checkbox"
         :checked="selectedIds.length === items.length && items.length > 0"
@@ -219,51 +225,51 @@ defineExpose({
     </div>
 
     <!-- EasyDataTable -->
-     <div class="overflow-x-auto">
-    <EasyDataTable
-      :headers="computedHeaders"
-      :items="items"
-      :loading="loading"
-      :rows-per-page="rowsPerPage"
-      :current-page="currentPage"
-      :total-items="total"
-      show-index
-      @update:current-page="currentPage = $event"
-      @update:rows-per-page="rowsPerPage = $event"
-    >
-      <!-- Selection Column -->
-      <template #item-select="row">
-        <input type="checkbox" v-model="selectedIds" :value="row.id" class="w-4 h-4" />
-      </template>
+    <div class="overflow-x-auto">
+      <EasyDataTable
+        :headers="computedHeaders"
+        :items="items"
+        :loading="loading"
+        :rows-per-page="rowsPerPage"
+        :current-page="currentPage"
+        :total-items="total"
+        show-index
+        @update:current-page="currentPage = $event"
+        @update:rows-per-page="rowsPerPage = $event"
+      >
+        <!-- Selection Column -->
+        <template #item-select="row">
+          <input type="checkbox" v-model="selectedIds" :value="row.id" class="w-4 h-4" />
+        </template>
 
-      <!-- Actions column -->
-      <template #item-controller="item">
-        <div class="flex gap-2">
-          <button v-if="showEdit" @click="() => goToEdit(item)" class="px-3 py-1 bg-blue-500 text-white rounded hover:bg-blue-600">Edit</button>
-          <button v-if="showDelete" @click="() => deleteItem(item)" class="px-3 py-1 bg-red-500 text-white rounded hover:bg-red-600">Delete</button>
-          <button
-            v-for="action in customActions"
-            :key="action.name"
-            @click="() => handleCustomAction(action.name, item)"
-            :class="action.class || 'px-3 py-1 bg-gray-500 text-white rounded hover:bg-gray-600'"
-          >
-            {{ action.label }}
-          </button>
-        </div>
-      </template>
+        <!-- Actions -->
+        <template #item-controller="item">
+          <slot name="actions" :item="item">
+            <div class="flex gap-2">
+              <button v-if="showView" @click="() => goToView(item)" class="px-3 py-1 bg-gray-500 text-white rounded hover:bg-gray-600">View</button>
+              <button v-if="showEdit" @click="() => goToEdit(item)" class="px-3 py-1 bg-blue-500 text-white rounded hover:bg-blue-600">Edit</button>
+              <button v-if="showDelete" @click="() => deleteItem(item)" class="px-3 py-1 bg-red-500 text-white rounded hover:bg-red-600">Delete</button>
+              <button
+                v-for="action in customActions"
+                :key="action.name"
+                @click="() => handleCustomAction(action.name, item)"
+                :class="action.class || 'px-3 py-1 bg-gray-500 text-white rounded hover:bg-gray-600'"
+              >
+                {{ action.label }}
+              </button>
+            </div>
+          </slot>
+        </template>
 
-      <!-- Custom column templates -->
-      <template v-for="(_, slot) of $slots" v-slot:[slot]="slotProps">
-        <slot :name="slot" v-bind="slotProps" />
-      </template>
+        <!-- Custom column templates -->
+        <template v-for="(_, slot) of $slots" v-slot:[slot]="slotProps">
+          <slot :name="slot" v-bind="slotProps" />
+        </template>
 
-      <template #empty-message>
-        <div class="text-center p-4">{{ emptyMessage }}</div>
-      </template>
-    </EasyDataTable>
+        <template #empty-message>
+          <div class="text-center p-4">{{ emptyMessage }}</div>
+        </template>
+      </EasyDataTable>
     </div>
   </div>
 </template>
-
-<style>
-</style>
