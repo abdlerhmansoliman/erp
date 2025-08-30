@@ -32,5 +32,6 @@
     "phone": "Phone",
     "address": "Address",
     "purchases": "Purchases",
-    "products": "Products"
+    "products": "Products",
+    "Categories":"Categories"
 }

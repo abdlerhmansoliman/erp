@@ -13,11 +13,12 @@ const product = ref({
     purchase_price: '',
     category_id: '',
     unit_id: '',
+    tax_id: '',
 });
 
 const categories = ref([]);
 const units = ref([]);
-
+const taxes = ref([]);
 const fetchCategories = async () => {
   try {
     const response = await api.get('/categories');
@@ -33,13 +34,21 @@ const fetchUnits = async () => {
         const response = await api.get('/units');
         units.value = response.data.data;
     } catch (error) {
-        console.error('Failed to fetch units:', error);
+        toast.error('Failed to fetch units:', error);
     }
 }
-
+const fetchTaxes = async () => {
+    try {
+      const response= await api.get('/taxes');
+      taxes.value = response.data.data;
+    } catch (error) {
+      toast.error('Failed to fetch taxes:', error);
+    }
+}
 onMounted(() => {
   fetchCategories();
   fetchUnits();
+  fetchTaxes();
 });
 
 const submitForm = async () => {
@@ -117,6 +126,19 @@ const submitForm = async () => {
         </select>
       </div>
 
+        <!-- Taxe -->
+        <div class="flex flex-col">
+        <label class="mb-1 font-medium text-gray-700">Taxe</label>
+        <select 
+          v-model="product.tax_id" 
+          class="border border-gray-300 rounded-md p-3 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent transition"
+        >
+          <option value="">Select Category</option>
+          <option v-for="tax in taxes" :key="tax.id" :value="tax.id">
+            {{ tax.name }}
+          </option>
+        </select>
+      </div>
       <!-- Unit -->
       <div class="flex flex-col">
         <label class="mb-1 font-medium text-gray-700">Unit</label>

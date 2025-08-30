@@ -98,7 +98,7 @@ class PurchaseInvoiceController extends Controller
             return response()->json(['message' => 'Invoice not found'], 404);
         }
 
-        $pdf = \Barryvdh\DomPDF\Facade\Pdf::loadView('invoices.pdf', ['invoice' => $invoice]);
+        $pdf =Pdf::loadView('invoices.pdf', ['invoice' => $invoice]);
 
         return response($pdf->output(), 200)
             ->header('Content-Type', 'application/pdf')
