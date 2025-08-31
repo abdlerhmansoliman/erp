@@ -66,47 +66,32 @@ class PurchaseInvoiceService
                 'total_amount'   => $data['total_amount'] ?? 0,
             ]);
 
-            $rows = [];
-
-            foreach ($data['items'] as $item) {
-
-                $productId   = (int) $item['product_id'];
-                $qty         = (int) $item['quantity'];
-                $unitPrice   = (float) $item['unit_price'];
-                $discount_amount    = (float) $item['discount_amount'] ?? 0;
-                $tax_id     = $item['tax_id'] ?? null;
-                $tax_amount = (float) $item['tax_amount'] ?? 0;
-                $total_price = (float) $item['total_price'];
-                $net_price   = (float) $item['net_price'];
-
+            $rows=collect($data['items'])->map(function ($item) use ($invoice) {
                 $this->stockService->create([
-                'product_id'    => $productId,
-                'warehouse_id'  => $invoice->warehouse_id,
-                'product_unit_id'=> $item['product_unit_id'] ?? null,
-                'qty'           => $qty,
-                'remaining'     => $qty, 
-                'net_unit_price'=> $unitPrice,
-                'model_id'      => $invoice->id,
-                'model_type'    => PurchaseInvoice::class,
-                ]);
+                'product_id'      => (int) $item['product_id'],
+                'warehouse_id'    => $invoice->warehouse_id,
+                'product_unit_id' => $item['product_unit_id'] ?? null,
+                'qty'             => (int) $item['quantity'],
+                'remaining'       => (int) $item['quantity'],
+                'net_unit_price'  => (float) $item['unit_price'],
+                'model_id'        => $invoice->id,
+                'model_type'      => PurchaseInvoice::class,
+            ]); 
+                return [
+                'purchase_invoice_id' => $invoice->id,
+                'product_id'          => (int) $item['product_id'],
+                'quantity'            => (int) $item['quantity'],
+                'unit_price'          => (float) $item['unit_price'],
+                'discount_amount'     => (float) ($item['discount_amount'] ?? 0),
+                'tax_id'              => $item['tax_id'] ?? null,
+                'tax_amount'          => (float) ($item['tax_amount'] ?? 0),
+                'total_price'         => (float) $item['total_price'],
+                'net_price'           => (float) $item['net_price'],
+                'created_at'          => now(),
+            ];
+            });
 
-                $rows[] = [
-                    'purchase_invoice_id' => $invoice->id,
-                    'product_id'          => $productId,
-                    'quantity'            => $qty,
-                    'unit_price'          => $unitPrice,
-                    'discount_amount'     => $discount_amount,
-                    'tax_id'             => $tax_id,
-                    'tax_amount'          => $tax_amount,
-                    'total_price'         => $total_price,
-                    'net_price'           => $net_price,
-                    'created_at'          => now(),
-                ];
-            }
-
-            $this->itemRepo->bulkInsert($rows);
-
-            // 3. إعادة الفاتورة مع العناصر
+            $this->itemRepo->bulkInsert($rows->toArray());
             return $this->invoiceRepo->findByIdWithItems($invoice->id);
         });
     }

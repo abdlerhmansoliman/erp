@@ -41,4 +41,8 @@ class CustomerRepository implements CustomerRepositoryInterface
     {
         return Customer::whereIn('id', $ids)->delete();
     }
+    public function getCustomers()
+    {
+        return Customer::all();
+    }
 }

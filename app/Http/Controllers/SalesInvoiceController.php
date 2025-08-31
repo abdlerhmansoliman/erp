@@ -12,7 +12,7 @@ use App\Services\SalesInvoiceService;
 use Illuminate\Http\Request;
 
 
-class SelesInvoiceController extends Controller
+class SalesInvoiceController extends Controller
 {
     public function __construct(protected SalesInvoiceService $salesInvoiceService){}
     public function index()
@@ -21,8 +21,16 @@ class SelesInvoiceController extends Controller
         return SalesInvoiceResource::collection($invoices);
     }
     
-  public function store(StoreSalesInvoiceRequest $request)
+        public function create()
     {
+        $data = $this->salesInvoiceService->getCreateData();
+        return response()->json([
+            'status' => 'success',
+            'data' => $data
+        ]);
+    }
+  public function store(StoreSalesInvoiceRequest $request)
+    {   
         $invoice = $this->salesInvoiceService->createInvoice($request->validated());
         return new SalesInvoiceResource($invoice);
     }
@@ -34,14 +42,7 @@ class SelesInvoiceController extends Controller
         }
         return new SalesInvoiceResource($invoice);
     }
-    public function update(UpdateSalesInvoiceRequest $request, $id)
-    {
-        $invoice = $this->salesInvoiceService->updateInvoice($id, $request->validated());
-        if (!$invoice) {
-            return response()->json(['message' => 'Invoice not found'], 404);        
-        }
-        return new SalesInvoiceResource($invoice);
-    }
+
     public function destroy($id)
     {
         $invoice = $this->salesInvoiceService->deleteInvoice($id);

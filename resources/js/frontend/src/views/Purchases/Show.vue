@@ -197,7 +197,7 @@ async function downloadPdf() {
         <button 
           @click="editInvoice"
           class="px-6 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 focus:ring-2 focus:ring-green-500 focus:ring-offset-2">
-          Edit Invoice
+          Make Returns
         </button>
       </div>
     </div>

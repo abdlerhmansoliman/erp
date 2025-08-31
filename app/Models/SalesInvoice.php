@@ -12,7 +12,21 @@ class SalesInvoice extends Model
         'tax_amount',
         'grand_total',
         'discount_amount',
+        'invoice_number',
+        'warehouse_id'
     ];
+    protected static function boot()
+{
+    parent::boot();
+
+    static::creating(function ($model) {
+        if (empty($model->invoice_number)) {
+            $lastInvoice = self::latest('id')->first();
+            $nextNumber = $lastInvoice ? $lastInvoice->id + 1 : 1;
+            $model->invoice_number = 'PO-' . str_pad($nextNumber, 5, '0', STR_PAD_LEFT);
+        }
+    });
+}
     public function customer()
     {
         return $this->belongsTo(Customer::class);
@@ -21,8 +35,9 @@ class SalesInvoice extends Model
     {
         return $this->hasMany(SalesItem::class);
     }
-    public function getInvoiceNumberAttribute()
+    public function warehouse()
     {
-        return 'INV-' . str_pad($this->id, 6, '0', STR_PAD_LEFT);
+        return $this->belongsTo(Warehouse::class);
     }
+    
 }

@@ -63,11 +63,6 @@ const routes = [
       component: () => import('@/views/products/Create.vue')
     },
     {
-      path: '/products/:id/edit',
-      name: 'ProductEdit',
-      component: () => import('@/views/products/Edit.vue')
-    },
-    {
       path: '/purchases/:id',
       name: 'PurchaseShow',
       component: () => import('@/views/Purchases/Show.vue')
@@ -81,6 +76,21 @@ const routes = [
       path: '/categories/create',
       name: 'CategoryCreate',
       component: () => import('@/views/Categories/Create.vue')
+    },
+    {
+      path: '/categories/:id/edit',
+      name: 'CategoryEdit',
+      component: () => import('@/views/Categories/Edit.vue')
+    },
+    {
+      path:'sales',
+      name:'sales',
+      component: () => import('@/views/Sales/Sales.vue')
+    },
+    {
+      path: '/sales/create',
+      name: 'SalesCreate',
+      component: () => import('@/views/Sales/Create.vue')
     }
   ]
 }

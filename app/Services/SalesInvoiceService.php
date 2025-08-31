@@ -2,8 +2,11 @@
 
 namespace App\Services;
 
+use App\Models\Customer;
+use App\Models\SalesInvoice;
 use App\Repositories\Interfaces\SalesInvoiceRepositoryInterface;
 use App\Repositories\PurchaseItemRepository;
+use App\Repositories\SalesInvoiceRepository;
 use App\Repositories\SalesItemRepository;
 use App\Services\Billing\InvoiceCalculator;
 use Illuminate\Support\Facades\DB;
@@ -15,11 +18,13 @@ class SalesInvoiceService
      */
     protected $salesInvoiceRepository;
     protected $invoiceItemService;
-    public function __construct(SalesInvoiceRepositoryInterface $salesInvoiceRepository , 
+    
+    public function __construct(SalesInvoiceRepository $salesInvoiceRepository , 
     InvoiecItemService $invoiceItemService , 
      protected StockService $stockService,
-             protected SalesItemRepository $itemRepo,
-
+     protected SalesItemRepository $itemRepo,
+     protected CustomerService $customerService,
+     protected WarehouseService $warehouseService
      )
     {
         $this->salesInvoiceRepository = $salesInvoiceRepository;
@@ -33,125 +38,66 @@ class SalesInvoiceService
     {
         return $this->salesInvoiceRepository->findById($id);
     }
+            public function getCreateData()
+    {
+        
+        $customers = $this->customerService->getCustomers();
+        $warehouses = $this->warehouseService->getWarehouses();
+        $statuses = [
+            ['key' => 'draft', 'label' => 'Draft'],
+            ['key' => 'ordered', 'label' => 'Ordered'],
+            ['key' => 'received', 'label' => 'Received'],
+        ];
+
+        return [
+            'customers' => $customers,
+            'warehouses' => $warehouses,
+            'statuses' => $statuses,
+            'date' => now()->toDateString(),
+        ];
+    }
     public function createInvoice(array $data)
     {
         return DB::transaction(function () use ($data) {
-            $invoice=$this->salesInvoiceRepository->create([
-                'customer_id' => $data['customer_id'],
-                'sub_total'   => 0,
-                'discount_amount' => 0,
-                'tax_amount' => 0,
-                'grand_total'  => 0,
-                'invoice_number'=> $data['invoice_number'] ?? null,
-            ]);
-            $subTotalAfterProductDiscount = 0;
-            $itemsProductDiscount = 0;
-            $itemsProductTax = 0;
-            $rows = [];
-            foreach($data['items']as $item){
-                $productId= (int)$item['product_id'];
-                $qty= (float)$item['quantity'];
-                $unitPrice= (float)$item['unit_price'];
-                $warehouseId= (int)$item['warehouse_id'];
+          $invoice=$this->salesInvoiceRepository->create([
+            'customer_id' => $data['customer_id'],
+            'status' => $data['status'] ?? 'draft',
+            'sub_total' => $data['sub_total'] ?? 0,
+            'warehouse_id' => $data['warehouse_id'],
+            'discount_amount' => $data['discount_amount'] ?? 0,
+            'tax_amount' => $data['tax_amount'] ?? 0,
+            'grand_total' => $data['grand_total'] ?? 0,
+          ]); 
 
-                $line=InvoiceCalculator::computeLine($productId,$qty,$unitPrice,'sales');
-                $subTotalAfterProductDiscount+= $line['line_after_discount'];
-                $itemsProductDiscount += $line['discount_amount'];
-                $itemsProductTax += $line['tax_amount'];
-
-                $this->stockService->decrease($productId, $warehouseId, $qty);
-
-                $rows[] = [
-                    'sales_invoice_id' => $invoice->id,
-                    'product_id' => $productId,
-                    'warehouse_id'=> $warehouseId,
-                    'quantity' => $qty,
-                    'unit_price' => $unitPrice,
-                    'discount_amount' => $line['discount_amount'],
-                    'tax_amount' => $line['tax_amount'],
-                    'total_price'=> $line['line_base'],
-                    'net_price' => $line['net_price'],
-                    'created_at'=> now(),
-                ];
-            }
-            $this->itemRepo->bulkInsert($rows);
-            $totals=InvoiceCalculator::computeInvoiceTotals($subTotalAfterProductDiscount,
-            $itemsProductTax,
-            null,
-            'sales');
-            $invoice->update([
-                'sub_total' => $subTotalAfterProductDiscount,
-                'discount_amount' => $itemsProductDiscount + $totals['invoice_discount_amount'],
-                'tax_amount' => $itemsProductTax + $totals['invoice_tax_amount'],
-                'grand_total' => $totals['grand_total'],
-            ]);
-            return $invoice->load('customer', 'items.product');
+          $rows=collect($data['items'])->map(function ($item) use ($invoice) {
+            $this->stockService->create([
+                'product_id'      => (int) $item['product_id'],
+                'product_unit_id' => $item['product_unit_id'] ?? null,
+                'warehouse_id'    => $invoice->warehouse_id,
+                'qty'             => (int) $item['quantity'],
+                'remaining'       => (int) $item['quantity'],
+                'net_unit_price'  => (float) $item['unit_price'],
+                'model_id'        => $invoice->id,
+                'model_type'      => SalesInvoice::class,
+              ]);
+              return[
+                'sales_invoice_id' => $invoice->id,
+                'product_id'          => (int) $item['product_id'],
+                'quantity'            => (int) $item['quantity'],
+                'unit_price'          => (float) $item['unit_price'],
+                'discount_amount'     => (float) ($item['discount_amount'] ?? 0),
+                'tax_amount'          => (float) ($item['tax_amount'] ?? 0),
+                'total_price'         => (float) $item['total_price'],
+                'net_price'           => (float) $item['net_price'],
+                'created_at'          => now(),
+              ];
+          });
+          $this->itemRepo->bulkInsert($rows->toArray());
+          return $invoice;
         });   
      }
 
-    public function updateInvoice($id, array $data)
-    {
-        return DB::transaction(function () use ($id,$data) {
-            $invoice=$this->salesInvoiceRepository->findById($id);
-            if (!$invoice) {
-                abort(404, 'Invoice not found');
-            }
-            $oldItem=$this->itemRepo->getByInvoice($id);
-            foreach ($oldItem as $old) {
-                $this->stockService->increase($old->product_id, $old->warehouse_id, $old->quantity);
-            }
-            $this->itemRepo->deleteByInvoice($invoice->id);
-            $subTotalAfterProductDiscount = 0;
-            $itemsProductDiscount = 0;
-            $itemsProductTax = 0;
-            $rows = [];
-            foreach ($data['items'] as $item) {
-                $productId= (int) $item['product_id'];
-                $qty  = (int) $item['quantity'];
-                $unitPrice  = (float) $item['unit_price'];
-                $warehouseId = (int) $item['warehouse_id'];
 
-                $line = InvoiceCalculator::computeLine($productId, $qty, $unitPrice,'sales');
-                $subTotalAfterProductDiscount += $line['line_after_discount'];
-                $itemsProductDiscount += $line['discount_amount'];
-                $itemsProductTax += $line['tax_amount'];
-
-                $this->stockService->decrease($productId, $warehouseId, $qty);
-
-                $rows[] = [
-                'sales_invoice_id' => $invoice->id,
-                'product_id'=> $productId,
-                'warehouse_id' => $warehouseId,
-                'quantity'=> $qty,
-                'unit_price'=> $unitPrice,
-                'discount_amount'=> $line['discount_amount'],
-                'tax_amount'=> $line['tax_amount'],
-                'total_price'=> $line['line_base'],
-                'net_price'=> $line['net_price'],
-                'updated_at'=> now(),
-                ];
-            }
-            $this->itemRepo->bulkInsert($rows);
-
-
-        $totals = InvoiceCalculator::computeInvoiceTotals(
-            $subTotalAfterProductDiscount,
-            $itemsProductTax,
-            $data['discount_id'] ?? null,
-            'sales'
-        );
-        $invoice->update([
-            'customer_id' => $data['customer_id'],
-            'sub_total' => $subTotalAfterProductDiscount,
-            'discount_amount' => $itemsProductDiscount + $totals['invoice_discount_amount'],
-            'tax_amount' => $itemsProductTax + $totals['invoice_tax_amount'],
-            'grand_total' => $totals['grand_total'],
-            'invoice_number'=> $data['invoice_number'] ?? null,
-        ]);
-        return $invoice->load('customer', 'items.product');
-        });
-
-    }
 
     public function deleteInvoice($id)
     {

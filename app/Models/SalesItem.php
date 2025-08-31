@@ -8,15 +8,16 @@ class SalesItem extends Model
 {
     protected $table = 'sales_items';
     protected $fillable = [
-        'sales_invoice_id', 
-        'product_id',
-        'warehouse_id', 
-        'quantity', 
-        'unit_price',
-        'tax_amount',
-        'discount_amount',
-        'total_price', 
-        'net_price'
+    'sales_invoice_id',
+    'product_id',
+    'quantity',
+    'unit_price',
+    'tax_amount',
+    'discount_amount',
+    'total_price',
+    'net_price',
+    'tax_id',
+    'warehouse_id',
     ];
     public function product(){
         return $this->belongsTo(Product::class);

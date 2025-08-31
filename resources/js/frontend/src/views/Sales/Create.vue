@@ -6,24 +6,15 @@ import InvoiceItemsTable from '@/components/Invoice/InvoiceItemsTable.vue';
 import InvoiceSummary from '@/components/Invoice/InvoiceSummary/InvoiceSummary.vue';
 import { useInvoice } from '@/composables/useInvoice';
 
-// Props
-const props = defineProps({
-  type: {
-    type: String,
-    default: 'purchase', // 'purchase' or 'sale'
-    validator: (value) => ['purchase', 'sale'].includes(value)
-  }
-});
-
-// Use the invoice composable
+// Use the invoice composable with 'sale' type
 const {
   // State
-  selectedSupplier,
+  selectedSupplier, // This will be selectedCustomer for sales
   selectedWarehouse,
   date,
   status,
   invoiceItems,
-  suppliers,
+  suppliers, // This will be customers for sales
   warehouses,
   taxes,
   
@@ -41,7 +32,7 @@ const {
   updateItem,
   handleTaxChange,
   saveInvoice
-} = useInvoice(props.type);
+} = useInvoice('sale'); // Pass 'sale' type
 
 // Initialize data on component mount
 onMounted(initializeData);
@@ -94,7 +85,7 @@ onMounted(initializeData);
       <div class="flex justify-end mt-4">
         <button 
           @click="saveInvoice"
-          class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+          class="bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded">
           {{ config.saveButtonText }}
         </button>
       </div>

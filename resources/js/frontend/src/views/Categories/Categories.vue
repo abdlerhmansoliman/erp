@@ -1,14 +1,12 @@
 <script setup>
 import BaseCrudTable from '@/components/BaseCrudTable.vue'
 import { ref } from 'vue'
-import { useRouter } from 'vue-router'
 import { onMounted } from 'vue'
 import api from '@/plugins/axios'
 
 const categoriesHeader=[
     { text: 'Name', value: 'name', sortable: true },
 ]
-const router = useRouter()
 
 const categories = ref([])
 

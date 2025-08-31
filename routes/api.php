@@ -11,7 +11,7 @@ use App\Http\Controllers\PositionController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\PurchaseInvoiceController;
 use App\Http\Controllers\RoleController;
-use App\Http\Controllers\SelesInvoiceController;
+use App\Http\Controllers\SalesInvoiceController;
 use App\Http\Controllers\StockController;
 use App\Http\Controllers\SupplierController;
 use App\Http\Controllers\UnitController;
@@ -30,7 +30,11 @@ Route::apiResource('purchases', PurchaseInvoiceController::class);
 Route::post('purchases/delete-multiple', [PurchaseInvoiceController::class, 'deleteMultiple']);
 Route::get('/purchases/{id}/pdf', [PurchaseInvoiceController::class, 'downloadPdf']);
 
-Route::apiResource('sales', SelesInvoiceController::class);
+
+Route::get('sales/create', [SalesInvoiceController::class, 'create']);
+
+Route::apiResource('sales', SalesInvoiceController::class);
+
 Route::apiResource('products', ProductController::class);
 
 Route::middleware('auth:sanctum')->get('/auth/user', function (Request $request) {

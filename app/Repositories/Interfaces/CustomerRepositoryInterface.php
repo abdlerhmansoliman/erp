@@ -14,5 +14,5 @@ interface CustomerRepositoryInterface
 
     public function update(int $id, array $data);
     public function deleteMultiple(array $ids): int;
-
+    public function getCustomers();
 }

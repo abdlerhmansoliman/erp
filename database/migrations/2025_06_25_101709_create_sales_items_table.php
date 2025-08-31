@@ -15,7 +15,6 @@ return new class extends Migration
             $table->id();
             $table->foreignId('sales_invoice_id')->constrained()->onDelete('cascade');
             $table->foreignId('product_id')->constrained()->onDelete('cascade');
-            $table->foreignId('warehouse_id')->constrained()->onDelete('cascade');
             $table->integer('quantity');
             $table->decimal('unit_price', 10, 2);
             $table->decimal('tax_amount', 5, 2)->default(0.00);

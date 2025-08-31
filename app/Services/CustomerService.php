@@ -2,6 +2,8 @@
 
 namespace App\Services;
 
+use App\Models\Customer;
+use App\Repositories\CustomerRepository;
 use App\Repositories\Interfaces\CustomerRepositoryInterface;
 
 
@@ -11,7 +13,7 @@ class CustomerService
      * Create a new class instance.
      */
     protected $customerRepository;
-    public function __construct(CustomerRepositoryInterface $customerRepository)
+    public function __construct(CustomerRepository $customerRepository)
     {
         $this->customerRepository = $customerRepository;
     }
@@ -40,4 +42,8 @@ class CustomerService
         return $this->customerRepository->deleteMultiple($ids);
     }
 
+    public function getCustomers()
+    {
+        return Customer::all();
+    }
 }
