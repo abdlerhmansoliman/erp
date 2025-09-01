@@ -7,14 +7,10 @@ use Illuminate\Filesystem\Filesystem;
 
 class MakeRepository extends Command
 {
-    /**
-     * اسم الكوماند في التيرمنال
-     */
+
     protected $signature = 'make:repository {name}';
 
-    /**
-     * وصف الكوماند
-     */
+
     protected $description = 'Create a new Repository class';
 
     protected $files;
@@ -29,19 +25,15 @@ class MakeRepository extends Command
     {
         $name = $this->argument('name');
 
-        // مسار الريبو
         $path = app_path("Repositories/{$name}.php");
 
-        // لو الملف موجود بالفعل
         if ($this->files->exists($path)) {
             $this->error("Repository already exists!");
             return;
         }
 
-        // تأكد إن المجلد موجود
         $this->makeDirectory($path);
 
-        // اكتب الكود في الملف
         $stub = $this->getStub($name);
         $this->files->put($path, $stub);
 

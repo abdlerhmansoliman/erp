@@ -7,14 +7,9 @@ use Illuminate\Filesystem\Filesystem;
 
 class MakeService extends Command
 {
-    /**
-     * اسم الكوماند في التيرمنال
-     */
+
     protected $signature = 'make:service {name}';
 
-    /**
-     * وصف الكوماند
-     */
     protected $description = 'Create a new Service class';
 
     protected $files;
@@ -29,19 +24,15 @@ class MakeService extends Command
     {
         $name = $this->argument('name');
 
-        // مسار السيرفيس
         $path = app_path("Services/{$name}.php");
 
-        // لو الملف موجود بالفعل
         if ($this->files->exists($path)) {
             $this->error("Service already exists!");
             return;
         }
 
-        // تأكد إن المجلد موجود
         $this->makeDirectory($path);
 
-        // اكتب الكود في الملف
         $stub = $this->getStub($name);
         $this->files->put($path, $stub);
 
