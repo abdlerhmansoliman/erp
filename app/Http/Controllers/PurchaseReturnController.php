@@ -2,16 +2,19 @@
 
 namespace App\Http\Controllers;
 
+use App\Services\PurchaseReturnsService;
 use Illuminate\Http\Request;
 
-class ReturnController extends Controller
+class PurchaseReturnController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
+    public function __construct(protected PurchaseReturnsService $returnService){}
     public function index()
     {
-        
+        $filters=request()->only(['search','sortBy','sortDirection','perPage','page']);
+        $this->returnService->getAllReturns($filters);
     }
 
     /**

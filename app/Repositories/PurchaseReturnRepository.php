@@ -2,13 +2,23 @@
 
 namespace App\Repositories;
 
+use App\Models\PurchaseItems;
 use App\Models\PurchaseReturn;
 
 class PurchaseReturnRepository
 {
-    public function all()
+    public function all($filters)
     {
-        return PurchaseReturn::with(['supplier', 'warehouse'])->get();
+        return PurchaseReturn::query()
+            ->with['supplier']
+            ->when($filters['search'] ?? null, function ($q, $search) {
+                return $q->where('id','like',"%{$search}%")
+                ->orWhereHas('supplier', function ($query) use ($search) {
+                    $query->where('name', 'like', "%{$search}%");
+                });
+            })
+            ->orderBy($filters['sortBy'] ?? 'id', $filters['sortDir'] ?? 'desc')
+            ->paginate($filters['perPage'] ?? 10);
     }
 
     public function find($id)
