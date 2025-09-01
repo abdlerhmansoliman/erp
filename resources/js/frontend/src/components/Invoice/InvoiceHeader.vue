@@ -6,7 +6,9 @@ const props = defineProps({
   warehouseList: { type: Array, default: () => [] },
   selectedWarehouse: { type: Object, default: null },
   date: { type: String, default: new Date().toISOString().slice(0,10) },
-  status: { type: String, default: 'draft' }
+  status: { type: String, default: 'draft' },
+  partyLabel: { type: String, default: 'المورد / العميل' } 
+
 });
 
 const emit = defineEmits([
@@ -39,7 +41,7 @@ function onStatusChange(e) {
   <div class="grid grid-cols-4 gap-4 mb-4">
     <!-- Party Select -->
     <div>
-      <label>المورد / العميل</label>
+      <label>{{ props.partyLabel }}</label>
       <select :value="selectedParty?.id" @change="onPartyChange" class="border rounded p-2 w-full">
         <option value="">اختر</option>
         <option v-for="party in partyList" :key="party.id" :value="party.id">
@@ -66,6 +68,7 @@ function onStatusChange(e) {
         <option value="draft">مسودة</option>
         <option value="ordered">تم الطلب</option>
         <option value="received">تم الاستلام</option>
+        <option value="cancelled">ملغية</option>
       </select>
     </div>
 
