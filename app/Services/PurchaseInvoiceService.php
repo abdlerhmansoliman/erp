@@ -89,6 +89,7 @@ class PurchaseInvoiceService
                 'total_price'         => (float) $item['total_price'],
                 'net_price'           => (float) $item['net_price'],
                 'created_at'          => now(),
+                'updated_at'          => now(),
             ];
             });
 
