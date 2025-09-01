@@ -54,7 +54,6 @@ onMounted(() => {
 const submitForm = async () => {
   try {
     const response = await api.post('/products', product.value);
-    console.log('Product created:', response.data);
     router.push('/products');
   } catch (error) {
     useToast('Failed to create product:', error.response?.data || error);

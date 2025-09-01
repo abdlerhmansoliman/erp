@@ -85,7 +85,7 @@ const calculatedSummary = computed(() => {
     
     subtotal += itemSubtotal
     totalTax += parseFloat(item.tax_amount || 0)
-    totalDiscount += parseFloat(item.discount_amount || 0)
+    totalDiscount += parseFloat(item.discount_amount||item.discount || 0)
   })
   
   const grandTotal = subtotal + totalTax - totalDiscount
@@ -242,7 +242,7 @@ function formatCurrency(value) {
               </div>
             </td>
             <td v-if="showDiscount" class="px-6 py-4 whitespace-nowrap text-sm text-right">
-              <span class="text-red-600">{{ formatCurrency(item.discount_amount || 0) }}</span>
+            <span class="text-red-600">{{ formatCurrency(item.discount_amount || item.discount || 0) }}</span>
               <div class="text-xs text-gray-500" v-if="item.discount_rate">
                 ({{ item.discount_rate }}%)
               </div>

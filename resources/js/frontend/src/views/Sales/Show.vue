@@ -11,14 +11,14 @@ const {
   goBack,
   editInvoice,
   downloadPdf,
-} = useInvoice('purchases')
+} = useInvoice('sales')
 </script>
 
 <template>
   <GenericInvoice
-    type="supplier"
-    title="Purchase Invoice"
-    party-label="SUPPLIER"
+    type="customer"
+    title="Sales Invoice"
+    party-label="CUSTOMER"
     :invoice="invoice"
     :loading="loading"
     :invoice-summary="invoiceSummary"

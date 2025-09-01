@@ -102,12 +102,9 @@ export function useInvoice(invoiceType = 'purchase') {
   // Methods
   const initializeData = async () => {
     try {
-      console.log('Initializing data for:', invoiceType);
-      console.log('Using endpoint:', config.value.createEndpoint);
       
       const { data } = await api.get(config.value.createEndpoint);
       
-      console.log('Received data:', data);
       
       // Handle different response structures
       if (data.data) {
@@ -118,8 +115,6 @@ export function useInvoice(invoiceType = 'purchase') {
         warehouses.value = data.warehouses || [];
       }
 
-      console.log('Parsed suppliers/customers:', suppliers.value);
-      console.log('Parsed warehouses:', warehouses.value);
 
       if (warehouses.value.length > 0) {
         selectedWarehouse.value = warehouses.value[0];
@@ -239,12 +234,9 @@ export function useInvoice(invoiceType = 'purchase') {
         }))
       };
 
-      console.log(`Saving ${invoiceType} invoice to:`, config.value.saveEndpoint);
-      console.log('Data being sent:', invoiceData);
 
       const { data } = await api.post(config.value.saveEndpoint, invoiceData);
       
-      console.log('Response received:', data);
       
       // Check if the response has data (indicating success) or explicit status
       if (data.status === 'success' || (data.data && data.data.id)) {

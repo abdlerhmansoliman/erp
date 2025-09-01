@@ -10,15 +10,9 @@ const supplierHeaders = [
 ]
 
 // Handle custom events if needed
-const handleItemSelected = (event) => {
-  console.log('Item selected:', event)
-  // Handle create/edit events if not using routes
-}
+const handleItemSelected = (event) => {}
 
-const handleCustomAction = (event) => {
-  console.log('Custom action:', event)
-  // Handle any custom actions
-}
+const handleCustomAction = (event) => {}
 </script>
 
 <template>

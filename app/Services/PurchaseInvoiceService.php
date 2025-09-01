@@ -41,6 +41,7 @@ class PurchaseInvoiceService
             ['key' => 'draft', 'label' => 'Draft'],
             ['key' => 'ordered', 'label' => 'Ordered'],
             ['key' => 'received', 'label' => 'Received'],
+            ['key' => 'cancelled', 'label' => 'Cancelled'],
         ];
 
         return [

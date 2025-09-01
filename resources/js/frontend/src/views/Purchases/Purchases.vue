@@ -8,14 +8,7 @@ const purchaseHeaders = [
   { text: 'Status', value: 'status', sortable: true },
 ];
 
-const handleItemSelected = (event) => {
-    console.log('Item selected:', event);
-    // Handle create/edit events if not using routes
-};
-const handleCustomAction = (event) => {
-    console.log('Custom action:', event);
-    // Handle any custom actions
-};
+
 
 </script>
 <template>

@@ -6,14 +6,7 @@ const salesHeaders = [
     { text: 'Date', value: 'created_at', sortable: true },
     { text: 'Total Amount', value: 'grand_total', sortable: true },
 ]
-const handleItemSelected = (event) => {
-    console.log('Item selected:', event);
-    // Handle create/edit events if not using routes
-};
-const handleCustomAction = (event) => {
-    console.log('Custom action:', event);
-    // Handle any custom actions
-};
+
 </script>
 <template>
 <div>
@@ -24,7 +17,7 @@ const handleCustomAction = (event) => {
     :show-view="true"
     :show-edit="false"
     :show-delete="false"
-    edit-route-name="SaleEdit"
+    show-route-name="SalesShow"
     create-route="/sales/Create"
     search-placeholder="البحث..."
     empty-message="لا توجد بيانات متاحة"
