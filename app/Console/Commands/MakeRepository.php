@@ -3,84 +3,97 @@
 namespace App\Console\Commands;
 
 use Illuminate\Console\Command;
-use Illuminate\Filesystem\Filesystem;
+use Illuminate\Support\Str;
+use File;
 
 class MakeRepository extends Command
 {
-
     protected $signature = 'make:repository {name}';
-
-
-    protected $description = 'Create a new Repository class';
-
-    protected $files;
-
-    public function __construct(Filesystem $files)
-    {
-        parent::__construct();
-        $this->files = $files;
-    }
+    protected $description = 'Create a new interface and repository class';
 
     public function handle()
     {
-        $name = $this->argument('name');
+        $name = $this->argument('name'); // e.g., User
 
-        $path = app_path("Repositories/{$name}.php");
+        // Paths
+        $interfaceDir = app_path('Repositories/Interfaces');
+        $repoDir = app_path('Repositories');
 
-        if ($this->files->exists($path)) {
-            $this->error("Repository already exists!");
-            return;
+        // Ensure directories exist
+        if (!File::exists($interfaceDir)) {
+            File::makeDirectory($interfaceDir, 0755, true);
+        }
+        if (!File::exists($repoDir)) {
+            File::makeDirectory($repoDir, 0755, true);
         }
 
-        $this->makeDirectory($path);
+        $interfaceName = $name . 'RepositoryInterface';
+        $repoName = $name . 'Repository';
 
-        $stub = $this->getStub($name);
-        $this->files->put($path, $stub);
+        $interfacePath = $interfaceDir . '/' . $interfaceName . '.php';
+        $repoPath = $repoDir . '/' . $repoName . '.php';
 
-        $this->info("Repository created: {$path}");
-    }
+        // Create interface
+        if (!File::exists($interfacePath)) {
+            $interfaceTemplate = "<?php
 
-    protected function getStub($name)
-    {
-        return <<<PHP
-<?php
+namespace App\Repositories\Interfaces;
+
+interface {$interfaceName}
+{
+    public function all();
+    public function find(\$id);
+    public function create(array \$data);
+    public function update(\$id, array \$data);
+    public function delete(\$id);
+}
+";
+            File::put($interfacePath, $interfaceTemplate);
+            $this->info("Interface {$interfaceName} created successfully.");
+        } else {
+            $this->warn("Interface {$interfaceName} already exists.");
+        }
+
+        // Create repository class
+        if (!File::exists($repoPath)) {
+            $repoTemplate = "<?php
 
 namespace App\Repositories;
 
-class {$name}
+use App\Repositories\Interfaces\\{$interfaceName};
+
+class {$repoName} implements {$interfaceName}
 {
     public function all()
     {
-        // TODO: implement all()
+        // TODO: implement
     }
 
     public function find(\$id)
     {
-        // TODO: implement find()
+        // TODO: implement
     }
 
     public function create(array \$data)
     {
-        // TODO: implement create()
+        // TODO: implement
     }
 
     public function update(\$id, array \$data)
     {
-        // TODO: implement update()
+        // TODO: implement
     }
 
     public function delete(\$id)
     {
-        // TODO: implement delete()
+        // TODO: implement
     }
 }
-PHP;
-    }
-
-    protected function makeDirectory($path)
-    {
-        if (! $this->files->isDirectory(dirname($path))) {
-            $this->files->makeDirectory(dirname($path), 0755, true, true);
+";
+            File::put($repoPath, $repoTemplate);
+            $this->info("Repository {$repoName} created successfully.");
+        } else {
+            $this->warn("Repository {$repoName} already exists.");
         }
     }
 }
