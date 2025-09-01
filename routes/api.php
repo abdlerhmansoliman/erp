@@ -32,8 +32,8 @@ Route::get('/purchases/{id}/pdf', [PurchaseInvoiceController::class, 'downloadPd
 
 
 Route::get('sales/create', [SalesInvoiceController::class, 'create']);
-
 Route::apiResource('sales', SalesInvoiceController::class);
+Route::get('/sales/{id}/pdf', [SalesInvoiceController::class, 'downloadPdf']);
 
 Route::apiResource('products', ProductController::class);
 

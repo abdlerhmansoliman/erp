@@ -111,5 +111,8 @@ class SalesInvoiceService
     });
     }
     
-   
+   public function getInvoiceByIdWithItems($id)
+    {
+        return $this->salesInvoiceRepository->findByIdWithItems($id);
+    }
 }

@@ -10,7 +10,7 @@
 </head>
 <body>
 <h1>Invoice #{{ $invoice->invoice_number }}</h1>
-<p>Supplier: {{ $invoice->supplier->name }}</p>
+<p>{{ $invoice->customer?->name ?? $invoice->supplier?->name ?? 'N/A' }}</p>
 <p>Warehouse: {{ $invoice->warehouse->name }}</p>
 
 <table>

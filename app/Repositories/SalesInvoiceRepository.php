@@ -39,5 +39,8 @@ class SalesInvoiceRepository implements SalesInvoiceRepositoryInterface
     {
         return SalesInvoice::where('id', $id)->delete();
     }
-
+    public function findByIdWithItems($id)
+    {
+        return SalesInvoice::with('items')->find($id);
+    }
 }
