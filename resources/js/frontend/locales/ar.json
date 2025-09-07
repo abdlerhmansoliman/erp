@@ -34,7 +34,14 @@
     "purchases":"المشتريات",
     "products":"المنتجات",
     "Categories":"التصنيفات",
-    "Sales":"المبيعات"
-
+    "Sales":"المبيعات",
+    "category": "الفئة",
+    "description": "الوصف",
+    "product_code": "كود المنتج",
+    "price": "السعر",
+    "unit": "الوحدة",
+    "empty": "لا توجد بيانات متاحة",
+    "delete_selected": "حذف المحدد",
+    "select_all": "اختيار الكل"
 
 }

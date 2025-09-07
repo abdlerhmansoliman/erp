@@ -1,6 +1,11 @@
 <script setup>
-
+import CategoryForm from '@/components/Forms/CategoryFrom.vue'
 </script>
-<template>
 
+<template>
+  <CategoryForm 
+    endpoint="/categories" 
+    method="POST" 
+    redirectRoute="categories" 
+  />
 </template>

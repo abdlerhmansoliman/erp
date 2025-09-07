@@ -17,13 +17,12 @@ const salesHeaders = [
     :show-view="true"
     :show-edit="false"
     :show-delete="false"
+    :show-select="false"
     show-route-name="SalesShow"
     create-route="/sales/Create"
     search-placeholder="البحث..."
     empty-message="لا توجد بيانات متاحة"
     delete-confirmation-key="sale_id"
-    @item-selected="handleItemSelected"
-    @custom-action="handleCustomAction"
 >
     <!-- Custom create button text if needed -->
     <template #create-button-text>

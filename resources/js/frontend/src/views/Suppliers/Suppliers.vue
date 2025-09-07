@@ -10,9 +10,7 @@ const supplierHeaders = [
 ]
 
 // Handle custom events if needed
-const handleItemSelected = (event) => {}
 
-const handleCustomAction = (event) => {}
 </script>
 
 <template>
@@ -26,8 +24,7 @@ const handleCustomAction = (event) => {}
       search-placeholder="البحث..."
       empty-message="لا توجد بيانات متاحة"
       delete-confirmation-key="name"
-      @item-selected="handleItemSelected"
-      @custom-action="handleCustomAction"
+
     >
       <!-- Custom create button text if needed -->
       <template #create-button-text>

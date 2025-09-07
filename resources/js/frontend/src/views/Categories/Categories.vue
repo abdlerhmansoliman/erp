@@ -5,7 +5,8 @@ import { onMounted } from 'vue'
 import api from '@/plugins/axios'
 
 const categoriesHeader=[
-    { text: 'Name', value: 'name', sortable: true },
+    { text: 'Arabic Name', value: 'name_ar', sortable: true },
+    { text: 'English Name', value: 'name_en', sortable: true },
 ]
 
 const categories = ref([])
@@ -29,7 +30,7 @@ onMounted(async () => {
     >
         <!-- Custom create button text if needed -->
         <template #create-button-text>
-            Add Product
+            Add Category
         </template>
     </BaseCrudTable>
 </template>

@@ -3,7 +3,8 @@ import { ref, onMounted } from 'vue';
 import api from '@/plugins/axios';
 import { useRouter } from 'vue-router';
 import { useToast } from 'vue-toastification';
-
+import { useI18n } from 'vue-i18n';
+const { locale } = useI18n();
 const router = useRouter();
 const toast = useToast();
 const product = ref({
@@ -113,14 +114,22 @@ const submitForm = async () => {
 
       <!-- Category -->
       <div class="flex flex-col">
-        <label class="mb-1 font-medium text-gray-700">Category</label>
+        <label class="mb-1 font-medium text-gray-700">
+          {{ locale === 'ar' ? 'الفئة' : 'Category' }}
+        </label>
         <select 
           v-model="product.category_id" 
           class="border border-gray-300 rounded-md p-3 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent transition"
         >
-          <option value="">Select Category</option>
-          <option v-for="category in categories" :key="category.id" :value="category.id">
-            {{ category.name }}
+          <option value="">
+            {{ locale === 'ar' ? 'اختر الفئة' : 'Select Category' }}
+          </option>
+          <option 
+            v-for="category in categories" 
+            :key="category.id" 
+            :value="category.id"
+          >
+            {{ locale === 'ar' ? category.name_ar : category.name_en }}
           </option>
         </select>
       </div>

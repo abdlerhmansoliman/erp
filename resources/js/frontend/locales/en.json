@@ -34,5 +34,14 @@
     "purchases": "Purchases",
     "products": "Products",
     "Categories":"Categories",
-    "Sales":"Sales"
+    "Sales":"Sales",
+    "category": "Category",
+    "description": "Description",
+    "product_code": "Product Code",
+    "price": "Price",
+    "unit": "Unit",
+    "empty": "No data available",
+    "delete selected": "Delete selected",
+    "select_all": "Select All"
+
 }

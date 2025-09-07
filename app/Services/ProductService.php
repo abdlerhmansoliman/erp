@@ -5,6 +5,7 @@ namespace App\Services;
 use App\Models\Unit;
 use App\Repositories\Interfaces\AuthRepositoryInterface;
 use App\Repositories\Interfaces\ProductRepositoryInterface;
+use App\Repositories\ProducetRepository;
 use Illuminate\Container\Attributes\Auth;
 use Illuminate\Support\Facades\Hash;
 
@@ -14,14 +15,13 @@ class ProductService
      * Create a new class instance.
      */
     protected $ProductRepository;
-    public function __construct(ProductRepositoryInterface $productRepository)
+    public function __construct(ProducetRepository $productRepository)
     {
         $this->ProductRepository = $productRepository;
     }
 
    public function getAllProducts(array $filters){
     $products = $this->ProductRepository->getAllProducts($filters);
-    // Eager load tax relationships
     if ($products->getCollection()) {
         $products->load('tax');
     }

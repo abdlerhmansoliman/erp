@@ -3,12 +3,14 @@ import { ref, watch, onMounted, computed } from 'vue';
 import api from '@/plugins/axios';
 import EasyDataTable from 'vue3-easy-data-table';
 import { useRouter } from 'vue-router';
-import { useConfirmDialog } from '@/composables/useConfirmDialog';
 import { useToast } from 'vue-toastification';
+import { useConfirmDialog } from '@/composables/useConfirmDialog';
+import { useI18n } from 'vue-i18n';
 
-const { confirmDelete } = useConfirmDialog();
+const { t, locale } = useI18n();
 const toast = useToast();
 const router = useRouter();
+const { confirmDelete } = useConfirmDialog();
 
 // Props
 const props = defineProps({
@@ -25,6 +27,7 @@ const props = defineProps({
   showDelete: { type: Boolean, default: true },
   showCreate: { type: Boolean, default: true },
   showView: { type: Boolean, default: false },
+  showSelect: { type: Boolean, default: true },
   emptyMessage: { type: String, default: 'لا توجد بيانات متاحة' },
   deleteConfirmationKey: { type: String, default: 'name' }
 });
@@ -45,16 +48,13 @@ const selectedIds = ref([]);
 const computedHeaders = computed(() => {
   const baseHeaders = [...props.headers];
 
-  // Add selection column
-  baseHeaders.unshift({ text: '', value: 'select', sortable: false, width: '50px' });
+  if (props.showSelect) {
+    baseHeaders.unshift({ text: '', value: 'select', sortable: false, width: '50px' });
+  }
 
-  // Add actions column if needed
   const hasActions = props.showEdit || props.showDelete || props.showView || props.customActions.length > 0;
-  if (hasActions) {
-    const actionsHeader = baseHeaders.find(h => h.value === 'controller');
-    if (!actionsHeader) {
-      baseHeaders.push({ text: 'Actions', value: 'controller', sortable: false });
-    }
+  if (hasActions && !baseHeaders.find(h => h.value === 'controller')) {
+    baseHeaders.push({ text: 'Actions', value: 'controller', sortable: false });
   }
 
   return baseHeaders;
@@ -70,7 +70,14 @@ async function fetchData() {
 
     const data = response.data;
     if (data.data && Array.isArray(data.data)) {
-      items.value = data.data;
+      // إضافة category_name حسب اللغة
+      items.value = data.data.map(product => ({
+        ...product,
+        category_name: locale.value === 'ar'
+                       ? product.category?.name_ar
+                       : product.category?.name_en
+      }));
+
       total.value = data.total;
       selectedIds.value = selectedIds.value.filter(id => items.value.some(i => i.id === id));
       emit('selection-changed', selectedIds.value);
@@ -91,6 +98,16 @@ async function fetchData() {
     loading.value = false;
   }
 }
+
+// Watch language change
+watch(locale, () => {
+  items.value = items.value.map(product => ({
+    ...product,
+    category_name: locale.value === 'ar'
+                   ? product.category?.name_ar
+                   : product.category?.name_en
+  }));
+});
 
 // Search
 function onSearch() {
@@ -130,49 +147,21 @@ const deleteSelected = async () => {
   }
 };
 
-// Edit
-function goToEdit(item) {
-  if (props.editRouteName) {
-    router.push({ name: props.editRouteName, params: { id: item.id } });
-  } else {
-    emit('item-selected', { action: 'edit', item });
-  }
-}
-
-// Create
-function goToCreate() {
-  if (props.createRoute) {
-    router.push(props.createRoute);
-  } else {
-    emit('item-selected', { action: 'create' });
-  }
-}
-
-// View
-function goToView(item) {
-  if (props.showRouteName) {
-    router.push({ name: props.showRouteName, params: { id: item.id } });
-  } else {
-    emit('item-selected', { action: 'view', item });
-  }
-}
+// Edit, Create, View
+function goToEdit(item) { if (props.editRouteName) router.push({ name: props.editRouteName, params: { id: item.id } }); else emit('item-selected', { action: 'edit', item }); }
+function goToCreate() { if (props.createRoute) router.push(props.createRoute); else emit('item-selected', { action: 'create' }); }
+function goToView(item) { if (props.showRouteName) router.push({ name: props.showRouteName, params: { id: item.id } }); else emit('item-selected', { action: 'view', item }); }
 
 // Custom action
-function handleCustomAction(action, item) {
-  emit('custom-action', { action, item });
-}
+function handleCustomAction(action, item) { emit('custom-action', { action, item }); }
 
-// Select all toggle
+// Select all
 function toggleSelectAll(event) {
-  if (event.target.checked) {
-    selectedIds.value = items.value.map(item => item.id);
-  } else {
-    selectedIds.value = [];
-  }
+  selectedIds.value = event.target.checked ? items.value.map(i => i.id) : [];
   emit('selection-changed', selectedIds.value);
 }
 
-// Watchers
+// Watch pagination
 watch([currentPage, rowsPerPage], fetchData);
 
 // Lifecycle
@@ -180,6 +169,7 @@ onMounted(fetchData);
 
 // Expose
 defineExpose({ fetchData, refresh: fetchData, selectedIds });
+
 </script>
 
 <template>
@@ -208,7 +198,7 @@ defineExpose({ fetchData, refresh: fetchData, selectedIds });
           :disabled="selectedIds.length === 0"
           @click="deleteSelected"
         >
-          Delete Selected ({{ selectedIds.length }})
+          {{ t('delete_selected') }}  ({{ selectedIds.length }})
         </button>
       </div>
     </div>
@@ -221,7 +211,7 @@ defineExpose({ fetchData, refresh: fetchData, selectedIds });
         @change="toggleSelectAll"
         class="mr-2"
       />
-      Select All
+      {{ t('select_all') }}
     </div>
 
     <!-- EasyDataTable -->
@@ -238,7 +228,7 @@ defineExpose({ fetchData, refresh: fetchData, selectedIds });
         @update:rows-per-page="rowsPerPage = $event"
       >
         <!-- Selection Column -->
-        <template #item-select="row">
+        <template v-if="showSelect" #item-select="row">
           <input type="checkbox" v-model="selectedIds" :value="row.id" class="w-4 h-4" />
         </template>
 
@@ -261,11 +251,7 @@ defineExpose({ fetchData, refresh: fetchData, selectedIds });
           </slot>
         </template>
 
-        <!-- Custom column templates -->
-        <template v-for="(_, slot) of $slots" v-slot:[slot]="slotProps">
-          <slot :name="slot" v-bind="slotProps" />
-        </template>
-
+        <!-- Empty Message -->
         <template #empty-message>
           <div class="text-center p-4">{{ emptyMessage }}</div>
         </template>
