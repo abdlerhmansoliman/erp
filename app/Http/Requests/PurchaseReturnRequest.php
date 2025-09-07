@@ -16,6 +16,7 @@ class PurchaseReturnRequest extends FormRequest
     {
         return [
             'purchase_invoice_id' => 'required|exists:purchase_invoices,id',
+            "note" => "nullable|string",
             'items' => 'required|array|min:1',
             'items.*.product_id' => 'required|exists:products,id',
             'items.*.quantity' => 'required|integer|min:1',

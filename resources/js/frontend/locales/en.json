@@ -42,6 +42,7 @@
     "unit": "Unit",
     "empty": "No data available",
     "delete selected": "Delete selected",
-    "select_all": "Select All"
+    "select_all": "Select All",
+    "returns":"Returns"
 
 }

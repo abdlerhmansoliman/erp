@@ -7,19 +7,19 @@ use App\Models\PurchaseReturnItem;
 
 class PurchaseReturnRepository
 {
-    public function all(array $filters)
-    {
-        return PurchaseReturn::query()
-            ->with(['items', 'invoice', 'invoice.supplier'])
-            ->when($filters['search'] ?? null, function ($q, $search) {
-                $q->where('id', 'like', "%{$search}%")
-                  ->orWhereHas('supplier', function ($q2) use ($search) {
-                      $q2->where('name', 'like', "%{$search}%");
-                  });
-            })
-            ->orderBy($filters['sortBy'] ?? 'id', $filters['sortDir'] ?? 'desc')
-            ->paginate($filters['perPage'] ?? 10);
-    }
+public function all(array $filters)
+{
+    return PurchaseReturn::query()
+        ->with(['items', 'invoice', 'invoice.supplier'])
+        ->when($filters['search'] ?? null, function ($q, $search) {
+            $q->where('invoice_number', 'like', "%{$search}%") 
+              ->orWhereHas('invoice', function ($q2) use ($search) {
+                  $q2->where('invoice_number', 'like', "%{$search}%"); 
+              });
+        })
+        ->orderBy($filters['sortBy'] ?? 'id', $filters['sortDir'] ?? 'desc')
+        ->paginate($filters['perPage'] ?? 10);
+}
 
     public function create(array $data)
     {

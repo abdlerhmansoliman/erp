@@ -2,6 +2,7 @@
 import BaseCrudTable from '@/components/BaseCrudTable.vue';
 const purchaseHeaders = [
   { text: 'Purchase ID', value: 'id', sortable: true },
+  { text: 'Invoice Number', value: 'invoice_number', sortable: true },
   { text: 'Supplier', value: 'supplier_name', sortable: true },
   { text: 'Date', value: 'created_at', sortable: true },
   { text: 'Total Amount', value: 'grand_total', sortable: true },
@@ -25,7 +26,6 @@ const purchaseHeaders = [
         create-route="/Purchases/Create"
         search-placeholder="البحث..."
         empty-message="لا توجد بيانات متاحة"
-        delete-confirmation-key="purchase_id"
     >
         <!-- Custom create button text if needed -->
         <template #create-button-text>

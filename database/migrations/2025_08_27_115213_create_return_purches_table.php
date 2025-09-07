@@ -22,6 +22,8 @@ return new class extends Migration
             $table->decimal('tax_amount', 10, 2)->default(0);
             $table->decimal('discount_amount', 10, 2)->default(0);
             $table->decimal('grand_total', 10, 2)->default(0);
+            $table->string('invoice_number')->unique();
+            $table->string('note')->nullable();
             $table->timestamps();
         });
     }
