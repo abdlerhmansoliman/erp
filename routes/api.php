@@ -30,6 +30,9 @@ Route::get('purchases/create', [PurchaseInvoiceController::class, 'create']);
 Route::apiResource('purchases', PurchaseInvoiceController::class);
 Route::post('purchases/delete-multiple', [PurchaseInvoiceController::class, 'deleteMultiple']);
 Route::get('/purchases/{id}/pdf', [PurchaseInvoiceController::class, 'downloadPdf']);
+
+Route::get('/returns/purchase/create/{id}', [PurchaseReturnController::class, 'createPurchaseReturn']);
+
 Route::apiResource('returns', PurchaseReturnController::class);
 
 Route::get('sales/create', [SalesInvoiceController::class, 'create']);

@@ -101,7 +101,12 @@ const routes = [
       path:'returns',
       name:'returns',
       component: () => import('@/views/Returns/Returns.vue')
-    }
+    },
+{
+  path: '/returns/:type/create/:id',
+  name: 'ReturnsCreate',
+  component: () => import('@/views/Returns/Create.vue')
+}
   ]
 }
 

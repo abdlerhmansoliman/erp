@@ -1,5 +1,8 @@
 <script setup>
 import ShowInvoiceTable from '@/components/ShowInvoiceTable.vue'
+import { useRouter } from 'vue-router';
+
+const router = useRouter();
 
 // Props
 const props = defineProps({
@@ -15,6 +18,11 @@ const props = defineProps({
   editInvoice: { type: Function, required: true },
   downloadPdf: { type: Function, required: true },
 })
+
+const goToCreateReturn = (invoiceId) => {
+  router.push(`/returns/purchase/create/${invoiceId}`);
+};
+
 </script>
 
 <template>
@@ -116,11 +124,11 @@ const props = defineProps({
           class="px-6 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2">
           Download PDF
         </button>
-        <button 
-          @click="editInvoice"
-          class="px-6 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 focus:ring-2 focus:ring-green-500 focus:ring-offset-2">
-          Make Returns
-        </button>
+      <button 
+        @click="goToCreateReturn(invoice.id)"
+        class="px-6 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 focus:ring-2 focus:ring-green-500 focus:ring-offset-2">
+        Make Returns
+      </button>
       </div>
     </div>
 

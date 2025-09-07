@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\PurchaseReturnRequest;
 use App\Http\Resources\PurchaseReturnResource;
+use App\Models\PurchaseInvoice;
 use App\Models\PurchaseReturn;
 use App\Services\PurchaseReturnsService;
 use Illuminate\Http\Request;
@@ -95,4 +96,20 @@ public function store(PurchaseReturnRequest $request)
     {
         //
     }
+    public function createPurchaseReturn($id)
+{
+    $invoice = PurchaseInvoice::with('items.product', 'supplier', 'warehouse')->find($id);
+    if (!$invoice) {
+        return response()->json([
+            'success' => false,
+            'message' => 'Invoice not found'
+        ], 404);
+    }
+
+    return response()->json([
+        'success' => true,
+        'data' => $invoice
+    ]);
+}
+
 }
