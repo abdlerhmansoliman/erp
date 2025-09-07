@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\PurchaseReturnRequest;
+use App\Models\PurchaseReturn;
 use App\Services\PurchaseReturnsService;
 use Illuminate\Http\Request;
 
@@ -13,8 +15,9 @@ class PurchaseReturnController extends Controller
     public function __construct(protected PurchaseReturnsService $returnService){}
     public function index()
     {
-        $filters=request()->only(['search','sortBy','sortDirection','perPage','page']);
-        $this->returnService->getAllReturns($filters);
+        $filters = request()->only(['search', 'sortBy', 'sortDir', 'perPage', 'page']);
+        $returns = $this->returnService->getAllReturns($filters);
+        return response()->json($returns);
     }
 
     /**
@@ -22,16 +25,32 @@ class PurchaseReturnController extends Controller
      */
     public function create()
     {
-        //
     }
 
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
-    {
-        //
+
+public function store(PurchaseReturnRequest $request)
+{
+    $data = $request->validated();
+
+    try {
+        $purchaseReturn = $this->returnService->createReturn($data);
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Purchase return created successfully',
+            'data' => $purchaseReturn
+        ], 201);
+
+    } catch (\Exception $e) {
+        return response()->json([
+            'success' => false,
+            'message' => $e->getMessage()
+        ], 400);
     }
+}
 
     /**
      * Display the specified resource.

@@ -2,28 +2,23 @@
 
 namespace App\Repositories;
 
-use App\Models\PurchaseItems;
 use App\Models\PurchaseReturn;
+use App\Models\PurchaseReturnItem;
 
 class PurchaseReturnRepository
 {
-    public function all($filters)
+    public function all(array $filters)
     {
         return PurchaseReturn::query()
-            ->with['supplier']
+            ->with(['items', 'invoice', 'invoice.supplier'])
             ->when($filters['search'] ?? null, function ($q, $search) {
-                return $q->where('id','like',"%{$search}%")
-                ->orWhereHas('supplier', function ($query) use ($search) {
-                    $query->where('name', 'like', "%{$search}%");
-                });
+                $q->where('id', 'like', "%{$search}%")
+                  ->orWhereHas('supplier', function ($q2) use ($search) {
+                      $q2->where('name', 'like', "%{$search}%");
+                  });
             })
             ->orderBy($filters['sortBy'] ?? 'id', $filters['sortDir'] ?? 'desc')
             ->paginate($filters['perPage'] ?? 10);
-    }
-
-    public function find($id)
-    {
-        return PurchaseReturn::with(['supplier', 'warehouse','items'])->find($id);
     }
 
     public function create(array $data)
@@ -31,14 +26,29 @@ class PurchaseReturnRepository
         return PurchaseReturn::create($data);
     }
 
-    public function update(PurchaseReturn $purchaseReturn, array $data)
+    public function createItem(array $data)
     {
-        $purchaseReturn->update($data);
-        return $purchaseReturn;
+        return PurchaseReturnItem::create($data);
     }
 
-    public function delete(PurchaseReturn $purchaseReturn)
+    public function findByIdWithItems($id)
     {
-       return $purchaseReturn->delete();
+        return PurchaseReturn::with(['items', 'invoice', 'invoice.supplier'])
+            ->findOrFail($id);
+    }
+
+    public function deleteItems($returnId)
+    {
+        return PurchaseReturnItem::where('purchase_returns_id', $returnId)->delete();
+    }
+
+    public function delete($id)
+    {
+        return PurchaseReturn::where('id', $id)->delete();
+    }
+
+    public function bulkInsertItems(array $rows)
+    {
+        return PurchaseReturnItem::insert($rows);
     }
 }
