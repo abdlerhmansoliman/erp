@@ -12,12 +12,14 @@ class PurchaseReturnItem extends Model
         'quantity',
         'unit_price',
         'total_price',
+        'tax_amount',
+        'discount_amount',
     ];
 
     public function product(){
         return $this->belongsTo(Product::class);
     }
     public function return(){
-        return $this->belongsTo(PurchaseReturn::class);
+        return $this->belongsTo(PurchaseReturn::class,'purchase_returns_id');
     }
 }

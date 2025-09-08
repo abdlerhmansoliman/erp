@@ -21,9 +21,12 @@ class PurchaseReturnRequest extends FormRequest
             'items.*.product_id' => 'required|exists:products,id',
             'items.*.quantity' => 'required|integer|min:1',
             'items.*.total_price' => 'required|numeric|min:0',
+            'items.*.tax_amount' => 'nullable|numeric|min:0',
+            'items.*.discount_amount' => 'nullable|numeric|min:0',      
             'sub_total' => 'required|numeric|min:0',
             'tax_amount' => 'required|numeric|min:0',
             'grand_total' => 'required|numeric|min:0',
+            'discount_amount' => 'nullable|numeric|min:0',
         ];
     }
 
@@ -41,6 +44,8 @@ class PurchaseReturnRequest extends FormRequest
             'items.*.quantity.min' => 'Quantity must be at least 1.',
             'items.*.total_price.required' => 'Total price is required for each item.',
             'items.*.total_price.numeric' => 'Total price must be a number.',
+            'items.*.tax_amount' => 'nullable|numeric|min:0',
+            'items.*.discount_amount' => 'nullable|numeric|min:0',
             'sub_total.required' => 'Sub total is required.',
             'sub_total.numeric' => 'Sub total must be a number.',
             'tax_amount.required' => 'Tax amount is required.',

@@ -29,7 +29,6 @@ public function createReturn(array $data)
     return DB::transaction(function () use ($data) {
 
         $invoice = $this->invoiceRepo->findByIdWithItems($data['purchase_invoice_id']);
-
         $return = $this->returnRepo->create([
             'purchase_invoice_id' => $invoice->id,
             'supplier_id'         => $invoice->supplier_id,
@@ -51,16 +50,25 @@ public function createReturn(array $data)
                 throw new \Exception("Quantity exceeds original invoice for product ID {$item['product_id']}");
             }
 
+            $alreadyReturnedQty=$this->returnRepo->sumReturnedQuantity(
+                $invoice->id,
+                $item['product_id']);
+                $availableQty=$invoiceItem->quantity-$alreadyReturnedQty;
+                if ($item['quantity'] > $availableQty) {
+                    throw new \Exception("Return quantity exceeds available quantity for product ID {$item['product_id']}. Available: {$availableQty}");
+                }
             $unitPrice  = $invoiceItem->unit_price;
             $totalPrice = $unitPrice * $item['quantity'];
-            $taxAmount  = ($invoiceItem->tax_amount / $invoiceItem->quantity) * $item['quantity'];
-
+            $taxAmount = $invoiceItem->tax_amount ?? 0;
+            $discountAmount = $invoiceItem->discount_amount ?? 0;
             $this->returnRepo->createItem([
-                'purchase_returns_id' => $return->id,
-                'product_id'          => $item['product_id'],
-                'quantity'            => $item['quantity'],
-                'unit_price'          => $unitPrice,
-                'total_price'         => $totalPrice,
+    'purchase_returns_id' => $return->id,
+    'product_id'         => $item['product_id'],
+    'quantity'           => $item['quantity'],
+    'unit_price'         => $unitPrice,
+    'total_price'        => $totalPrice,
+    'tax_amount'         => $item['tax_amount'] ?? 0,
+    'discount_amount'    => $item['discount_amount'] ?? 0,
             ]);
 
             $this->stockService->create([
@@ -77,6 +85,17 @@ public function createReturn(array $data)
 
         return $this->returnRepo->findByIdWithItems($return->id);
     });
-}
-
+    }
+    public function prepareReturnData($id){
+        $invoice=$this->invoiceRepo->findByIdWithItems($id);
+        if(!$invoice){
+            return null;
+        }
+        foreach($invoice->items as $item){
+            $returnedQty = $this->returnRepo->sumReturnedQuantity($invoice->id, $item->product_id);
+            $item->returned_quantity=$returnedQty;
+            $item->available_quantity=$item->quantity-$returnedQty;
+        }
+        return $invoice;
+    }
 }

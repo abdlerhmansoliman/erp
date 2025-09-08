@@ -51,4 +51,12 @@ public function all(array $filters)
     {
         return PurchaseReturnItem::insert($rows);
     }
-}
+    public function sumReturnedQuantity($invoiceId , $productId){
+        return PurchaseReturnItem::whereHas('return',function($q) use ($invoiceId){
+            $q->where('purchase_invoice_id', $invoiceId);
+        })
+        ->where('product_id', $productId)
+        ->sum('quantity');
+    }
+    }
+    

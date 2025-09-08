@@ -66,7 +66,7 @@ class PurchaseInvoiceService
                 'grand_total'    => $data['grand_total'] ?? 0,
                 'total_amount'   => $data['total_amount'] ?? 0,
             ]);
-
+            
             $rows=collect($data['items'])->map(function ($item) use ($invoice) {
                 $this->stockService->create([
                 'product_id'      => (int) $item['product_id'],

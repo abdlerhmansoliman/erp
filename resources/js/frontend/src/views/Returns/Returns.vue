@@ -16,7 +16,7 @@ const returnHeaders = [
 <template>
 <div>
     <BaseCrudTable
-        endpoint="/returns"
+        endpoint="/returns/purchase"
         :headers="returnHeaders"
         resource-name="purchase-return"
         :show-view="true"
