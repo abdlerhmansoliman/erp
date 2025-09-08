@@ -1,4 +1,3 @@
-// src/composables/useInvoice.js
 import { ref, computed, onMounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useToast } from 'vue-toastification'
@@ -12,38 +11,37 @@ export function useInvoice(type = 'purchases') {
   const invoice = ref(null)
   const loading = ref(true)
 
-const invoiceSummary = computed(() => {
-  if (!invoice.value || !invoice.value.items) {
-    return {
-      subtotal: 0,
-      total_discount: 0,
-      total_tax: 0,
-      shipping_amount: 0,
-      additional_charges: 0,
-      grand_total: 0,
+  const invoiceSummary = computed(() => {
+    if (!invoice.value || !invoice.value.items) {
+      return {
+        subtotal: 0,
+        total_discount: 0,
+        total_tax: 0,
+        shipping_amount: 0,
+        additional_charges: 0,
+        grand_total: 0,
+      }
     }
-  }
 
-  let subtotal = 0
-  let totalDiscount = 0
-  let totalTax = 0
+    let subtotal = 0
+    let totalDiscount = 0
+    let totalTax = 0
 
-  invoice.value.items.forEach(item => {
-    subtotal += Number(item.total_price || 0)
-    totalDiscount += Number(item.discount || 0)
-    totalTax += Number(item.tax_amount || 0)
+    invoice.value.items.forEach(item => {
+      subtotal += Number(item.total_price || 0)
+      totalDiscount += Number(item.discount_amount || 0)
+      totalTax += Number(item.tax_amount || 0)
+    })
+
+    return {
+      subtotal,
+      total_discount: totalDiscount,
+      total_tax: totalTax,
+      shipping_amount: Number(invoice.value.shipping_amount || 0),
+      additional_charges: Number(invoice.value.additional_charges || 0),
+      grand_total: Number(invoice.value.grand_total || (subtotal - totalDiscount + totalTax)),
+    }
   })
-
-  return {
-    subtotal,
-    total_discount: totalDiscount,
-    total_tax: totalTax,
-    shipping_amount: Number(invoice.value.shipping_amount || 0),
-    additional_charges: Number(invoice.value.additional_charges || 0),
-    grand_total: Number(invoice.value.grand_total || (subtotal - totalDiscount + totalTax)),
-  }
-})
-
 
   function getStatusClass(status) {
     const classes = {
@@ -64,7 +62,7 @@ const invoiceSummary = computed(() => {
   }
 
   function goBack() {
-    router.push({ name: type }) // route name dynamic (purchases or sales)
+    router.push({ name: type }) // route name dynamic
   }
 
   function editInvoice() {
@@ -95,7 +93,25 @@ const invoiceSummary = computed(() => {
 
   onMounted(async () => {
     try {
-      const { data } = await api.get(`/${type}/${route.params.id}`)
+      let url = ''
+      switch (type) {
+        case 'purchases':
+          url = `/purchases/${route.params.id}`
+          break
+        case 'sales':
+          url = `/sales/${route.params.id}`
+          break
+        case 'purchase-returns':
+          url = `/returns/purchase/${route.params.id}`
+          break
+        case 'sales-returns':
+          url = `/returns/sales/${route.params.id}`
+          break
+        default:
+          url = `/purchases/${route.params.id}`
+      }
+
+      const { data } = await api.get(url)
       invoice.value = data.data
     } catch (error) {
       console.error(`Error fetching ${type} invoice:`, error)

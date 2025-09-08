@@ -104,7 +104,6 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::get('/purchases/{id}/pdf', [PurchaseInvoiceController::class, 'downloadPdf']);
 
     // Purchase Returns
-    Route::get('/returns/purchase/create/{id}', [PurchaseReturnController::class, 'createPurchaseReturn']);
     Route::apiResource('returns/purchase', PurchaseReturnController::class);
 
     // Sales
@@ -112,3 +111,4 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::apiResource('sales', SalesInvoiceController::class);
     Route::get('/sales/{id}/pdf', [SalesInvoiceController::class, 'downloadPdf']);
 });
+    Route::get('/returns/purchase/create/{id}', [PurchaseReturnController::class, 'createPurchaseReturn']);

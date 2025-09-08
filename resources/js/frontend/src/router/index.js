@@ -97,16 +97,23 @@ const routes = [
       name: 'SalesShow',
       component: () => import('@/views/Sales/Show.vue')
     },
-  {
-    path: 'returns',
-    name: 'PurchaseReturnList', // نفس الاسم اللي بتعمله push
-    component: () => import('@/views/Returns/Returns.vue')
-},
-{
-  path: '/returns/:type/create/:id',
-  name: 'ReturnsCreate',
-  component: () => import('@/views/Returns/Create.vue')
-}
+    {
+      path: 'returns',
+      name: 'PurchaseReturnList', // نفس الاسم اللي بتعمله push
+      component: () => import('@/views/Returns/Returns.vue')
+    },
+    {
+      path: '/returns/:type/create/:id',
+      name: 'ReturnsCreate',
+      component: () => import('@/views/Returns/Create.vue')
+    },
+    {
+      path: '/returns/:id',
+      name: 'returns-show',
+      component: () => import('@/views/Returns/Show.vue'),
+      props: true,
+    }
+
   ]
 }
 
