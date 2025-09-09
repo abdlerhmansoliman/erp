@@ -62,13 +62,13 @@ public function createReturn(array $data)
             $taxAmount = $invoiceItem->tax_amount ?? 0;
             $discountAmount = $invoiceItem->discount_amount ?? 0;
             $this->returnRepo->createItem([
-    'purchase_returns_id' => $return->id,
-    'product_id'         => $item['product_id'],
-    'quantity'           => $item['quantity'],
-    'unit_price'         => $unitPrice,
-    'total_price'        => $totalPrice,
-    'tax_amount'         => $item['tax_amount'] ?? 0,
-    'discount_amount'    => $item['discount_amount'] ?? 0,
+            'purchase_returns_id' => $return->id,
+            'product_id'         => $item['product_id'],
+            'quantity'           => $item['quantity'],
+            'unit_price'         => $unitPrice,
+            'total_price'        => $totalPrice,
+            'tax_amount'         => $item['tax_amount'] ?? 0,
+            'discount_amount'    => $item['discount_amount'] ?? 0,
             ]);
 
             $this->stockService->create([
@@ -87,7 +87,7 @@ public function createReturn(array $data)
     });
     }
     public function prepareReturnData($id){
-        $invoice=$this->invoiceRepo->findByIdWithItems($id);
+        $invoice=$this->returnRepo->findByIdWithItems($id);
         if(!$invoice){
             return null;
         }

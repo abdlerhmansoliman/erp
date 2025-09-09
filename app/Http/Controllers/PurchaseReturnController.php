@@ -33,12 +33,8 @@ public function index()
     }
 }
 
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-    }
+
+
 
     /**
      * Store a newly created resource in storage.
@@ -65,29 +61,39 @@ public function store(PurchaseReturnRequest $request)
     }
 }
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(string $id)
+    public function show($id)
     {
-        //
+        $invoice = $this->returnService->prepareReturnData($id);
+        if (!$invoice) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Invoice not found'
+            ], 404);
+        }
+
+        return response()->json([
+            'success' => true,
+            'data' => new PurchaseReturnResource($invoice)
+        ]);
     }
 
 
     public function createPurchaseReturn($id)
-{
-    $invoice = $this->returnService->prepareReturnData($id);
-    if (!$invoice) {
+    {
+        $invoice = $this->returnService->prepareReturnData($id);
+        if (!$invoice) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Invoice not found'
+            ], 404);
+        }
+
         return response()->json([
-            'success' => false,
-            'message' => 'Invoice not found'
-        ], 404);
+            'success' => true,
+            'data' => $invoice
+        ]);
     }
 
-    return response()->json([
-        'success' => true,
-        'data' => $invoice
-    ]);
-}
+
 
 }
