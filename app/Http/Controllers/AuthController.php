@@ -23,10 +23,21 @@ class AuthController extends Controller
         ]);
     }
     public function user(Request $request)
-{
-    return response()->json([
-        'success' => true,
-        'data' => $request->user(),
-    ]);
-}
+    {
+        return response()->json([
+            'success' => true,
+            'data' => $request->user(),
+        ]);
+    }
+    public function loginWithGoogle(Request $request){
+        $request->validate([
+            'id_token' => 'required'
+        ]);
+        $result=$this->authService->loginWithGoogle(($request->id_token));
+        if(! $result){
+        return response()->json(['message' => 'Invalid Google token'], 401);
+        }
+        return response()->json($result);
+
+    }
 }

@@ -50,6 +50,31 @@ export const useAuthStore=defineStore('auth',{
                 this.loading = false;
             }
         },
+
+         async loginWithGoogle(idToken) {
+        this.loading = true;
+        this.error = null;
+        try {
+            const response = await api.post('/auth/google', { id_token: idToken });
+            const data = response.data;
+
+            if (data.token && data.user) {
+                this.token = data.token;
+                this.user = data.user;
+                this.isAuthenticated = true;
+                localStorage.setItem('auth_token', this.token);
+                return { success: true, message: 'Google login successful', data: data.user };
+            }
+
+            this.error = 'Google login failed';
+            return { success: false, message: this.error };
+        } catch (error) {
+            this.error = error.response?.data?.message || 'Google login failed';
+            return { success: false, message: this.error };
+        } finally {
+            this.loading = false;
+        }
+    },
         async register(userData){
             this.loading=true;
             this.error=null;

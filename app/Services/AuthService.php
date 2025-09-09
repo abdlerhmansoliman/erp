@@ -2,9 +2,12 @@
 
 namespace App\Services;
 
+use App\Repositories\AuthRepository;
 use App\Repositories\Interfaces\AuthRepositoryInterface;
 use Illuminate\Container\Attributes\Auth;
 use Illuminate\Support\Facades\Hash;
+use Google_Client;
+use Illuminate\Support\Str;
 
 class AuthService
 {
@@ -12,7 +15,7 @@ class AuthService
      * Create a new class instance.
      */
     protected $authRepository;
-    public function __construct(AuthRepositoryInterface $authRepository)
+    public function __construct(AuthRepository $authRepository)
     {
         $this->authRepository=$authRepository;
     }
@@ -45,4 +48,27 @@ class AuthService
         $user->currentAccessToken()->delete();
         
     }
+    public function loginWithGoogle(string $idToken){
+        $client=new Google_Client(['client_id'=>env('GOOGLE_CLIENT_ID')]);
+
+        $payload=$client->verifyIdToken($idToken);
+
+        if(! $payload){
+            return null;
+        }
+        $user=$this->authRepository->firstOrCreateByEmail(
+            $payload['email'],
+            [
+                'name' => $payload['name'] ?? 'No Name',
+                'password'=>bcrypt(Str::random(16))
+            ]
+            );
+            $token=$user->createToken('auth_token')->plainTextToken;
+
+            return [
+                'user' => $user,
+                'token' => $token
+            ];
+    }
+
 }

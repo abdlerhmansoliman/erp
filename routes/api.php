@@ -7,6 +7,7 @@ use App\Http\Controllers\CustomerController;
 use App\Http\Controllers\TaxController;
 use App\Http\Controllers\DepartmentController;
 use App\Http\Controllers\EmployerController;
+use App\Http\Controllers\GoogleAuthController;
 use App\Http\Controllers\PositionController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\PurchaseInvoiceController;
@@ -41,6 +42,8 @@ Route::get('/sales/{id}/pdf', [SalesInvoiceController::class, 'downloadPdf']);
 
 Route::apiResource('products', ProductController::class);
 
+
+Route::post('auth/google',[AuthController::class,'loginWithGoogle']);
 Route::middleware('auth:sanctum')->get('/auth/user', function (Request $request) {
     return response()->json([
         'success' => true,

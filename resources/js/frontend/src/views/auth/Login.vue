@@ -3,6 +3,7 @@ import { ref, reactive } from 'vue'
 import { useRouter } from 'vue-router'
 import { useAuthStore } from '@/stores/authStore'
 import { useI18n } from 'vue-i18n'
+import GoogleLoginButtonVue from '@/components/Auth/GoogleLoginButton.vue.vue'
 
 const { t } = useI18n()
 const router = useRouter()
@@ -142,6 +143,7 @@ const handleLogin = async () => {
             </div>
             <p v-if="errors.password" class="mt-1 text-sm text-red-600">{{ errors.password[0] }}</p>
           </div>
+         <GoogleLoginButtonVue />
 
           <!-- Remember Me -->
           <div class="flex items-center justify-between">
