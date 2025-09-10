@@ -90,6 +90,7 @@ class SalesInvoiceService
                 'total_price'         => (float) $item['total_price'],
                 'net_price'           => (float) $item['net_price'],
                 'created_at'          => now(),
+            'tax_id'              => $item['tax_id']
               ];
           });
           $this->itemRepo->bulkInsert($rows->toArray());

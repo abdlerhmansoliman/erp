@@ -29,6 +29,7 @@ public function createReturn(array $data)
     return DB::transaction(function () use ($data) {
 
         $invoice = $this->invoiceRepo->findByIdWithItems($data['purchase_invoice_id']);
+        dd($invoice);
         $return = $this->returnRepo->create([
             'purchase_invoice_id' => $invoice->id,
             'supplier_id'         => $invoice->supplier_id,
@@ -45,6 +46,7 @@ public function createReturn(array $data)
         foreach ($data['items'] as $item) {
 
             $invoiceItem = $invoice->items->firstWhere('product_id', $item['product_id']);
+            
             if (!$invoiceItem || $item['quantity'] > $invoiceItem->quantity) {
                 throw new \Exception("Quantity exceeds original invoice for product ID {$item['product_id']}");
             }

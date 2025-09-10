@@ -41,6 +41,6 @@ class SalesInvoiceRepository implements SalesInvoiceRepositoryInterface
     }
     public function findByIdWithItems($id)
     {
-        return SalesInvoice::with('items')->find($id);
+        return SalesInvoice::with('items.product', 'customer','warehouse')->find($id);
     }
 }

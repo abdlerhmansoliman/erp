@@ -11,7 +11,7 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('sales_invoices', function (Blueprint $table) {
+        Schema::table('sales_items', function (Blueprint $table) {
             $table->foreignId('tax_id')->nullable()->constrained('taxes')->onDelete('cascade')->after('warehouse_id');
             
         });

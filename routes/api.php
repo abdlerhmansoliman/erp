@@ -14,6 +14,7 @@ use App\Http\Controllers\PurchaseInvoiceController;
 use App\Http\Controllers\PurchaseReturnController;
 use App\Http\Controllers\RoleController;
 use App\Http\Controllers\SalesInvoiceController;
+use App\Http\Controllers\SalesReturnController;
 use App\Http\Controllers\StockController;
 use App\Http\Controllers\SupplierController;
 use App\Http\Controllers\UnitController;
@@ -41,7 +42,7 @@ Route::apiResource('sales', SalesInvoiceController::class);
 Route::get('/sales/{id}/pdf', [SalesInvoiceController::class, 'downloadPdf']);
 
 Route::apiResource('products', ProductController::class);
-
+Route::apiResource('returns/sales', SalesReturnController::class);
 
 Route::post('auth/google',[AuthController::class,'loginWithGoogle']);
 Route::middleware('auth:sanctum')->get('/auth/user', function (Request $request) {
