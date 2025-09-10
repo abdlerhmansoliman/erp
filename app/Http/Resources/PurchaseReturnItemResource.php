@@ -22,6 +22,7 @@ class PurchaseReturnItemResource extends JsonResource
             'total_price' => $this->total_price,
             'created_at' => $this->created_at?->format('Y-m-d H:i'),
             'updated_at' => $this->updated_at,
+            'tax_id' => $this->tax_id
         ];
     }
 }

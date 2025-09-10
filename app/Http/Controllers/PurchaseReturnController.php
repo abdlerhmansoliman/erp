@@ -63,7 +63,7 @@ public function store(PurchaseReturnRequest $request)
 
     public function show($id)
     {
-        $invoice = $this->returnService->prepareReturnData($id);
+        $invoice = $this->returnService->showReturn($id);
         if (!$invoice) {
             return response()->json([
                 'success' => false,

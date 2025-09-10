@@ -23,6 +23,7 @@ class PurchaseItemResource extends JsonResource
             'tax_amount'    => $this->tax_amount,
             'net_price'     => $this->net_price,
             'total_price'   => $this->total_price,
+            'tax_id'        =>$this->tax_id
         ];
     
     }

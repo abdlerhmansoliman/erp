@@ -34,7 +34,8 @@ class PurchaseReturnResource extends JsonResource
                 'warehouse' => optional($this->warehouse) ? [
                     'id' => $this->warehouse->id,
                     'name' => $this->warehouse->name,
-                ] : null,                'status' => $this->invoice->status,
+                ] : null,                
+                'status' => $this->invoice->status,
                 'sub_total' => $this->invoice->sub_total,
                 'tax_amount' => $this->invoice->tax_amount,
                 'discount_amount' => $this->invoice->discount_amount,

@@ -14,6 +14,7 @@ class PurchaseReturnItem extends Model
         'total_price',
         'tax_amount',
         'discount_amount',
+        'tax_id'
     ];
 
     public function product(){
