@@ -23,7 +23,7 @@ class SalesInvoice extends Model
         if (empty($model->invoice_number)) {
             $lastInvoice = self::latest('id')->first();
             $nextNumber = $lastInvoice ? $lastInvoice->id + 1 : 1;
-            $model->invoice_number = 'PO-' . str_pad($nextNumber, 5, '0', STR_PAD_LEFT);
+            $model->invoice_number = 'SI-' . str_pad($nextNumber, 5, '0', STR_PAD_LEFT);
         }
     });
 }

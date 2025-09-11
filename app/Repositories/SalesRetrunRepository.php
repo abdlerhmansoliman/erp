@@ -8,19 +8,25 @@ use App\Repositories\Interfaces\SalesRetrunRepositoryInterface;
 
 class SalesRetrunRepository implements SalesRetrunRepositoryInterface
 {
-    public function all(array $filters)
-    {
-        return SalesReturn::query()->
-        with(['invoice', 'invoice.customer', 'items', ])
-        ->when($filters['search']?? null, function($q,$search){
-            $q->where('invoice_number', 'like', "%$search%")
-            ->orWhereHas('invoice', function($q2) use ($search){
-                $q2->where('invoice_number', 'like', "%$search%");
-            });
-        })
-        ->orderBy($filters['sortBy']??'id', $filters['sortDir']??'desc')
-        ->paginate($filters['perPage']??10);
-    }
+        public function all(array $filters)
+        {
+            $in = SalesReturn::query()
+                ->with(['items', 'customer', 'warehouse', 'invoice'])
+                ->when($filters['search'] ?? null, function($q, $search){
+                    $q->where('invoice_number', 'like', "%$search%")
+                    ->orWhereHas('customer', function($q2) use ($search){
+                        $q2->where('name', 'like', "%$search%");
+                    })
+                    ->orWhereHas('invoice', function($q3) use ($search) {
+                        $q3->where('invoice_number', 'like', "%$search%");
+                    });
+                })
+                ->orderBy($filters['sortBy'] ?? 'id', $filters['sortDir'] ?? 'desc')
+                ->paginate($filters['perPage'] ?? 10);
+
+
+                        return $in;
+        }
 
     public function find($id)
     {

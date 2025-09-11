@@ -43,6 +43,10 @@
     "empty": "No data available",
     "delete selected": "Delete selected",
     "select_all": "Select All",
-    "returns":"Returns"
+    "returns":"Returns",
+    "purchase_returns":"Purchase Returns",
+    "sales_returns":"Sales Returns",
+    "taxes":"Taxes",
+    "discounts":"Discounts"
 
 }

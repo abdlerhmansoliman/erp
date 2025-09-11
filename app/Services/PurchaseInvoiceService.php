@@ -68,6 +68,9 @@ class PurchaseInvoiceService
             ]);
             
             $rows=collect($data['items'])->map(function ($item) use ($invoice) {
+                $unitCost = $item['unit_price'] 
+                 + ($item['tax_amount'] - $item['discount_amount']) / $item['quantity'];
+
                 $this->stockService->create([
                 'product_id'      => (int) $item['product_id'],
                 'warehouse_id'    => $invoice->warehouse_id,
@@ -77,6 +80,7 @@ class PurchaseInvoiceService
                 'net_unit_price'  => (float) $item['unit_price'],
                 'model_id'        => $invoice->id,
                 'model_type'      => PurchaseInvoice::class,
+                'unit_coast'      => $unitCost
             ]); 
                 return [
                 'purchase_invoice_id' => $invoice->id,

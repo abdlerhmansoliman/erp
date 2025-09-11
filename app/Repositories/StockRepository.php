@@ -43,4 +43,17 @@ public function delete(Stock $stock)
 {
     return $stock->delete();
 }
+public function getAvailableFIFO($product_id, $warehouse_id)
+{
+    return Stock::where('product_id', $product_id)
+                ->where('warehouse_id', $warehouse_id)
+                ->where('remaining', '>', 0)
+                ->orderBy('created_at', 'asc')
+                ->lockForUpdate()
+                ->get();
+}
+public function decrementRemaining($stockId, $quantity)
+{
+    return Stock::where('id',$stockId)->decrement('remaining', $quantity);
+}
 }

@@ -111,23 +111,29 @@ const routes = [
     {
       path: 'returns',
       name: 'PurchaseReturnList', 
-      component: () => import('@/views/Returns/Returns.vue'),
+      component: () => import('@/views/Purchase Returns/Returns.vue'),
       meta:{title:'Returns'}
     },
-{
-  path: '/returns/:type/create/:id',
-  name: 'ReturnsCreate',
-  component: () => import('@/views/Returns/Create.vue'),
-  meta:{title:'Create Returns'},
-  props: true,
-},
-{
-  path: '/returns/purchase/:id',
-  name: 'returns-show',
-  component: () => import('@/views/Returns/Show.vue'),
-  meta:{title:'Show Returns'},
-  props: true
-}
+    {
+      path: '/returns/:type/create/:id',
+      name: 'ReturnsCreate',
+      component: () => import('@/views/Purchase Returns/Create.vue'),
+      meta:{title:'Create Returns'},
+      props: true,
+    },
+    {
+      path: '/returns/purchase/:id',
+      name: 'returns-show',
+      component: () => import('@/views/Purchase Returns/Show.vue'),
+      meta:{title:'Show Returns'},
+      props: true
+    },
+    {
+      path:'/returns/sales',
+      name:'sales-returns',
+      component: () => import('@/views/Sales Returns/Returns.vue'),
+      meta:{title:'Sales Returns'}
+    }
 
   ]
 }

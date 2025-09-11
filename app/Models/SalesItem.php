@@ -18,6 +18,7 @@ class SalesItem extends Model
     'net_price',
     'tax_id',
     'warehouse_id',
+    'stock_distribution'
     ];
     public function product(){
         return $this->belongsTo(Product::class);

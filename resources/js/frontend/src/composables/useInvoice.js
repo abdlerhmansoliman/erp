@@ -196,80 +196,63 @@ export function useInvoice(invoiceType = 'purchase') {
     item.total = total;
   };
 
-  const saveInvoice = async () => {
-    if (!selectedSupplier.value) {
-      toast.error(config.value.partyRequiredMessage);
-      return;
+const saveInvoice = async () => {
+  if (!selectedSupplier.value) {
+    toast.error(config.value.partyRequiredMessage);
+    return;
+  }
+
+  if (!selectedWarehouse.value) {
+    toast.error('الرجاء اختيار المستودع');
+    return;
+  }
+
+  if (!invoiceItems.value.length) {
+    toast.error('الرجاء إضافة منتجات للفاتورة');
+    return;
+  }
+
+  try {
+    const invoiceData = {
+      [config.value.partyIdKey]: selectedSupplier.value.id,
+      warehouse_id: selectedWarehouse.value.id,
+      status: status.value,
+      date: date.value,
+      sub_total: invoiceSummary.value.subTotal,
+      discount_amount: invoiceSummary.value.totalDiscount,
+      tax_amount: invoiceSummary.value.totalTax,
+      grand_total: invoiceSummary.value.grandTotal,
+      items: invoiceItems.value.map(item => ({
+        product_id: item.id,
+        quantity: item.qty,
+        unit_price: item.price,
+        discount_amount: item.discount_amount || 0,
+        tax_id: item.tax_id || null,
+        tax_amount: item.tax_amount || 0,
+        total_price: item.total,
+        net_price: item.subtotal - (item.discount_amount || 0) + (item.tax_amount || 0)
+      }))
+    };
+
+    const { data } = await api.post(config.value.saveEndpoint, invoiceData);
+
+    if (data.status === 'success' || (data.data && data.data.id)) {
+      toast.success(data.message || config.value.successMessage);
+      resetForm();
+      router.push(config.value.redirectPath);
+    } else {
+      toast.error(data.message || 'حدث خطأ أثناء حفظ الفاتورة');
     }
-
-    if (!selectedWarehouse.value) {
-      toast.error('الرجاء اختيار المستودع');
-      return;
+  } catch (error) {
+    // عرض رسالة OutOfStockException فقط
+    if (error.response?.data?.message) {
+      toast.error(error.response.data.message);
+    } else {
+      toast.error(error.message || 'حدث خطأ أثناء حفظ الفاتورة');
     }
+  }
+};
 
-    if (!invoiceItems.value.length) {
-      toast.error('الرجاء إضافة منتجات للفاتورة');
-      return;
-    }
-
-    try {
-      const invoiceData = {
-        [config.value.partyIdKey]: selectedSupplier.value.id,
-        warehouse_id: selectedWarehouse.value.id,
-        status: status.value,
-        date: date.value,
-        sub_total: invoiceSummary.value.subTotal,
-        discount_amount: invoiceSummary.value.totalDiscount,
-        tax_amount: invoiceSummary.value.totalTax,
-        grand_total: invoiceSummary.value.grandTotal,
-        items: invoiceItems.value.map(item => ({
-          product_id: item.id,
-          quantity: item.qty,
-          unit_price: item.price,
-          discount_amount: item.discount_amount || 0,
-          tax_id: item.tax_id || null,
-          tax_amount: item.tax_amount || 0,
-          total_price: item.total,
-          net_price: item.subtotal - (item.discount_amount || 0) + (item.tax_amount || 0)
-        }))
-      };
-
-
-      const { data } = await api.post(config.value.saveEndpoint, invoiceData);
-      
-      
-      // Check if the response has data (indicating success) or explicit status
-      if (data.status === 'success' || (data.data && data.data.id)) {
-        toast.success(data.message || config.value.successMessage);
-        resetForm();
-        router.push(config.value.redirectPath);
-      } else {
-        console.error('Backend returned error:', data);
-        toast.error(data.message || 'حدث خطأ أثناء حفظ الفاتورة');
-      }
-    } catch (error) {
-      console.error('Full error object:', error);
-      console.error('Error response status:', error.response?.status);
-      console.error('Error response data:', error.response?.data);
-      console.error('Error config:', error.config);
-      
-      if (error.response?.status === 422) {
-        // Validation errors
-        const errors = error.response.data.errors || {};
-        console.error('Validation errors:', errors);
-        const errorMessages = Object.values(errors).flat();
-        errorMessages.forEach(message => toast.error(message));
-      } else if (error.response?.status === 404) {
-        toast.error(`API endpoint not found: ${config.value.saveEndpoint}`);
-      } else if (error.response?.status === 500) {
-        toast.error('Server error - check backend logs');
-      } else if (error.response?.data?.message) {
-        toast.error(error.response.data.message);
-      } else {
-        toast.error('حدث خطأ أثناء حفظ الفاتورة: ' + (error.message || 'Unknown error'));
-      }
-    }
-  };
 
   const resetForm = () => {
     selectedSupplier.value = null;

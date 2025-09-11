@@ -3,10 +3,9 @@
 namespace App\Services;
 
 use App\Models\Stock;
-use App\Repositories\Interfaces\AuthRepositoryInterface;
-use App\Repositories\Interfaces\StockRepositoryInterface;
-use Illuminate\Container\Attributes\Auth;
-use Illuminate\Support\Facades\Hash;
+
+use App\Repositories\StockRepository;
+use Illuminate\Support\Facades\DB;
 
 class StockService
 {
@@ -14,7 +13,7 @@ class StockService
      * Create a new class instance.
      */
     protected $stockRepository;
-    public function __construct(StockRepositoryInterface $stockRepository)
+    public function __construct(StockRepository $stockRepository)
     {
         $this->stockRepository=$stockRepository;
     }
@@ -36,21 +35,35 @@ class StockService
     {
         return $this->stockRepository->delete($stock);
     }
-        public function increase(int $productId, int $warehouseId, int $qty): void
-    {
-        $stock = Stock::where(
-            ['product_id' => $productId, 'warehouse_id' => $warehouseId],
-            ['quantity' => 0]
-        );
-        $stock->increment('quantity', $qty);
+    public function allocateFIFOStock($product_id, $warehouse_id, $quantity)
+        {
+            $allocations = [];
+
+            DB::transaction(function () use ($product_id, $warehouse_id, $quantity, &$allocations) {
+                $stocks = $this->stockRepository->getAvailableFIFO($product_id, $warehouse_id);
+                $remaining = $quantity;
+
+                foreach ($stocks as $stock) {
+                    if ($remaining <= 0) break;
+                    $takeQty = min($remaining, $stock->remaining);
+                    $this->stockRepository->decrementRemaining($stock->id, $takeQty);
+
+                    $allocations[] = [
+                        'stock_id' => $stock->id,
+                        'quantity' => $takeQty,
+                        'cost'     => $stock->unit_coast
+                    ];
+
+                    $remaining -= $takeQty;
+                }
+
+                if ($remaining > 0) {
+                    throw new \Exception("Out of stock: {$product_id}");
+                }
+            });
+
+            return $allocations;
+            
     }
 
-    public function decrease(int $productId, int $warehouseId, int $qty): void
-    {
-        $stock = Stock::where('product_id', $productId)
-            ->where('warehouse_id', $warehouseId)
-            ->first();
-            $stock->decrement('quantity', $qty);
-        
-    }
 }

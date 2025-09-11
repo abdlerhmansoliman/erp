@@ -70,17 +70,8 @@ class SalesInvoiceService
           ]); 
 
           $rows=collect($data['items'])->map(function ($item) use ($invoice) {
-            $this->stockService->create([
-                'product_id'      => (int) $item['product_id'],
-                'product_unit_id' => $item['product_unit_id'] ?? null,
-                'warehouse_id'    => $invoice->warehouse_id,
-                'qty'             => (int) $item['quantity'],
-                'remaining'       => (int) $item['quantity'],
-                'net_unit_price'  => (float) $item['unit_price'],
-                'model_id'        => $invoice->id,
-                'model_type'      => SalesInvoice::class,
-              ]);
-              return[
+                $allocations=$this->stockService->allocateFIFOStock($item['product_id'], $invoice->warehouse_id, $item['quantity']);
+                return[
                 'sales_invoice_id' => $invoice->id,
                 'product_id'          => (int) $item['product_id'],
                 'quantity'            => (int) $item['quantity'],
@@ -89,8 +80,10 @@ class SalesInvoiceService
                 'tax_amount'          => (float) ($item['tax_amount'] ?? 0),
                 'total_price'         => (float) $item['total_price'],
                 'net_price'           => (float) $item['net_price'],
+                'stock_distribution'    => json_encode($allocations), 
                 'created_at'          => now(),
-            'tax_id'              => $item['tax_id']
+                'updated_at'          => now(),
+                'tax_id'              => $item['tax_id']
               ];
           });
           $this->itemRepo->bulkInsert($rows->toArray());

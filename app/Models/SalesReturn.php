@@ -39,7 +39,7 @@ class SalesReturn extends Model
     public function items(){
         return $this->hasMany(SalesReturnItem::class,);
     }
-    public function invoice(){
-        return $this->belongsTo(SalesInvoice::class);
+    public function invoice() {
+        return $this->belongsTo(SalesInvoice::class, 'sales_invoice_id');
     }
 }

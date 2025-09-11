@@ -15,12 +15,11 @@ return new class extends Migration
             $table->id();
             $table->foreignId('product_id')->constrained()->onDelete('cascade');
             $table->foreignId('warehouse_id')->constrained()->onDelete('cascade');
-            $table->unsignedBigInteger('product_unit_id')->nullable(); 
             $table->morphs('model');
             $table->decimal('qty', 10, 2);
             $table->decimal('remaining', 10, 2);
             $table->decimal('net_unit_price', 10, 2);
-            
+            $table->decimal('unit_coast', 10, 2);
             $table->timestamps();
         });
     }

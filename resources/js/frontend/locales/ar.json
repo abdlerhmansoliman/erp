@@ -43,6 +43,10 @@
     "empty": "لا توجد بيانات متاحة",
     "delete_selected": "حذف المحدد",
     "select_all": "اختيار الكل",
-    "returns": "المرتجعات"
+    "returns": "المرتجعات",
+    "purchase_returns": "مرتجعات المشتريات",
+    "sales_returns": "مرتجعات المبيعات",
+    "taxes": "الضرائب",
+    "discounts": "الخصومات"
 
 }

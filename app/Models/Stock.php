@@ -14,7 +14,8 @@ class Stock extends Model
         'model_id',
         'qty',
         'remaining',
-        'net_unit_price'
+        'net_unit_price',
+        'unit_coast'
     ];
     public function product()
     {
