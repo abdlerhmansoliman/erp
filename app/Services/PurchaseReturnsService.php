@@ -68,7 +68,8 @@ public function createReturn(array $data)
             'discount_amount'    => $item['discount_amount'] ?? 0,
             'tax_id'             => $invoiceItem->tax_id,
             ]);
-
+                $unitCost = $unitPrice 
+                 + ($item['tax_amount'] - $item['discount_amount']) / $item['quantity'];
             $this->stockService->create([
                 'product_id'      => (int) $item['product_id'],
                 'warehouse_id'    => $invoice->warehouse_id,
@@ -78,6 +79,7 @@ public function createReturn(array $data)
                 'net_unit_price'  => $unitPrice,
                 'model_id'        => $return->id,
                 'model_type'      => PurchaseReturn::class,
+                'unit_coast'      => $unitCost
             ]);
         }
 
