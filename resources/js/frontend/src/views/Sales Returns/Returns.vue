@@ -4,7 +4,7 @@ import BaseCrudTable from '@/components/BaseCrudTable.vue';
 const returnHeaders = [
   { text: 'Return Date', value: 'return_date', sortable: true },
   { text: 'Return Number', value: 'invoice_number', sortable: true },
-  { text: 'Original Invoice', value: 'original_invoice_number', sortable: true }, // الفاتورة الأصلية
+  { text: 'Original Invoice', value: 'original_invoice_number', sortable: true }, 
   { text: 'Customer', value: 'customer.name', sortable: true },
   { text: 'Warehouse', value: 'warehouse.name', sortable: true },
   { text: 'Grand Total', value: 'grand_total', sortable: true },
@@ -23,7 +23,7 @@ const returnHeaders = [
   :show-edit="false"
   :show-delete="false"
   :show-select="false"
-  show-route-name="returns-show"
+  show-route-name="sales-returns-show"
   create-route="/returns/sales/create"
   search-placeholder="البحث برقم المرتجع أو الفاتورة الأصلية..."
   empty-message="لا توجد بيانات متاحة"

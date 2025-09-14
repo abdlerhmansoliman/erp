@@ -19,8 +19,14 @@ class SalesRetrunService
         return $this->retrunRepo->all($filters);
     }
 
-    public function show(){
-
+    public function show($id){
+        $invoice= $this->retrunRepo->findByIdWithItems($id);
+                foreach($invoice->items as $item){
+            $returnedQty = $this->retrunRepo->sumReturnedQuantity($invoice->id, $item->product_id);
+            $item->returned_quantity=$returnedQty;
+            $item->available_quantity=$item->quantity-$returnedQty;
+        }
+          return $invoice;
     }
     public function create(array $data){
         return DB::transaction(function () use ($data) {
@@ -52,7 +58,8 @@ class SalesRetrunService
                     if($item['quantity']>$availableQty){
                         throw new \Exception("Return quantity exceeds available quantity for product ID {$item['product_id']}. Available: {$availableQty}");
                     }
-                        $unitPrice  = $invoiceItem->unit_price;
+                    
+                    $unitPrice  = $invoiceItem->unit_price;
                         $totalPrice = $unitPrice * $item['quantity'];
                     $this->itemRepo->createItem([
                         'sales_return_id'   => $return->id,
@@ -64,7 +71,8 @@ class SalesRetrunService
                         'discount_amount'    => $item['discount_amount'] ?? 0,
                         'tax_id'             => $invoiceItem->tax_id,
                     ]);
-
+                $unitCost = $unitPrice
+                 + ($item['tax_amount'] - $item['discount_amount']) / $item['quantity'];
                     $this->stockService->create([
                         'product_id'      => (int) $item['product_id'],
                         'warehouse_id'    => $invoice->warehouse_id,
@@ -74,11 +82,24 @@ class SalesRetrunService
                         'net_unit_price'  => $unitPrice,
                         'model_id'        => $return->id,
                         'model_type'      => SalesReturn::class,
+                        'unit_coast'      => $unitCost
                     ]);
                 }
 
                  return $this->retrunRepo->findByIdWithItems($return->id);
 
         });
+    }
+    public function prepareReturnData($id){
+        $invoice=$this->invoiceRepo->findByIdWithItems($id);
+        if(!$invoice){
+            return null;
+        }
+        foreach($invoice->items as $item){
+            $returnedQty = $this->retrunRepo->sumReturnedQuantity($invoice->id, $item->product_id);
+            $item->returned_quantity=$returnedQty;
+            $item->available_quantity=$item->quantity-$returnedQty;
+        }
+        return $invoice;
     }
 }

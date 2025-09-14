@@ -133,6 +133,20 @@ const routes = [
       name:'sales-returns',
       component: () => import('@/views/Sales Returns/Returns.vue'),
       meta:{title:'Sales Returns'}
+    },
+    {
+      path: '/returns/sales/:id',
+      name: 'sales-returns-show',
+      component: () => import('@/views/Sales Returns/Show.vue'),
+      meta:{title:'Show Sales Returns'},
+      props: true
+    },
+    {
+      path: '/returns/:type/create/:id',
+      name: 'ReturnsCreate',
+      component: () => import('@/views/Sales Returns/Create.vue'),
+      meta:{title:'Create Returns'},
+      props: true,
     }
 
   ]

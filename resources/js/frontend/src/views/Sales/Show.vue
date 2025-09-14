@@ -16,7 +16,7 @@ const {
 
 <template>
   <GenericInvoice
-    type="customer"
+    type="sales"
     title="Sales Invoice"
     party-label="CUSTOMER"
     :invoice="invoice"

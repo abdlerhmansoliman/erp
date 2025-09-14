@@ -22,6 +22,8 @@ class SalesInvoiceController extends Controller
         return SalesInvoiceResource::collection($invoices);
     }
     
+    
+
         public function create()
     {
         $data = $this->salesInvoiceService->getCreateData();
@@ -30,11 +32,14 @@ class SalesInvoiceController extends Controller
             'data' => $data
         ]);
     }
+
   public function store(StoreSalesInvoiceRequest $request)
     {   
         $invoice = $this->salesInvoiceService->createInvoice($request->validated());
         return new SalesInvoiceResource($invoice);
     }
+
+    
     public function show($id)
     {
         $invoice = $this->salesInvoiceService->getInvoiceById($id);
@@ -44,14 +49,7 @@ class SalesInvoiceController extends Controller
         return new SalesInvoiceResource($invoice);
     }
 
-    public function destroy($id)
-    {
-        $invoice = $this->salesInvoiceService->deleteInvoice($id);
-        if (!$invoice) {
-            return response()->json(['message' => 'Invoice not found'], 404);
-        }
-        return response()->json(['message' => 'Invoice deleted successfully']);
-    }
+
     public function downloadPdf($id)
     {
         $invoice = $this->salesInvoiceService->getInvoiceByIdWithItems($id);

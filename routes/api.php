@@ -136,4 +136,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
 
 
 Route::get('/returns/purchase/create/{id}', [PurchaseReturnController::class, 'createPurchaseReturn']);
-Route::get('/returns/purchase/{id}', [PurchaseReturnController::class, 'show']);    
+Route::get('/returns/purchase/{id}', [PurchaseReturnController::class, 'show']); 
+
+Route::get('/returns/sales/create/{id}', [SalesReturnController::class, 'create']);   
+Route::get('/returns/sales/{id}', [SalesReturnController::class, 'show']);

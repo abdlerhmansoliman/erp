@@ -74,48 +74,148 @@ const grandTotal = computed(() => subTotal.value + taxTotal.value - discountTota
 // ✅ submit return
 async function submitReturn() {
   try {
-    const itemsToReturn = form.items
-      .filter(i => i.quantity > 0)
-      .map((i, index) => ({
-        product_id: i.product_id,
-        quantity: i.quantity,
-        unit_price: i.unit_price,
-        total_price: itemsWithTotal.value[index].totalPrice,
-        tax_amount: itemsWithTotal.value[index].tax,
-        discount_amount: itemsWithTotal.value[index].discount,
-      }));
+    // Validate form data
+    if (!form?.items || !Array.isArray(form.items)) {
+      toast.error('Invalid form data: items not found');
+      return;
+    }
 
+    // Filter and map items to return
+    const itemsToReturn = form.items
+      .filter(item => item.quantity && item.quantity > 0)
+      .map((item, index) => {
+        if (!item.product_id) {
+          throw new Error(`Item at index ${index} missing product_id`);
+        }
+        
+        if (!itemsWithTotal.value || !itemsWithTotal.value[index]) {
+          throw new Error(`Missing calculated values for item at index ${index}`);
+        }
+
+        return {
+          product_id: item.product_id,
+          quantity: parseFloat(item.quantity) || 0,
+          unit_price: parseFloat(item.unit_price) || 0,
+          total_price: parseFloat(itemsWithTotal.value[index].totalPrice) || 0,
+          tax_amount: parseFloat(itemsWithTotal.value[index].tax) || 0,
+          discount_amount: parseFloat(itemsWithTotal.value[index].discount) || 0,
+        };
+      });
+
+    // Validate at least one item selected
     if (!itemsToReturn.length) {
       toast.error('Please enter return quantity for at least one item.');
       return;
     }
 
-    const res = await api.post(`/returns/${props.type}`, {
+    // Validate required dependencies
+    if (!invoice.value?.id) {
+      toast.error('Invoice ID not found');
+      return;
+    }
+
+    if (!props?.type) {
+      toast.error('Return type not specified');
+      return;
+    }
+
+    // Prepare payload
+    const payload = {
       [`${props.type}_invoice_id`]: invoice.value.id,
       return_date: new Date().toISOString().split('T')[0],
-      sub_total: subTotal.value,
-      tax_amount: taxTotal.value,
-      discount_amount: discountTotal.value,
-      grand_total: grandTotal.value,
+      sub_total: parseFloat(subTotal.value) || 0,
+      tax_amount: parseFloat(taxTotal.value) || 0,
+      discount_amount: parseFloat(discountTotal.value) || 0,
+      grand_total: parseFloat(grandTotal.value) || 0,
       items: itemsToReturn,
-    });
+    };
 
-    if (res.data.success) {
-      toast.success(`${labels.value.title} successfully`);
-      router.push({ name: labels.value.listRoute });
+    // Make API call
+    const res = await api.post(`/returns/${props.type}`, payload);
+
+    // Handle response - check for success based on actual response structure
+    if (res.data && (res.data.success === true || res.data.data)) {
+      const successMessage = `${labels.value?.title || 'Return created'} successfully`;
+      toast.success(successMessage);
+      
+      // Navigate to list page
+      if (labels.value?.listRoute) {
+        try {
+          await router.push({ name: labels.value.listRoute });
+        } catch (routeError) {
+          // Try common alternative route names
+          const alternativeRoutes = [
+            'sales-returns',
+            'sales-return-list', 
+            'returns',
+            'return-list',
+            'sales_returns',
+            'salesReturns'
+          ];
+          
+          let routeFound = false;
+          for (const altRoute of alternativeRoutes) {
+            try {
+              await router.push({ name: altRoute });
+              routeFound = true;
+              break;
+            } catch (e) {
+              // Continue trying other routes
+            }
+          }
+          
+          if (!routeFound) {
+            toast.info('Return created successfully. Please navigate to the returns list manually.');
+          }
+        }
+      }
     } else {
-      toast.error(res.data.message || 'Failed to create return');
+      // Handle failure
+      let errorMessage = 'Failed to create return';
+      
+      if (res.data?.message) {
+        errorMessage = res.data.message;
+      } else if (res.data?.errors) {
+        if (Array.isArray(res.data.errors)) {
+          errorMessage = res.data.errors.join(', ');
+        } else if (typeof res.data.errors === 'object') {
+          errorMessage = Object.values(res.data.errors).flat().join(', ');
+        }
+      }
+
+      toast.error(errorMessage);
     }
 
   } catch (error) {
-    if (error.response?.status === 400) {
-      toast.error(error.response.data.message || 'Quantity exceeds available amount');
-      return;
+    // Handle different types of errors
+    if (error.response) {
+      if (error.response.status === 400) {
+        const errorMsg = error.response.data?.message || 'Bad request - please check your input';
+        toast.error(errorMsg);
+      } else if (error.response.status === 401) {
+        toast.error('Authentication required. Please log in again.');
+      } else if (error.response.status === 403) {
+        toast.error('You do not have permission to perform this action.');
+      } else if (error.response.status === 404) {
+        toast.error('The requested resource was not found.');
+      } else if (error.response.status === 422) {
+        const errorMsg = error.response.data?.message || 'Validation failed';
+        toast.error(errorMsg);
+      } else if (error.response.status >= 500) {
+        toast.error('Server error. Please try again later.');
+      } else {
+        const errorMsg = error.response.data?.message || `HTTP Error ${error.response.status}`;
+        toast.error(errorMsg);
+      }
+    } else if (error.request) {
+      toast.error('Network error. Please check your connection and try again.');
+    } else {
+      toast.error(error.message || 'An unexpected error occurred');
     }
-    console.error(error);
-    toast.error(error.response?.data?.message || 'Failed to create return');
   }
 }
+
+
 </script>
 
 <template>

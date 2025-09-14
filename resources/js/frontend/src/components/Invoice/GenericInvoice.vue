@@ -20,7 +20,8 @@ const props = defineProps({
 })
 
 const goToCreateReturn = (invoiceId) => {
-  router.push(`/returns/purchase/create/${invoiceId}`);
+  let returnType = props.type === 'sales' ? 'sales' : 'purchase';
+  router.push(`/returns/${returnType}/create/${invoiceId}`);
 };
 
 </script>

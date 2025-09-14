@@ -16,10 +16,35 @@ class SalesReturnController extends Controller
         $returns=$this->salesRetrunService->getAllReturns($request);
         return SalesReturnResource::collection($returns);
     }
+
+    public function show($id){
+        $return=$this->salesRetrunService->show($id);
+        return response()->json([
+            'success' => true,
+            'data' => new SalesReturnResource($return)
+        ]);   
+    }
+
     public function store(SalesReturnRequest $request){
         $data=$request->validated();
         $return=$this->salesRetrunService->create($data);
 
         return new SalesReturnResource($return);
+    }
+    public function create($id){
+
+        $return=$this->salesRetrunService->prepareReturnData($id);
+                if (!$return) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Invoice not found'
+            ], 404);
+        }
+
+        return response()->json([
+            'success' => true,
+            'data' => $return
+        ]);
+    
     }
 }
