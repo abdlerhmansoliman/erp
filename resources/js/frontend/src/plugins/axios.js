@@ -14,13 +14,13 @@ const api = axios.create({
 
 api.interceptors.request.use(
     (config) => {
-        // 👇 إضافة التوكن
+
         const token = localStorage.getItem("auth_token");
         if (token) {
             config.headers['Authorization'] = `Bearer ${token}`;
         }
 
-        // 👇 إضافة CSRF
+
         const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content');
         if (csrfToken) {
             config.headers['X-CSRF-TOKEN'] = csrfToken;

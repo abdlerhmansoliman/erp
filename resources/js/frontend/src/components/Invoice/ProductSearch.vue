@@ -1,6 +1,6 @@
 <script setup>
 import {   ref, watch } from 'vue';
-import axios from 'axios';
+import api from '@/plugins/axios';
 
 const props = defineProps({
   apiUrl: { type: String, required: true }  // endpoint البحث
@@ -22,8 +22,8 @@ async function searchProducts() {
   loading.value = true;
   try {
     // Use the API URL relative to the backend
-    const url = `/api/products/search?q=${encodeURIComponent(searchQuery.value)}`;
-    const { data } = await axios.get(url);
+    const url = `/products/search?q=${encodeURIComponent(searchQuery.value)}`;
+    const { data } = await api.get(url);
     if (data.status === 'success' && Array.isArray(data.data)) {
       searchResults.value = data.data;
     } else {
