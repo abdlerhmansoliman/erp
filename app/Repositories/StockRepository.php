@@ -56,4 +56,10 @@ public function decrementRemaining($stockId, $quantity)
 {
     return Stock::where('id',$stockId)->decrement('remaining', $quantity);
 }
+public function getAvailableStock(int $productId, int $warehouseId): int
+{
+    return Stock::where('product_id', $productId)
+                ->where('warehouse_id', $warehouseId)
+                ->sum('remaining');
+}
 }

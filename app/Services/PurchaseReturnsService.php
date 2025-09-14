@@ -24,11 +24,12 @@ class PurchaseReturnsService
         return $this->returnRepo->findByIdWithItems($id);
     }
 
-public function createReturn(array $data)
-{
+    public function createReturn(array $data)
+    {
     return DB::transaction(function () use ($data) {
 
         $invoice = $this->invoiceRepo->findByIdWithItems($data['purchase_invoice_id']);
+
         $return = $this->returnRepo->create([
             'purchase_invoice_id' => $invoice->id,
             'supplier_id'         => $invoice->supplier_id,
@@ -45,17 +46,18 @@ public function createReturn(array $data)
         foreach ($data['items'] as $item) {
 
             $invoiceItem = $invoice->items->firstWhere('product_id', $item['product_id']);
-            
             if (!$invoiceItem || $item['quantity'] > $invoiceItem->quantity) {
                 throw new \Exception("Quantity exceeds original invoice for product ID {$item['product_id']}");
             }
             $alreadyReturnedQty=$this->returnRepo->sumReturnedQuantity(
                 $invoice->id,
-                $item['product_id']);   
-                $availableQty=$invoiceItem->quantity-$alreadyReturnedQty;
-                if ($item['quantity'] > $availableQty) {
-                    throw new \Exception("Return quantity exceeds available quantity for product ID {$item['product_id']}. Available: {$availableQty}");
-                }
+                $item['product_id']); 
+
+            $stock = $this->stockService->findStockForPurchase($invoice->id, $item['product_id']);
+            if (!$stock || $item['quantity'] > $stock->remaining) {
+                    $productName = $invoiceItem->product->name ?? "Unknown Product";
+                throw new \Exception("The return quantity for {$productName} exceeds the available quantity ({$stock->remaining}).");
+            }
             $unitPrice  = $invoiceItem->unit_price;
             $totalPrice = $unitPrice * $item['quantity'];
             $this->returnRepo->createItem([
@@ -68,21 +70,9 @@ public function createReturn(array $data)
             'discount_amount'    => $item['discount_amount'] ?? 0,
             'tax_id'             => $invoiceItem->tax_id,
             ]);
-                $unitCost = $unitPrice 
-                 + ($item['tax_amount'] - $item['discount_amount']) / $item['quantity'];
-            $this->stockService->create([
-                'product_id'      => (int) $item['product_id'],
-                'warehouse_id'    => $invoice->warehouse_id,
-                'product_unit_id' => $item['product_unit_id'] ?? null,
-                'qty'             => (int) $item['quantity'],
-                'remaining'       => (int) $item['quantity'],
-                'net_unit_price'  => $unitPrice,
-                'model_id'        => $return->id,
-                'model_type'      => PurchaseReturn::class,
-                'unit_coast'      => $unitCost
-            ]);
-        }
 
+            $this->stockService->decrementRemainingByPurchaseItem($invoice->id, $item['product_id'], $item['quantity']);
+        }
         return $this->returnRepo->findByIdWithItems($return->id);
     });
     }
