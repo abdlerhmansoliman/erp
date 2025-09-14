@@ -5,10 +5,12 @@ namespace App\Providers;
 use App\Models\Stock;
 use App\Repositories\AuthRepository;
 use App\Repositories\CustomerRepository;
+use App\Repositories\DashbordRepository;
 use App\Repositories\DepartmentRepository;
 use App\Repositories\EmployeeRepository;
 use App\Repositories\Interfaces\AuthRepositoryInterface;
 use App\Repositories\Interfaces\CustomerRepositoryInterface;
+use App\Repositories\Interfaces\DashbordRepositoryInterface;
 use App\Repositories\Interfaces\DepartmentRepositoryInterface;
 use App\Repositories\Interfaces\EmployeeRepositoryInterface;
 use App\Repositories\Interfaces\positionRepositoryInterface;
@@ -66,6 +68,7 @@ class AppServiceProvider extends ServiceProvider
         $this->app->bind(SalesItemRepositoryInterface::class,SalesItemRepository::class);
         $this->app->bind(SalesRetrunRepositoryInterface::class,SalesRetrunRepository::class);
         $this->app->bind(SalesRetrunItemRepositoryInterface::class,SalesRetrunItemRepository::class);
+        $this->app->bind(DashbordRepositoryInterface::class,DashbordRepository::class);
         
     }
 

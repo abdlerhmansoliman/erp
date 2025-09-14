@@ -47,6 +47,14 @@
     "purchase_returns": "مرتجعات المشتريات",
     "sales_returns": "مرتجعات المبيعات",
     "taxes": "الضرائب",
-    "discounts": "الخصومات"
+    "discounts": "الخصومات",
+    "People": "الاشخاص",
+    "purchases & Sales": "المشتريات والمبيعات",
+    "sales": "المبيعات",
+    "purchase": "المشتريات",
+    "last_7_days": "اخر 7 ايام",
+    "recent_sales": "المبيعات الحديثة",
+    "recent_purchases": "المشتريات الحديثة"
+    
 
 }

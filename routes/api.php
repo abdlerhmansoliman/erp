@@ -4,6 +4,7 @@ use App\Http\Controllers\UserRoleController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\CustomerController;
+use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\TaxController;
 use App\Http\Controllers\DepartmentController;
 use App\Http\Controllers\EmployerController;
@@ -29,7 +30,7 @@ use Illuminate\Support\Facades\Route;
 */
 
 
-
+Route::get('dashboard/overview', [DashboardController::class, 'index']);
 // Authentication Routes
 Route::prefix('auth')->group(function () {
     Route::post('/register', [AuthController::class, 'register']);

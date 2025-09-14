@@ -47,6 +47,13 @@
     "purchase_returns":"Purchase Returns",
     "sales_returns":"Sales Returns",
     "taxes":"Taxes",
-    "discounts":"Discounts"
+    "discounts":"Discounts",
+    "People": "People",
+    "purchases & Sales": "Purchases & Sales",
+    "sales": "Sales",
+    "purchase": "Purchases",
+    "Last 7 days": "Last 7 days",
+    "recent_sales": "Recent Sales",
+    "recent_purchases": "Recent Purchases"
 
 }

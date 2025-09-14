@@ -4,6 +4,7 @@ import { useAuthStore } from '@/stores/authStore'
 import { useI18n } from 'vue-i18n'
 import LanguageSelector from '@/components/LanguageSelector.vue'
 import { ref } from 'vue'
+import SidebarMenu from '@/components/SidebarMenu.vue'
 
 const { t } = useI18n()
 const authStore = useAuthStore()
@@ -12,6 +13,9 @@ const route = useRoute()
 
 const showSidebar = ref(false)
 
+const openSidebar = () => {
+  
+}
 async function logoutUser() {
   await authStore.logout()
   router.push('/login')
@@ -21,59 +25,9 @@ async function logoutUser() {
 <template>
   <div class="min-h-screen flex bg-gray-100">
     <!-- Sidebar for Desktop -->
-    <aside class="w-64 bg-white shadow p-4 hidden md:block">
+    <aside class="w-64  shadow p-4 hidden md:block">
       <h2 class="text-xl font-bold mb-6">ERP System</h2>
-      <nav class="space-y-2">
-        <RouterLink class="block px-3 py-2 rounded hover:bg-gray-200" 
-        to="/dashboard"
-        :class="{ 'bg-gray-200 ': route.path.startsWith('/dashboard') }"
-        >{{t('dashboard')}}</RouterLink>
-        <RouterLink class="block px-3 py-2 rounded hover:bg-gray-200" 
-        to="/customers"
-        :class="{ 'bg-gray-200 ': route.path.startsWith('/customers') }"
-        >{{t('customers')}}</RouterLink>
-        <RouterLink class="block px-3 py-2 rounded hover:bg-gray-200" 
-        to="/suppliers"
-        :class="{ 'bg-gray-200 ': route.path.startsWith('/suppliers') }"
-        >{{t('suppliers')}}</RouterLink>
-
-        <RouterLink class="block px-3 py-2 rounded hover:bg-gray-200" 
-        to="/purchases"
-        :class="{ 'bg-gray-200 ': route.path.startsWith('/purchases') }"
-        >{{t('purchases')}}</RouterLink>
-
-        <RouterLink class="block px-3 py-2 rounded hover:bg-gray-200" 
-        to="/sales"
-        :class="{ 'bg-gray-200 ': route.path.startsWith('/sales') }"
-        >{{t('Sales')}}</RouterLink>
-
-        <RouterLink class="block px-3 py-2 rounded hover:bg-gray-200" 
-        to="/products"
-        :class="{ 'bg-gray-200 ': route.path.startsWith('/products') }"
-        >{{t('products')}}</RouterLink>
-
-        <RouterLink
-          class="block px-3 py-2 rounded hover:bg-gray-200"
-          to="/returns"
-          :class="{ 'bg-gray-200': route.path.startsWith('/returns/purchase') }"
-        >
-          {{ t('purchase_returns') }}
-        </RouterLink>
-
-        <RouterLink
-          class="block px-3 py-2 rounded hover:bg-gray-200"
-          to="/returns/sales"
-          :class="{ 'bg-gray-200': route.path.startsWith('/returns/sales') }"
-        >
-          {{ t('sales_returns') }}
-        </RouterLink>
-
-        <RouterLink class="block px-3 py-2 rounded hover:bg-gray-200" 
-        to="/categories"
-        :class="{ 'bg-gray-200 ': route.path.startsWith('/categories') }"
-        >{{t('Categories')}}</RouterLink>
-
-      </nav>
+      <SidebarMenu />
     </aside>
 
     <!-- Sidebar for Mobile (Drawer) -->
@@ -83,7 +37,7 @@ async function logoutUser() {
         class="fixed inset-0 bg-black bg-opacity-50 z-40 flex"
         @click.self="showSidebar = false"
       >
-        <div class="w-64 bg-white shadow p-4 z-50">
+        <div class="w-64  shadow p-4 z-50">
           <button class="mb-4 text-red-500 font-bold" @click="showSidebar = false">
             ✕ Close
           </button>
@@ -94,6 +48,7 @@ async function logoutUser() {
             <RouterLink class="block px-3 py-2 rounded hover:bg-gray-200" to="/suppliers" @click="showSidebar = false">{{t('suppliers')}}</RouterLink>
             <RouterLink class="block px-3 py-2 rounded hover:bg-gray-200" to="/purchases" @click="showSidebar = false">{{t('purchases')}}</RouterLink>
             <RouterLink class="block px-3 py-2 rounded hover:bg-gray-200" to="/products" @click="showSidebar = false">{{t('products')}}</RouterLink>
+            <RouterLink class="block px-3 py-2 rounded hover:bg-gray-200" to="/sales" @click="showSidebar = false">{{t('sales')}}</RouterLink>
           </nav>
         </div>
       </aside>
