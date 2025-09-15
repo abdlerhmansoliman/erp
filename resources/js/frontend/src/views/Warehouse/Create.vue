@@ -11,10 +11,11 @@ const toast = useToast();
 const schema = yup.object({
   name: yup.string().required('الاسم مطلوب'),
   address: yup.string().required('العنوان مطلوب'),
-phone: yup.string()
-    .matches(/^[0-9]{10,15}$/, 'رقم الهاتف غير صحيح')
+  phone: yup
+    .string()
+    .matches(/^[0-9+\-\s()]{8,20}$/, 'رقم الهاتف غير صحيح')
     .required('رقم الهاتف مطلوب'),
-      email: yup.string().email('صيغة الايميل غير صحيحة').required('الإيميل مطلوب'),
+  email: yup.string().email('صيغة الإيميل غير صحيحة').required('الإيميل مطلوب'),
 });
 
 function submitForm(values, {setFieldError}){

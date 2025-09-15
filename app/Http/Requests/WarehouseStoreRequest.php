@@ -19,13 +19,14 @@ class WarehouseStoreRequest extends FormRequest
      *
      * @return array<string, \Illuminate\Contracts\Validation\ValidationRule|array<mixed>|string>
      */
-    public function rules(): array
-    {
-        return [
-            'name' => 'required|string|max:255',
-            'address' => 'required|string|max:255',
-            'phone'=>'required|digits_between:8,20',
-            'email' => 'required|email',
-        ];
-    }
+public function rules(): array
+{
+    return [
+        'name' => 'required|string|max:255',
+        'address' => 'required|string|max:255',
+        'phone' => ['required','regex:/^[0-9+\-\s()]{8,20}$/'],
+        'email' => 'required|email',
+    ];
+}
+
 }

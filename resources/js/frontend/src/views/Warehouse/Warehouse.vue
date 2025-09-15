@@ -1,5 +1,7 @@
 <script setup>
+import { useI18n } from 'vue-i18n';
 import BaseCrudTable from '@/components/BaseCrudTable.vue';
+const { t } = useI18n();
 const warehouseHeaders = [
   { text: 'Name', value: 'name', sortable: true },
   { text: 'Address', value: 'address', sortable: true },
@@ -25,7 +27,7 @@ const warehouseHeaders = [
         >
             <!-- Custom create button text if needed -->
             <template #create-button-text>
-            Create Warehouse
+                {{ t('create_warehouse') }}
             </template>
         </BaseCrudTable>
     </div>

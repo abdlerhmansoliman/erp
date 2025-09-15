@@ -64,6 +64,17 @@
     "warehouses": "المخازن",
     "warehouse_details": "تفاصيل المخزن",
     "product_count": "عدد المنتجات",
-    "total_quantity": "إجمالي الكمية"
+    "total_quantity": "إجمالي الكمية",
+    "product_name": "اسم المنتج",
+    "quantity": "الكمية",
+    "total_price": "المجموع",
+    "unit_price": " سعر الوحدة",
+    "remaining": "المتبقي",
+    "search_products": "البحث في المنتجات",
+    "loading": "جاري التحميل",
+    "warehouse": "المخزن",
+    "unit_cost": "تكلفة الوحدة",
+    "create_warehouse": "انشاء مخزن",
+    "no_products_found": "لم يتم العثور على منتجات"
 
 }
