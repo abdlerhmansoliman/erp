@@ -75,6 +75,7 @@
     "warehouse": "المخزن",
     "unit_cost": "تكلفة الوحدة",
     "create_warehouse": "انشاء مخزن",
-    "no_products_found": "لم يتم العثور على منتجات"
+    "no_products_found": "لم يتم العثور على منتجات",
+    "warehouse & products": "المخازن والمنتجات"
 
 }

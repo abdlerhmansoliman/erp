@@ -18,7 +18,6 @@ const menuItems = [
         { label: 'suppliers', path: '/suppliers' },
         ],
     },
-    { label: 'products', path: '/products' },
     {
         label: 'purchases & Sales',
         children: [
@@ -36,8 +35,13 @@ const menuItems = [
     },
 
   { label: 'Categories', path: '/categories' },
-  {label:'warehouses', path:'/warehouses'},
-
+    {
+      label:'warehouse & products',
+      children:[
+        {label:'warehouses', path:'/warehouses'},
+        { label: 'products', path: '/products' },
+      ]
+    }
 
 ]
 
