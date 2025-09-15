@@ -28,9 +28,8 @@ use Illuminate\Support\Facades\Route;
 | Public Routes (No Authentication Required)
 |--------------------------------------------------------------------------
 */
+    Route::apiResource('/warehouses', WarehouseController::class);
 
-
-Route::get('dashboard/overview', [DashboardController::class, 'index']);
 // Authentication Routes
 Route::prefix('auth')->group(function () {
     Route::post('/register', [AuthController::class, 'register']);
@@ -56,6 +55,8 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::get('/user', function (Request $request) {
         return $request->user();
     });
+
+    Route::get('dashboard/overview', [DashboardController::class, 'index']);
     
     /*
     |--------------------------------------------------------------------------
@@ -81,7 +82,6 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::apiResource('stocks', StockController::class);
     
     // Warehouses
-    Route::apiResource('warehouses', WarehouseController::class);
     
     /*
     |--------------------------------------------------------------------------

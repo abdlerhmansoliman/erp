@@ -3,10 +3,8 @@
 namespace App\Services;
 
 use App\Models\Warehouse;
-use App\Repositories\Interfaces\UserRoleRepositoryInterface;
-use App\Repositories\Interfaces\WarehouseRepositoryInterface;
 
-
+use App\Repositories\WarehouseRepository;
 
 class WarehouseService
 {
@@ -14,7 +12,7 @@ class WarehouseService
      * Create a new class instance.
      */
     protected $warehouseRepository;
-    public function __construct( WarehouseRepositoryInterface $warehouse)
+    public function __construct( WarehouseRepository $warehouse)
     {
         $this->warehouseRepository=$warehouse;
     }
@@ -40,5 +38,10 @@ class WarehouseService
     public function getWarehouses()
     {
         return $this->warehouseRepository->allWarehouses();
+    }
+
+    public function getByIdWithAvailableProducts($id, $filters )
+    {
+     return $this->warehouseRepository->getByIdWithAvailableProducts($id, $filters);
     }
 }

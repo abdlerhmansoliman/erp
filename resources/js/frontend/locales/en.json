@@ -60,5 +60,9 @@
     "create_product": "Create Product",
     "add_customer": "Add Customer",
     "create_supplier": "Create Supplier",
-    "create_category": "Create Category"
+    "create_category": "Create Category",
+    "warehouses": "Warehouses",
+    "warehouse_details": "Warehouse Details",
+    "product_count": "Product Count",
+    "total_quantity": "Total Quantity"
 }

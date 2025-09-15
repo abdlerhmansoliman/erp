@@ -24,5 +24,17 @@ class Warehouse extends Model
     {
         return $this->hasMany(PurchaseReturn::class);
     }
+    public function sales()
+    {
+        return $this->hasMany(SalesInvoice::class);
+    }
     
+    public function scopeWithStockSummary($query)
+    {
+        return $query
+            ->withCount(['stocks as product_count' => function ($q) {
+                $q->select(\DB::raw('COUNT(DISTINCT product_id)'));
+            }])
+            ->withSum('stocks as total_quantity', 'remaining');
+    }
 }

@@ -147,6 +147,24 @@ const routes = [
       component: () => import('@/views/Sales Returns/Create.vue'),
       meta:{title:'Create Returns'},
       props: true,
+    },
+    {
+      path:'warehouses',
+      name:'warehouses',
+      component: () => import('@/views/Warehouse/Warehouse.vue'),
+      meta:{title:'Warehouses'}
+    },
+    {
+      path: '/warehouses/create',
+      name: 'WarehouseCreate',
+      component: () => import('@/views/Warehouse/Create.vue'),
+      meta:{title:'Create Warehouses'}
+    },
+    {
+      path:'/warehouses/:id',
+      name:'WarehouseShow',
+      component: () => import('@/views/Warehouse/Show.vue'),
+      meta:{title:'Show Warehouses'}
     }
 
   ]

@@ -24,6 +24,8 @@ class WarehouseStoreRequest extends FormRequest
         return [
             'name' => 'required|string|max:255',
             'address' => 'required|string|max:255',
+            'phone'=>'required|digits_between:8,20',
+            'email' => 'required|email',
         ];
     }
 }

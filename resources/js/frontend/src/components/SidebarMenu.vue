@@ -36,6 +36,9 @@ const menuItems = [
     },
 
   { label: 'Categories', path: '/categories' },
+  {label:'warehouses', path:'/warehouses'},
+
+
 ]
 
 // لحفظ القوائم المفتوحة

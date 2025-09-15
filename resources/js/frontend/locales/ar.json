@@ -60,7 +60,10 @@
     "create_product": "انشاء منتج",
     "add_customer": "اضافة عميل",
     "create_supplier": "انشاء مورد",
-    "create_category": "انشاء تصنيف"
-
+    "create_category": "انشاء تصنيف",
+    "warehouses": "المخازن",
+    "warehouse_details": "تفاصيل المخزن",
+    "product_count": "عدد المنتجات",
+    "total_quantity": "إجمالي الكمية"
 
 }

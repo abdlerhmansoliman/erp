@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Requests\WarehouseStoreRequest;
 use App\Http\Requests\WarehouseUpdateRequest;
 use App\Http\Resources\WarehouseResource;
+use App\Http\Resources\WarehouseShowResource;
 use App\Models\Warehouse;
 use App\Services\WarehouseService;
 use Illuminate\Http\Request;
@@ -19,7 +20,7 @@ class WarehouseController extends Controller
     {
         $filters = $request->only(['search', 'sortBy', 'sortDir', 'perPage', 'page']);
         $warehouses = $this->warehouseService->getAllWarehouses($filters);
-        return response()->json($warehouses);
+        return WarehouseResource::collection($warehouses);
     }
 
     /**
@@ -36,11 +37,19 @@ class WarehouseController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(string $id)
-    {
-        $warehouse=$this->warehouseService->getById($id);
-        return new WarehouseResource($warehouse);
-    }
+        public function show(string $id)
+        {
+            $filters = request()->only(['search', 'sortBy', 'sortDirection', 'perPage']);
+            
+            // Get basic warehouse info
+            $warehouse = $this->warehouseService->getById($id);
+            // Get products with pagination
+            $productsData = $this->warehouseService->getByIdWithAvailableProducts($id, $filters);
+            
+            // Combine them
+            $warehouse->products_data = $productsData;
+            return new WarehouseShowResource($warehouse);  // ← Use the new resource
+        }
 
     /**
      * Update the specified resource in storage.
