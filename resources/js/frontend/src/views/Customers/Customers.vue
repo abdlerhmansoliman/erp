@@ -1,5 +1,9 @@
 <script setup>
 import ReusableDataTable from '@/components/BaseCrudTable.vue'
+import { useI18n } from 'vue-i18n'
+
+const { t } = useI18n()
+
 
 const customerHeaders = [
   { text: 'Name', value: 'name', sortable: true },
@@ -26,7 +30,7 @@ const customerHeaders = [
     >
       <!-- Custom create button text if needed -->
       <template #create-button-text>
-        Add Customer
+        {{ t('add_customer') }}
       </template>
     </ReusableDataTable>
   </div>

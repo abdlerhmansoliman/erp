@@ -54,6 +54,11 @@
     "purchase": "Purchases",
     "Last 7 days": "Last 7 days",
     "recent_sales": "Recent Sales",
-    "recent_purchases": "Recent Purchases"
-
+    "recent_purchases": "Recent Purchases",
+    "create_purchase": "Create Purchase Invoice",
+    "create_sale": "Create Sales Invoice",
+    "create_product": "Create Product",
+    "add_customer": "Add Customer",
+    "create_supplier": "Create Supplier",
+    "create_category": "Create Category"
 }

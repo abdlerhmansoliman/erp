@@ -54,7 +54,13 @@
     "purchase": "المشتريات",
     "last_7_days": "اخر 7 ايام",
     "recent_sales": "المبيعات الحديثة",
-    "recent_purchases": "المشتريات الحديثة"
-    
+    "recent_purchases": "المشتريات الحديثة",
+    "create_purchase": "انشاء فاتورة شراء",
+    "create_sale": "انشاء فاتورة مبيعات",
+    "create_product": "انشاء منتج",
+    "add_customer": "اضافة عميل",
+    "create_supplier": "انشاء مورد",
+    "create_category": "انشاء تصنيف"
+
 
 }

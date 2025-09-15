@@ -8,7 +8,9 @@ class Warehouse extends Model
 {
     protected $fillable = [
         'name',
-        'address'
+        'address',
+        'phone',
+        'email',
     ];
 
     public function stocks(){

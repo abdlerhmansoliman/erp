@@ -14,8 +14,8 @@ return new class extends Migration
         Schema::create('discounts', function (Blueprint $table) {
             $table->id();
             $table->string('name');
-            $table->enum('type', ['invoice', 'product']);
             $table->boolean('is_percentage')->default(true);
+            $table->decimal('value', 8, 2)->after('type');
             $table->timestamps();
         });
     }

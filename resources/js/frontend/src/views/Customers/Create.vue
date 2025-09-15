@@ -1,7 +1,7 @@
 <script setup>
 import PartyForm from '@/components/Forms/PartyForm.vue';
 import { ref, onMounted } from 'vue';
-import axios from 'axios';
+import api from '@/plugins/axios';
 import { useRoute, useRouter } from 'vue-router';
 import { useToast } from "vue-toastification"
 
@@ -15,7 +15,7 @@ const formData=ref({
     address: '',
 })
 const createCastomer=async(customerData)=>{
-    await axios.post('http://localhost:8000/api/customers', customerData);
+    await api.post('http://localhost:8000/api/customers', customerData);
     toast.success('the customer created successfully');
     try {
         router.push({name:'CustomerIndex'});

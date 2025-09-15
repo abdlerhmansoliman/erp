@@ -3,7 +3,9 @@ import BaseCrudTable from '@/components/BaseCrudTable.vue'
 import { ref } from 'vue'
 import { onMounted } from 'vue'
 import api from '@/plugins/axios'
+import { useI18n } from 'vue-i18n'
 
+const { t } = useI18n()
 const categoriesHeader=[
     { text: 'Arabic Name', value: 'name_ar', sortable: true },
     { text: 'English Name', value: 'name_en', sortable: true },
@@ -30,7 +32,7 @@ onMounted(async () => {
     >
         <!-- Custom create button text if needed -->
         <template #create-button-text>
-            Add Category
+            {{ $t('create_category') }}
         </template>
     </BaseCrudTable>
 </template>

@@ -2,7 +2,6 @@
 import { ref, onMounted } from 'vue'
 import api from '@/plugins/axios'
 import { useI18n } from 'vue-i18n'
-
 const { t } = useI18n()
 
 const stats = ref({})
@@ -27,16 +26,40 @@ onMounted(async () => {
 </script>
 
 <template>
-  <div class="space-y-6">
+  <div class="space-y-6 ">
     <h1 class="text-2xl font-bold">Dashboard</h1>
 
     <div v-if="loading" class="text-gray-500">Loading...</div>
 
     <template v-else>
+      <div class="flex gap-9 justify-center ">
+    <!-- Create Purchase Invoice -->
+    <RouterLink
+      :to="{ name: 'PurchaseCreate' }"
+      class="px-4 py-2 rounded bg-blue-500 text-white hover:bg-blue-600"
+    >
+      {{ t('create_purchase') }}
+    </RouterLink>
 
+    <!-- Create Sales Invoice -->
+    <RouterLink
+      :to="{ name: 'SalesCreate' }"
+      class="px-4 py-2 rounded bg-green-500 text-white hover:bg-green-600"
+    >
+      {{ t('create_sale') }}
+  </RouterLink>
+
+    <!-- Create Product -->
+    <RouterLink
+      :to="{ name: 'ProductCreate' }"
+      class="px-4 py-2 rounded bg-purple-500 text-white hover:bg-purple-600"
+    >
+      {{ t('create_product') }} 
+  </RouterLink>
+  </div>
       <!-- Cards -->
       <div class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-4">
-        <div class="p-4 rounded-xl shadow bg-blue-400 hover:bg-blue-500 transition">
+        <div class="p-4 rounded-xl shadow bg-blue-500 hover:bg-blue-600 transition">
           <h3 class="text-sm">{{t('sales')}}</h3>
           <p class="text-2xl font-bold">{{ stats.total_sales }}</p>
         </div>
