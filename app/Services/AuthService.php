@@ -21,7 +21,7 @@ class AuthService
     }
     public function register(array $data){
         $user=$this->authRepository->create($data);
-        $user->assignRole('employee');
+        $user->assignRole('user');
         $token=$user->createToken('auth_token')->plainTextToken;
         return  response()->json([
             'user'=>$user,

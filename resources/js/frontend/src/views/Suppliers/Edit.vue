@@ -1,7 +1,7 @@
 <script setup>
 import PartyForm from '@/components/Forms/PartyForm.vue';
 import { ref, onMounted } from 'vue'; 
-import axios from 'axios';
+import api from '@/plugins/axios';
 import { useRoute, useRouter } from 'vue-router';
 import { useToast } from "vue-toastification"
 
@@ -24,7 +24,7 @@ const fetchSuppliers = async () => {
             return;
         }
         
-        const response = await axios.get(`http://localhost:8000/api/suppliers/${route.params.id}`);
+        const response = await api.get(`http://localhost:8000/api/suppliers/${route.params.id}`);
         
         if (response.data.data) {
             formDate.value = response.data.data;

@@ -10,7 +10,7 @@
               <div class="h-8 w-8 bg-blue-600 rounded-lg flex items-center justify-center">
                 <span class="text-white font-bold text-sm">A</span>
               </div>
-              <span class="ml-2 text-xl font-semibold text-gray-900">App Name</span>
+              <span class="ml-2 text-xl font-semibold text-gray-900">ER</span>
             </router-link>
           </div>
           

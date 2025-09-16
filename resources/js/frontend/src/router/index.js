@@ -9,7 +9,10 @@ const routes = [
   path: '/',
   component: MainLayout,
   children: [
-    { path: '', redirect: '/dashboard' },
+    { path: '', 
+      redirect: '/dashboard' ,
+      name:'Home'
+    },
     { path: 'dashboard', component: () => import('@/views/Dashboard.vue') },
 
     // Customers
@@ -165,6 +168,12 @@ const routes = [
       name:'WarehouseShow',
       component: () => import('@/views/Warehouse/Show.vue'),
       meta:{title:'Show Warehouses'}
+    },
+    {
+      path: '/warehouses/:id/edit',
+      name: 'WarehouseEdit',
+      component: () => import('@/views/Warehouse/Edit.vue'),
+      meta:{title:'Edit Warehouses'}
     }
 
   ]

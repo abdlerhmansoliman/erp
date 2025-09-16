@@ -54,6 +54,11 @@ class WarehouseController extends Controller
     /**
      * Update the specified resource in storage.
      */
+    public function edit(string $id)
+    {
+        $warehouse=$this->warehouseService->getById($id);
+        return new WarehouseResource($warehouse);
+    }
     public function update(WarehouseUpdateRequest $request,$id)
     {
         $data=$request->validated();

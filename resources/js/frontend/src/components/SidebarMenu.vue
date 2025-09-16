@@ -55,7 +55,7 @@ const toggleGroup = (label) => {
 <template>
   <nav class="space-y-1 ">
     <div v-for="item in menuItems" :key="item.label">
-      <!-- عنصر رئيسي بدون أبناء -->
+
       <RouterLink
         v-if="!item.children"
         :to="item.path"
@@ -65,7 +65,7 @@ const toggleGroup = (label) => {
         {{ t(item.label) }}
       </RouterLink>
 
-      <!-- عنصر رئيسي له أبناء -->
+
       <div v-else>
         <button
           @click="toggleGroup(item.label)"

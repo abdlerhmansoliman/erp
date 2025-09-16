@@ -28,7 +28,6 @@ use Illuminate\Support\Facades\Route;
 | Public Routes (No Authentication Required)
 |--------------------------------------------------------------------------
 */
-    Route::apiResource('/warehouses', WarehouseController::class);
 
 // Authentication Routes
 Route::prefix('auth')->group(function () {
@@ -213,4 +212,8 @@ Route::middleware(['auth:sanctum'])->group(function () {
     
     // Bulk Operations
     Route::post('/bulk/assign-role', [UserRoleController::class, 'bulkAssignRole'])->name('users.bulk-assign-role');
+
+    // Warehouses
+    Route::apiResource('/warehouses', WarehouseController::class);
+    Route::get('/warehouses/{id}/edit', [WarehouseController::class, 'edit']);
 });
