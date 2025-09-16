@@ -2,15 +2,10 @@
 
 namespace App\Services;
 
-use App\Models\Customer;
 use App\Models\SalesInvoice;
-use App\Repositories\Interfaces\SalesInvoiceRepositoryInterface;
-use App\Repositories\PurchaseItemRepository;
 use App\Repositories\SalesInvoiceRepository;
 use App\Repositories\SalesItemRepository;
-use Illuminate\Support\Facades\Log;
 use App\Services\PaymentService;
-use App\Services\Billing\InvoiceCalculator;
 use Illuminate\Support\Facades\DB;
 
 class SalesInvoiceService
@@ -99,12 +94,7 @@ class SalesInvoiceService
                     : ($data['paid_amount'] ?? 0);
 
                 if ($amount > 0) {
-                    Log::info('Adding payment', [
-                        'amount' => $amount,
-                        'invoice_id' => $invoice->id,
-                        'payment_date' => $data['payment_date'] ?? now(),
-                        'due_date' => $data['due_date'] ?? now()
-                    ]);
+
                     
                     $payment = $this->paymentService->addPayment(
                         type: SalesInvoice::class,
@@ -114,7 +104,6 @@ class SalesInvoiceService
                         paymentDate: $data['payment_date'] ? date('Y-m-d', strtotime($data['payment_date'])) : now()->toDateString()
                     );
                     
-                    Log::info('Payment created', ['payment' => $payment]);
                 }
             }
 
