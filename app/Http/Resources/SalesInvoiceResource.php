@@ -2,6 +2,7 @@
 
 namespace App\Http\Resources;
 
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
@@ -23,6 +24,9 @@ class SalesInvoiceResource extends JsonResource
     'grand_total' => $this->grand_total,
     'created_at' => $this->created_at ? $this->created_at->format('Y-m-d H:i') : null, // تاريخ + ساعة
     'updated_at' => $this->updated_at,
+    'payment_status' => $this->payment_status,
+    'shipping_cost' => $this->shipping_cost,
+    'due_date' => $this->due_date ? Carbon::parse($this->due_date)->format('Y-m-d') : null,
     'items' => SalesItemResource::collection($this->items),
         ];
     }

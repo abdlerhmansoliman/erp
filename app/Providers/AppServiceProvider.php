@@ -13,11 +13,13 @@ use App\Repositories\Interfaces\CustomerRepositoryInterface;
 use App\Repositories\Interfaces\DashbordRepositoryInterface;
 use App\Repositories\Interfaces\DepartmentRepositoryInterface;
 use App\Repositories\Interfaces\EmployeeRepositoryInterface;
+use App\Repositories\Interfaces\PaymentRepositoryInterface;
 use App\Repositories\Interfaces\positionRepositoryInterface;
 use App\Repositories\Interfaces\ProductRepositoryInterface;
 use App\Repositories\Interfaces\PurchaseInvoiceRepositoryInterface;
 use App\Repositories\Interfaces\PurchaseItemRepositoryInterface;
 use App\Repositories\Interfaces\RoleRepositoryInterface;
+use App\Repositories\Interfaces\SalesInvoicePaymentRepositoryInterface;
 use App\Repositories\Interfaces\SalesInvoiceRepositoryInterface;
 use App\Repositories\Interfaces\SalesItemRepositoryInterface;
 use App\Repositories\Interfaces\SalesRetrunItemRepositoryInterface;
@@ -27,11 +29,13 @@ use App\Repositories\Interfaces\SupplierRepositoryInterface;
 use App\Repositories\Interfaces\UnitRepositoryInterface;
 use App\Repositories\Interfaces\UserRoleRepositoryInterface;
 use App\Repositories\Interfaces\WarehouseRepositoryInterface;
+use App\Repositories\PaymentRepository;
 use App\Repositories\PositionRepository;
 use App\Repositories\ProducetRepository;
 use App\Repositories\PurchaseInvoiceRepository;
 use App\Repositories\PurchaseItemRepository;
 use App\Repositories\RoleRepository;
+use App\Repositories\SalesInvoicePaymentRepository;
 use App\Repositories\SalesInvoiceRepository;
 use App\Repositories\SalesItemRepository;
 use App\Repositories\SalesRetrunItemRepository;
@@ -69,6 +73,7 @@ class AppServiceProvider extends ServiceProvider
         $this->app->bind(SalesRetrunRepositoryInterface::class,SalesRetrunRepository::class);
         $this->app->bind(SalesRetrunItemRepositoryInterface::class,SalesRetrunItemRepository::class);
         $this->app->bind(DashbordRepositoryInterface::class,DashbordRepository::class);
+        $this->app->bind(PaymentRepositoryInterface::class,PaymentRepository::class);
         
     }
 

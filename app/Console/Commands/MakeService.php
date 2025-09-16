@@ -48,10 +48,7 @@ namespace App\Services;
 
 class {$name}
 {
-    public function __construct()
-    {
-        // Inject dependencies if needed (e.g. repositories)
-    }
+    public function __construct(){}
 }
 PHP;
     }

@@ -21,6 +21,10 @@ defineProps({
   totalEffectiveQuantity: {
     type: Number,
     required: true
+  },
+  shippingCost: {
+    type: Number,
+    required: true
   }
 });
 
@@ -82,6 +86,10 @@ const emit = defineEmits(['save']);
         <div class="flex justify-between">
           <span>إجمالي الضرائب:</span>
           <span>{{ summary.totalTax.toFixed(2) }}</span>
+        </div>
+            <div class="flex justify-between">
+          <span>تكلفة التوصيل:</span>
+          <span>{{ shippingCost.toFixed(2) }}</span>
         </div>
         <div class="border-t pt-2 font-bold flex justify-between">
           <span>الإجمالي النهائي:</span>

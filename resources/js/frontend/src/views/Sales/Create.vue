@@ -5,8 +5,8 @@ import ProductSearch from '@/components/Invoice/ProductSearch.vue';
 import InvoiceItemsTable from '@/components/Invoice/InvoiceItemsTable.vue';
 import InvoiceSummary from '@/components/Invoice/InvoiceSummary/InvoiceSummary.vue';
 import { useInvoice } from '@/composables/useInvoice';
+import InvoicePaymentSection from '@/components/Invoice/InvoicePaymentSection.vue';
 
-// Use the invoice composable with 'sale' type
 const {
   // State
   selectedSupplier, // This will be selectedCustomer for sales
@@ -17,7 +17,10 @@ const {
   suppliers, // This will be customers for sales
   warehouses,
   taxes,
-  
+  shippingCost,
+  paymentStatus,
+  paidAmount,
+  dueDate,
   // Computed
   config,
   invoiceSummary,
@@ -71,6 +74,13 @@ onMounted(initializeData);
         @remove-item="removeItem"
         @tax-change="handleTaxChange"
       />
+      <InvoicePaymentSection
+        v-model:shippingCost="shippingCost"
+        v-model:paymentStatus="paymentStatus"
+        v-model:paidAmount="paidAmount"
+        v-model:dueDate="dueDate"
+      />
+
 
       <!-- Summary Cards -->
       <InvoiceSummary
@@ -79,8 +89,11 @@ onMounted(initializeData);
         :used-taxes="usedTaxes"
         :total-quantity="getTotalQuantity"
         :total-effective-quantity="getTotalEffectiveQuantity"
+        :shipping-cost="shippingCost"
+
       />
       
+
       <!-- Submit Button -->
       <div class="flex justify-end mt-4">
         <button 

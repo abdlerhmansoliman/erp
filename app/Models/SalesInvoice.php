@@ -13,7 +13,11 @@ class SalesInvoice extends Model
         'grand_total',
         'discount_amount',
         'invoice_number',
-        'warehouse_id'
+        'warehouse_id',
+        'status',
+        'payment_status',
+        'due_date',
+        'shipping_cost'
     ];
     protected static function boot()
 {
@@ -39,5 +43,5 @@ class SalesInvoice extends Model
     {
         return $this->belongsTo(Warehouse::class);
     }
-    
+
 }

@@ -18,6 +18,10 @@ export function useInvoice(invoiceType = 'purchase') {
   const suppliers = ref([]);
   const warehouses = ref([]);
   const taxes = ref([]);
+  const shippingCost = ref(0);
+  const paymentStatus = ref('paid');
+  const dueDate = ref(new Date().toISOString().slice(0,10));
+  const paidAmount = ref(0);
 
   // Configuration based on invoice type
   const config = computed(() => {
@@ -66,7 +70,7 @@ export function useInvoice(invoiceType = 'purchase') {
       subTotal,
       totalDiscount,
       totalTax,
-      grandTotal: subTotal - totalDiscount + totalTax
+      grandTotal: subTotal - totalDiscount + totalTax + (Number(shippingCost.value) || 0)
     };
   });
 
@@ -213,26 +217,32 @@ const saveInvoice = async () => {
   }
 
   try {
-    const invoiceData = {
-      [config.value.partyIdKey]: selectedSupplier.value.id,
-      warehouse_id: selectedWarehouse.value.id,
-      status: status.value,
-      date: date.value,
-      sub_total: invoiceSummary.value.subTotal,
-      discount_amount: invoiceSummary.value.totalDiscount,
-      tax_amount: invoiceSummary.value.totalTax,
-      grand_total: invoiceSummary.value.grandTotal,
-      items: invoiceItems.value.map(item => ({
-        product_id: item.id,
-        quantity: item.qty,
-        unit_price: item.price,
-        discount_amount: item.discount_amount || 0,
-        tax_id: item.tax_id || null,
-        tax_amount: item.tax_amount || 0,
-        total_price: item.total,
-        net_price: item.subtotal - (item.discount_amount || 0) + (item.tax_amount || 0)
-      }))
-    };
+const invoiceData = {
+  [config.value.partyIdKey]: selectedSupplier.value.id,
+  warehouse_id: selectedWarehouse.value.id,
+  status: status.value,
+  date: date.value,
+  sub_total: invoiceSummary.value.subTotal,
+  discount_amount: invoiceSummary.value.totalDiscount,
+  tax_amount: invoiceSummary.value.totalTax,
+  grand_total: invoiceSummary.value.grandTotal,
+  shipping_cost: Number(shippingCost.value) || 0,
+  payment_status: paymentStatus.value,
+  due_date: ['partial', 'due'].includes(paymentStatus.value) ? dueDate.value : null,
+  paid_amount: paymentStatus.value === 'paid' ? invoiceSummary.value.grandTotal : (paymentStatus.value === 'partial' ? Number(paidAmount.value) : 0),
+  payment_date: ['paid', 'partial'].includes(paymentStatus.value) ? date.value : null,
+  items: invoiceItems.value.map(item => ({
+    product_id: item.id,
+    quantity: item.qty,
+    unit_price: item.price,
+    discount_amount: item.discount_amount || 0,
+    tax_id: item.tax_id || null,
+    tax_amount: item.tax_amount || 0,
+    total_price: item.total,
+    net_price: item.subtotal - (item.discount_amount || 0) + (item.tax_amount || 0)
+  }))
+};
+
 
     const { data } = await api.post(config.value.saveEndpoint, invoiceData);
 
@@ -272,7 +282,11 @@ const saveInvoice = async () => {
     suppliers,
     warehouses,
     taxes,
-    
+    shippingCost,
+    paymentStatus,
+    dueDate,
+    paidAmount,
+
     // Computed
     config,
     invoiceSummary,

@@ -8,6 +8,8 @@ use App\Repositories\Interfaces\SalesInvoiceRepositoryInterface;
 use App\Repositories\PurchaseItemRepository;
 use App\Repositories\SalesInvoiceRepository;
 use App\Repositories\SalesItemRepository;
+use Illuminate\Support\Facades\Log;
+use App\Services\PaymentService;
 use App\Services\Billing\InvoiceCalculator;
 use Illuminate\Support\Facades\DB;
 
@@ -24,7 +26,8 @@ class SalesInvoiceService
      protected StockService $stockService,
      protected SalesItemRepository $itemRepo,
      protected CustomerService $customerService,
-     protected WarehouseService $warehouseService
+     protected WarehouseService $warehouseService,
+     protected PaymentService $paymentService
      )
     {
         $this->salesInvoiceRepository = $salesInvoiceRepository;
@@ -67,8 +70,10 @@ class SalesInvoiceService
             'discount_amount' => $data['discount_amount'] ?? 0,
             'tax_amount' => $data['tax_amount'] ?? 0,
             'grand_total' => $data['grand_total'] ?? 0,
+            'payment_status' => $data['payment_status'] ?? 'paid',
+            'due_date' => in_array($data['payment_status'], ['partial','due']) ? $data['due_date'] ?? null : null,
+            'shipping_cost' => $data['shipping_cost'] ?? 0,
           ]); 
-
           $rows=collect($data['items'])->map(function ($item) use ($invoice) {
                 $allocations=$this->stockService->allocateFIFOStock($item['product_id'], $invoice->warehouse_id, $item['quantity']);
                 return[
@@ -87,6 +92,32 @@ class SalesInvoiceService
               ];
           });
           $this->itemRepo->bulkInsert($rows->toArray());
+
+            if (in_array($data['payment_status'], ['paid','partial'])) {
+                $amount = $data['payment_status'] === 'paid'
+                    ? $data['grand_total']
+                    : ($data['paid_amount'] ?? 0);
+
+                if ($amount > 0) {
+                    Log::info('Adding payment', [
+                        'amount' => $amount,
+                        'invoice_id' => $invoice->id,
+                        'payment_date' => $data['payment_date'] ?? now(),
+                        'due_date' => $data['due_date'] ?? now()
+                    ]);
+                    
+                    $payment = $this->paymentService->addPayment(
+                        type: SalesInvoice::class,
+                        id: $invoice->id,
+                        amount: $amount,
+                        dueDate: $data['due_date'] ? date('Y-m-d', strtotime($data['due_date'])) : now()->toDateString(),
+                        paymentDate: $data['payment_date'] ? date('Y-m-d', strtotime($data['payment_date'])) : now()->toDateString()
+                    );
+                    
+                    Log::info('Payment created', ['payment' => $payment]);
+                }
+            }
+
           return $invoice;
         });   
      }

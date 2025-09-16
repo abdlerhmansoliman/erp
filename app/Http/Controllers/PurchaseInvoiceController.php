@@ -3,9 +3,10 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\PurchaseInvoiceRequest;
+use App\Http\Requests\UpdatePurchaseRequest;
 use App\Http\Resources\PurchaseInvoiceResource;
+use App\Http\Resources\SalesInvoiceResource;
 use App\Services\PurchaseInvoiceService;
-use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\Request;
 
 class PurchaseInvoiceController extends Controller
@@ -52,8 +53,8 @@ class PurchaseInvoiceController extends Controller
             'data' => $data
         ]);
     }
-    public function store(PurchaseInvoiceRequest $request)
-    {
+public function store(PurchaseInvoiceRequest $request)
+{
     try {
         $invoice = $this->purchaseInvoiceService->createInvoice($request->validated())
             ->load(['supplier', 'items', 'warehouse']);
@@ -70,9 +71,34 @@ class PurchaseInvoiceController extends Controller
             'errors' => [$e->getMessage()]
         ], 500);
     }
+}
+
+public function update(UpdatePurchaseRequest $request, $id)
+{
+    try {
+        $invoice = $this->purchaseInvoiceService->updateInvoice($id, $request->validated());
+
+        if (!$invoice) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Invoice not found'
+            ], 404);
+        }
+
+        $invoice->load(['supplier', 'items', 'warehouse']);
+        return response()->json([
+            'status' => 'success',
+            'message' => 'Purchase invoice updated successfully',
+            'data' => new PurchaseInvoiceResource($invoice)
+        ]);
+    } catch (\Exception $e) {
+        return response()->json([
+            'status' => 'error',
+            'message' => 'Failed to update purchase invoice',
+            'errors' => [$e->getMessage()]
+        ], 500);
     }
-
-
+}
     public function destroy($id)
     {
         $this->purchaseInvoiceService->deletePurchase($id);
@@ -89,19 +115,5 @@ class PurchaseInvoiceController extends Controller
         }
         $this->purchaseInvoiceService->deleteMultiplePurchases($ids);
         return response()->json(['message' => 'Selected purchases deleted successfully']);
-    }
-    public function downloadPdf($id)
-    {
-        $invoice = $this->purchaseInvoiceService->getInvoiceByIdWithItems($id);
-
-        if (!$invoice) {
-            return response()->json(['message' => 'Invoice not found'], 404);
-        }
-
-        $pdf =Pdf::loadView('invoices.pdf', ['invoice' => $invoice]);
-
-        return response($pdf->output(), 200)
-            ->header('Content-Type', 'application/pdf')
-            ->header('Content-Disposition', 'attachment; filename="Invoice-'.$invoice->invoice_number.'.pdf"');
     }
 }
