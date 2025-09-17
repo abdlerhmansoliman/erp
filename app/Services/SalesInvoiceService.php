@@ -101,8 +101,10 @@ class SalesInvoiceService
                         id: $invoice->id,
                         amount: $amount,
                         dueDate: $data['due_date'] ? date('Y-m-d', strtotime($data['due_date'])) : now()->toDateString(),
-                        paymentDate: $data['payment_date'] ? date('Y-m-d', strtotime($data['payment_date'])) : now()->toDateString()
-                    );
+                        paymentDate: isset($data['payment_date']) && $data['payment_date']
+                            ? date('Y-m-d', strtotime($data['payment_date']))
+                            : now()->toDateString()
+                        );
                     
                 }
             }

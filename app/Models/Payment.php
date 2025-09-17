@@ -18,4 +18,8 @@ class Payment extends Model
     {
         return $this->morphTo();
     }
+    public function paymentMethod()
+    {
+        return $this->belongsTo(PaymentMethod::class);
+    }
 }

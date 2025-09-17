@@ -5,6 +5,7 @@ import ProductSearch from '@/components/Invoice/ProductSearch.vue';
 import InvoiceItemsTable from '@/components/Invoice/InvoiceItemsTable.vue';
 import InvoiceSummary from '@/components/Invoice/InvoiceSummary/InvoiceSummary.vue';
 import { useInvoice } from '@/composables/useInvoice';
+import InvoicePaymentSection from '@/components/Invoice/InvoicePaymentSection.vue';
 
 // Props
 const props = defineProps({
@@ -17,16 +18,18 @@ const props = defineProps({
 
 // Use the invoice composable
 const {
-  // State
-  selectedSupplier,
+  selectedSupplier, // This will be selectedCustomer for sales
   selectedWarehouse,
   date,
   status,
   invoiceItems,
-  suppliers,
+  suppliers, // This will be customers for sales
   warehouses,
   taxes,
-  
+  shippingCost,
+  paymentStatus,
+  paidAmount,
+  dueDate,
   // Computed
   config,
   invoiceSummary,
@@ -80,7 +83,12 @@ onMounted(initializeData);
         @remove-item="removeItem"
         @tax-change="handleTaxChange"
       />
-
+      <InvoicePaymentSection
+    v-model:shippingCost="shippingCost"
+    v-model:paymentStatus="paymentStatus"
+    v-model:dueDate="dueDate"
+    v-model:paidAmount="paidAmount"
+      />
       <!-- Summary Cards -->
       <InvoiceSummary
         :invoice-items="invoiceItems"

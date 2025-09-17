@@ -42,6 +42,8 @@ class PurchaseInvoiceRequest extends FormRequest
     'payment_status' => 'nullable|string|in:paid,due,partial',
     'due_date' => 'nullable|date|after_or_equal:today',
     'shipping_cost' => 'nullable|numeric|min:0',
+    'paid_amount' => 'required_if:payment_status,partial|numeric|min:0',
+    'payment_date' => 'required_if:payment_status,paid,partial|date',
     ];
     }
 }

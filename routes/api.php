@@ -28,7 +28,6 @@ use Illuminate\Support\Facades\Route;
 | Public Routes (No Authentication Required)
 |--------------------------------------------------------------------------
 */
-    Route::apiResource('purchases', PurchaseInvoiceController::class);
 
 // Authentication Routes
 Route::prefix('auth')->group(function () {
@@ -95,6 +94,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
         Route::post('/delete-multiple', [PurchaseInvoiceController::class, 'deleteMultiple']);
         Route::get('/{id}/pdf', [PurchaseInvoiceController::class, 'downloadPdf']);
     });
+    Route::apiResource('purchases', PurchaseInvoiceController::class);
     
     // Purchase Returns
     Route::prefix('returns/purchase')->group(function () {
