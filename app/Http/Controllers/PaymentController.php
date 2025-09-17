@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Controllers\Controller;
 use App\Models\Payment;
+use App\Models\SalesInvoice;
 use App\Payments\StripePaymentHandler;
 use Illuminate\Http\Request;
 
@@ -17,7 +18,7 @@ class PaymentController extends Controller
 
         // ننشئ دفعة وهمية في قاعدة البيانات
         $payment = Payment::create([
-            'payable_type' => 'App\\Models\\Invoice',
+            'payable_type' => SalesInvoice::class, 
             'payable_id' => 1, // مؤقت للتجربة
             'amount' => $request->amount,
             'payment_method_id' => 4, // رقم طريقة الدفع Stripe
