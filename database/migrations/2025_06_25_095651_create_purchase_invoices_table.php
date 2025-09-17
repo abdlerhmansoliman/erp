@@ -21,7 +21,9 @@ return new class extends Migration
             $table->decimal('discount_amount', 15, 2)->default(0);  
             $table->decimal('grand_total', 10, 2)->default(0);
             $table->foreignId('warehouse_id')->constrained()->onDelete('cascade');
-            
+            $table->decimal('shipping_cost', 10, 2)->default(0);
+            $table->enum('payment_status', ['paid', 'due', 'partial'])->default('paid');
+            $table->date('due_date')->nullable();
             $table->timestamps();
         });
     }

@@ -12,8 +12,10 @@ const invoiceId = route.params.id;
 const props = defineProps({
   apiEndPoint: { type: String, required: true },
   title: { type: String, required: true },
-  showActions: { type: Boolean, default: true },
-  currency: { type: String, default: 'USD' }
+  currency: { type: String, default: 'USD' },
+  showTax:{ type: Boolean, default: false },
+  showDiscount:{ type: Boolean, default: true },
+
 });
 
 // State
@@ -21,7 +23,6 @@ const invoice = ref(null);
 const loading = ref(false);
 const error = ref('');
 
-// Flags
 const showTax = ref(true);
 const showDiscount = ref(true);
 const emptyMessage = ref('No items found');
@@ -82,11 +83,10 @@ const calculatedSummary = computed(() => ({
   subtotal: Number(invoice.value?.sub_total || 0),
   total_tax: Number(invoice.value?.tax_amount || 0),
   total_discount: Number(invoice.value?.discount_amount || 0),
-  shipping_amount: Number(invoice.value?.shipping_amount || 0),
+  shipping_amount: Number(invoice.value?.shipping_cost || 0),
   additional_charges: Number(invoice.value?.additional_charges || 0),
   grand_total: Number(invoice.value?.grand_total || 0)
 }));
-
 // Helpers for items
 const getProductName = (item) => item.product?.name || item.name || 'N/A';
 const getProductCode = (item) => item.product?.code || item.code || '';
@@ -123,17 +123,15 @@ defineExpose({ fetchInvoice, invoice });
         </div>
 
         <!-- Invoice Summary -->
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6">
           <div class="bg-gray-50 p-4 rounded-lg">
             <h3 class="text-sm font-semibold text-gray-700 mb-2">Supplier</h3>
-            <p class="text-lg font-medium text-gray-900">{{ invoice?.invoice?.supplier?.name || 'N/A' }}</p>
-            <p class="text-sm text-gray-600 mt-1" v-if="invoice?.email">{{ invoice.email }}</p>
-            <p class="text-sm text-gray-600" v-if="invoice?.phone">{{ invoice.phone }}</p>
+            <p class="text-lg font-medium text-gray-900">{{ invoice?.customer_name || 'N/A' }}</p>
           </div>
 
           <div class="bg-gray-50 p-4 rounded-lg">
             <h3 class="text-sm font-semibold text-gray-700 mb-2">Warehouse</h3>
-            <p class="text-lg font-medium text-gray-900">{{ invoice?.invoice?.warehouse?.name || 'N/A' }}</p>
+            <p class="text-lg font-medium text-gray-900">{{ invoice?.warehouse_name || 'N/A' }}</p>
           </div>
 
           <div class="bg-green-50 p-4 rounded-lg">
@@ -145,8 +143,12 @@ defineExpose({ fetchInvoice, invoice });
             <h3 class="text-sm font-semibold text-gray-700 mb-2">Details</h3>
             <p class="text-sm text-gray-600"><span class="font-medium">Items:</span> {{ items.length }}</p>
           </div>
+            <div class="bg-gray-50 p-4 rounded-lg">
+            <h3 class="text-sm font-semibold text-gray-700 mb-2">Shipping Cost</h3>
+            <p class="text-2xl font-bold text-green-600">{{ formatCurrency(invoice?.shipping_cost) }}</p>
+          </div>
         </div>
-
+        
         <!-- Notes -->
         <div v-if="invoice?.notes" class="mt-6 p-4 bg-yellow-50 rounded-lg">
           <h3 class="text-sm font-semibold text-gray-700 mb-2">Notes</h3>
@@ -179,6 +181,8 @@ defineExpose({ fetchInvoice, invoice });
                   <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Product</th>
                   <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Quantity</th>
                   <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Unit Price</th>
+                  <th v-if="props.showTax" class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Tax</th>
+                  <th v-if="props.showDiscount" class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Discount</th>
                   <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Total</th>
                 </tr>
               </thead>
@@ -194,7 +198,9 @@ defineExpose({ fetchInvoice, invoice });
                     <div v-if="getProductDescription(item)" class="text-xs text-gray-400 mt-1">{{ getProductDescription(item) }}</div>
                   </td>
                   <td class="px-6 py-4 text-right text-sm text-gray-900 font-medium">{{ formatNumber(item.quantity) }} <span v-if="getUnit(item)" class="text-xs text-gray-500 ml-1">{{ getUnit(item) }}</span></td>
-                  <td class="px-6 py-4 text-right text-sm text-gray-900">{{ formatCurrency(item.unit_price || item.price) }}</td>
+                  <td v-if="showTax"class="px-6 py-4 text-right text-sm text-gray-900">{{ formatCurrency(item.unit_price || item.price) }}</td>
+                  <td v-if="showDiscount" class="px-6 py-4 text-right text-sm font-semibold text-gray-900">{{ formatCurrency(item.tax_amount || item.tax_amount) }}</td>
+                  <td class="px-6 py-4 text-right text-sm font-semibold text-gray-900">{{ formatCurrency(item.discount_amount || item.discount) }}</td>
                   <td class="px-6 py-4 text-right text-sm font-semibold text-gray-900">{{ formatCurrency(item.total_price || item.line_total) }}</td>
                 </tr>
               </tbody>
@@ -209,15 +215,15 @@ defineExpose({ fetchInvoice, invoice });
                   <span class="text-gray-600">Subtotal:</span>
                   <span class="font-medium">{{ formatCurrency(calculatedSummary.subtotal) }}</span>
                 </div>
-                <div v-if="showTax && calculatedSummary.total_tax > 0" class="flex justify-between text-sm">
+                <div v-if="showTax" class="flex justify-between text-sm">
                   <span class="text-gray-600">Total Tax:</span>
                   <span class="font-medium">{{ formatCurrency(calculatedSummary.total_tax) }}</span>
                 </div>
-                <div v-if="showDiscount && calculatedSummary.total_discount > 0" class="flex justify-between text-sm text-red-600">
+                <div v-if="showDiscount" class="flex justify-between text-sm text-red-600">
                   <span>Total Discount:</span>
                   <span class="font-medium">-{{ formatCurrency(calculatedSummary.total_discount) }}</span>
                 </div>
-                <div v-if="calculatedSummary.shipping_amount > 0" class="flex justify-between text-sm">
+                <div  class="flex justify-between text-sm">
                   <span class="text-gray-600">Shipping:</span>
                   <span class="font-medium">{{ formatCurrency(calculatedSummary.shipping_amount) }}</span>
                 </div>

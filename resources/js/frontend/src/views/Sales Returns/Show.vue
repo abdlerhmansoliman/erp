@@ -26,5 +26,6 @@ const props = defineProps({
       :title="'Purchase Return Invoice'"
       class="px-4 sm:px-6 lg:px-8"
     />
+    
   </div>
 </template>

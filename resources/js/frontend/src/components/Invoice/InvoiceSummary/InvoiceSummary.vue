@@ -24,7 +24,7 @@ defineProps({
   },
   shippingCost: {
     type: Number,
-    required: true
+    required: 0
   }
 });
 
@@ -75,26 +75,26 @@ const emit = defineEmits(['save']);
     <div class="bg-white p-4 rounded-lg shadow">
       <h3 class="text-lg font-semibold mb-2">الإجمالي</h3>
       <div class="space-y-2">
-        <div class="flex justify-between">
-          <span>المجموع الفرعي:</span>
-          <span>{{ summary.subTotal.toFixed(2) }}</span>
-        </div>
-        <div class="flex justify-between">
-          <span>إجمالي الخصم:</span>
-          <span>{{ summary.totalDiscount.toFixed(2) }}</span>
-        </div>
-        <div class="flex justify-between">
-          <span>إجمالي الضرائب:</span>
-          <span>{{ summary.totalTax.toFixed(2) }}</span>
-        </div>
-            <div class="flex justify-between">
-          <span>تكلفة التوصيل:</span>
-          <span>{{ shippingCost.toFixed(2) }}</span>
-        </div>
-        <div class="border-t pt-2 font-bold flex justify-between">
-          <span>الإجمالي النهائي:</span>
-          <span>{{ summary.grandTotal.toFixed(2) }}</span>
-        </div>
+<div class="flex justify-between">
+  <span>المجموع الفرعي:</span>
+  <span>{{ (summary.subTotal || 0).toFixed(2) }}</span>
+</div>
+<div class="flex justify-between">
+  <span>إجمالي الخصم:</span>
+  <span>{{ (summary.totalDiscount || 0).toFixed(2) }}</span>
+</div>
+<div class="flex justify-between">
+  <span>إجمالي الضرائب:</span>
+  <span>{{ (summary.totalTax || 0).toFixed(2) }}</span>
+</div>
+<div class="flex justify-between">
+  <span>تكلفة التوصيل:</span>
+  <span>{{ (shippingCost || 0).toFixed(2) }}</span>
+</div>
+<div class="border-t pt-2 font-bold flex justify-between">
+  <span>الإجمالي النهائي:</span>
+  <span>{{ (summary.grandTotal || 0).toFixed(2) }}</span>
+</div>
         
         <!-- Save Button -->
 

@@ -75,10 +75,10 @@ onMounted(initializeData);
         @tax-change="handleTaxChange"
       />
       <InvoicePaymentSection
-        v-model:shippingCost="shippingCost"
-        v-model:paymentStatus="paymentStatus"
-        v-model:paidAmount="paidAmount"
-        v-model:dueDate="dueDate"
+    v-model:shippingCost="shippingCost"
+    v-model:paymentStatus="paymentStatus"
+    v-model:dueDate="dueDate"
+    v-model:paidAmount="paidAmount"
       />
 
 

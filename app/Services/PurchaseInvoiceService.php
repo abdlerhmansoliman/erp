@@ -23,6 +23,7 @@ class PurchaseInvoiceService
         protected StockService $stockService,
         protected SupplierService $supplierService,
         protected WarehouseService $warehouseService,
+        protected PaymentService $paymentService
     ) {}
     public function getAllInvoices(array $filters )
     {
@@ -65,6 +66,9 @@ class PurchaseInvoiceService
                 'tax_amount'     => $data['tax_amount'] ?? 0,
                 'grand_total'    => $data['grand_total'] ?? 0,
                 'total_amount'   => $data['total_amount'] ?? 0,
+                'payment_status' => $data['payment_status'] ?? 'paid',
+                'due_date'       => $data['due_date'] ? date('Y-m-d', strtotime($data['due_date'])) : null,
+                'shipping_cost'  => $data['shipping_cost'] ?? 0,
             ]);
             
             $rows=collect($data['items'])->map(function ($item) use ($invoice) {
@@ -97,6 +101,24 @@ class PurchaseInvoiceService
             });
 
             $this->itemRepo->bulkInsert($rows->toArray());
+                        if (in_array($data['payment_status'], ['paid','partial'])) {
+                $amount = $data['payment_status'] === 'paid'
+                    ? $data['grand_total']
+                    : ($data['paid_amount'] ?? 0);
+
+                if ($amount > 0) {
+
+                    
+                    $payment = $this->paymentService->addPayment(
+                        type: PurchaseInvoice::class,
+                        id: $invoice->id,
+                        amount: $amount,
+                        dueDate: $data['due_date'] ? date('Y-m-d', strtotime($data['due_date'])) : now()->toDateString(),
+                        paymentDate: $data['payment_date'] ? date('Y-m-d', strtotime($data['payment_date'])) : now()->toDateString()
+                    );
+                    
+                }
+            }
             return $this->invoiceRepo->findByIdWithItems($invoice->id);
         });
     }

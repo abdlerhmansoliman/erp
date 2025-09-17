@@ -38,7 +38,10 @@ class PurchaseInvoiceRequest extends FormRequest
     'items.*.tax_id' => 'nullable|exists:taxes,id',
     'items.*.tax_amount' => 'nullable|numeric|min:0',
     'items.*.total_price' => 'required|numeric|min:0',
-    'items.*.net_price' => 'nullable|numeric|min:0'
+    'items.*.net_price' => 'nullable|numeric|min:0',
+    'payment_status' => 'nullable|string|in:paid,due,partial',
+    'due_date' => 'nullable|date|after_or_equal:today',
+    'shipping_cost' => 'nullable|numeric|min:0',
     ];
     }
 }

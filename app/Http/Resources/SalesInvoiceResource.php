@@ -26,6 +26,9 @@ class SalesInvoiceResource extends JsonResource
     'updated_at' => $this->updated_at,
     'payment_status' => $this->payment_status,
     'shipping_cost' => $this->shipping_cost,
+    'sub_total' => $this->sub_total,
+    'tax_amount' => $this->tax_amount,
+    'discount_amount' => $this->discount_amount,
     'due_date' => $this->due_date ? Carbon::parse($this->due_date)->format('Y-m-d') : null,
     'items' => SalesItemResource::collection($this->items),
         ];

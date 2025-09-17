@@ -1,31 +1,23 @@
 <script setup>
-import GenericInvoice from '@/components/Invoice/GenericInvoice.vue'
-import { useInvoice } from '@/composables/useInvoiceDetales'
+import { useRoute } from 'vue-router';
+import InvoiceDetails from '@/components/InvoiceDetails.vue';
+import InvoiceActions from '@/components/Invoice/InvoiceSummary/InvoiceActions.vue';
 
-const {
-  invoice,
-  loading,
-  invoiceSummary,
-  getStatusClass,
-  formatCurrency,
-  goBack,
-  editInvoice,
-  downloadPdf,
-} = useInvoice('sales')
+const route = useRoute();
 </script>
 
 <template>
-  <GenericInvoice
-    type="sales"
-    title="Sales Invoice"
-    party-label="CUSTOMER"
-    :invoice="invoice"
-    :loading="loading"
-    :invoice-summary="invoiceSummary"
-    :get-status-class="getStatusClass"
-    :format-currency="formatCurrency"
-    :go-back="goBack"
-    :edit-invoice="editInvoice"
-    :download-pdf="downloadPdf"
-  />
+<InvoiceDetails
+
+  :api-end-point="'/sales'"
+  :title="'Purchase Return Invoice'"
+  :show-tax="true"
+  :show-discount="true"
+  class="px-4 sm:px-6 lg:px-8"
+/>
+
+  <InvoiceActions
+  :invoice-id="route.params.id"
+  type="sales"
+/>
 </template>
