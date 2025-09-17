@@ -22,13 +22,18 @@ use App\Http\Controllers\UnitController;
 use App\Http\Controllers\WarehouseController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\PaymentController;
 
 /*
 |--------------------------------------------------------------------------
 | Public Routes (No Authentication Required)
 |--------------------------------------------------------------------------
 */
+Route::post('payments/stripe', [PaymentController::class, 'payWithStripe']);
+Route::post('payments/stripe/confirm', [PaymentController::class, 'confirmStripePayment']);
 
+Route::get('payment-methods', [PaymentController::class, 'methods']);
+Route::post('payments', [PaymentController::class, 'store']);
 // Authentication Routes
 Route::prefix('auth')->group(function () {
     Route::post('/register', [AuthController::class, 'register']);

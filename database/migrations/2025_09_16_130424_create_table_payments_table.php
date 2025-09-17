@@ -17,8 +17,10 @@ return new class extends Migration
             $table->decimal('amount', 15, 2);
             $table->date('due_date')->nullable();
             $table->date('payment_date')->nullable();
-            $table->unsignedBigInteger('payment_method_id')->nullable()->after('amount');
+            $table->unsignedBigInteger('payment_method_id')->nullable();
             $table->foreign('payment_method_id')->references('id')->on('payment_methods')->onDelete('set null');
+            $table->string('status')->default('pending');
+            $table->string('transaction_id')->nullable();
             $table->timestamps();
         });
     }
