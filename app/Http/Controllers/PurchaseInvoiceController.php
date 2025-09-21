@@ -7,6 +7,7 @@ use App\Http\Requests\UpdatePurchaseRequest;
 use App\Http\Resources\PurchaseInvoiceResource;
 use App\Http\Resources\SalesInvoiceResource;
 use App\Services\PurchaseInvoiceService;
+use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\Request;
 
 class PurchaseInvoiceController extends Controller
@@ -74,21 +75,23 @@ public function store(PurchaseInvoiceRequest $request)
 }
 
 
-    public function destroy($id)
+    public function downloadPdf($id)
     {
-        $this->purchaseInvoiceService->deletePurchase($id);
-        return response()->json(['message' => 'Purchase deleted successfully']);
-    }
-    public function deleteMultiple(Request $request)
-    {   
-        $ids = $request->input('ids', []);
-        if (empty($ids) || !is_array($ids)) {
-            return response()->json([
-                'status' => 'error',
-                'message' => 'No valid IDs provided'
-            ], 400);
+
+        $invoice = $this->purchaseInvoiceService->getInvoiceByIdWithItems($id);
+        if (!$invoice) {
+            return response()->json(['message' => 'Invoice not found'], 404);
         }
-        $this->purchaseInvoiceService->deleteMultiplePurchases($ids);
-        return response()->json(['message' => 'Selected purchases deleted successfully']);
-    }
+        try {
+            $pdf = Pdf::loadView('invoices.pdf', ['invoice' => $invoice]);
+            return response($pdf->output(), 200)
+                ->header('Content-Type', 'application/pdf')
+                ->header('Content-Disposition', 'attachment; filename="Invoice-'.$invoice->invoice_number.'.pdf"');
+        } catch (\Exception $e) {
+
+            $e->getMessage();
+            }
+        }
+
+
 }

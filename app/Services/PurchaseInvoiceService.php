@@ -70,7 +70,6 @@ class PurchaseInvoiceService
                 'due_date'       => $data['due_date'] ? date('Y-m-d', strtotime($data['due_date'])) : null,
                 'shipping_cost'  => $data['shipping_cost'] ?? 0,
             ]);
-            
             $rows=collect($data['items'])->map(function ($item) use ($invoice) {
                 $unitCost = $item['unit_price'] 
                  + ($item['tax_amount'] - $item['discount_amount']) / $item['quantity'];
@@ -101,7 +100,7 @@ class PurchaseInvoiceService
             });
 
             $this->itemRepo->bulkInsert($rows->toArray());
-                        if (in_array($data['payment_status'], ['paid','partial'])) {
+                if (in_array($data['payment_status'], ['paid','partial'])) {
                 $amount = $data['payment_status'] === 'paid'
                     ? $data['grand_total']
                     : ($data['paid_amount'] ?? 0);
@@ -109,14 +108,14 @@ class PurchaseInvoiceService
                 if ($amount > 0) {
 
                     
-                    $payment = $this->paymentService->addPayment(
+                     $ss=$this->paymentService->addPayment(
                         type: PurchaseInvoice::class,
                         id: $invoice->id,
                         amount: $amount,
                         dueDate: $data['due_date'] ? date('Y-m-d', strtotime($data['due_date'])) : now()->toDateString(),
                         paymentDate: $data['payment_date'] ? date('Y-m-d', strtotime($data['payment_date'])) : now()->toDateString()
                     );
-                    
+                    dd($ss);    
                 }
             }
             return $this->invoiceRepo->findByIdWithItems($invoice->id);

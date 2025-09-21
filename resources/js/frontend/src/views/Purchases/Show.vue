@@ -18,6 +18,6 @@ const route = useRoute();
 
   <InvoiceActions
   :invoice-id="route.params.id"
-  type="sales"
+  type="purchases"
 />
 </template>

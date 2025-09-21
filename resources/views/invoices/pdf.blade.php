@@ -42,6 +42,7 @@
     <p>Subtotal: {{ $invoice->sub_total }}</p>
     <p>Total Tax: {{ $invoice->tax_amount }}</p>
     <p>Total Discount: {{ $invoice->discount_amount }}</p>
+    <p>Shipping Cost: {{$invoice->shipping_cost}} </p>
     <p>Grand Total: {{ $invoice->grand_total }}</p>
 </div>
 </body>

@@ -15,6 +15,9 @@ class PurchaseInvoice extends Model
         'discount_amount',
         'invoice_number',
         'warehouse_id',
+        'payment_status',
+        'due_date',
+        'shipping_cost',
     ];
 protected static function boot()
 {

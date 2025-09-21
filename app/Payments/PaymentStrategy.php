@@ -7,5 +7,5 @@ use App\Models\Payment;
 
 interface PaymentStrategy
 {
-    public function pay(Payment $payment): bool;
+    public function pay(Payment $payment): mixed;
 }

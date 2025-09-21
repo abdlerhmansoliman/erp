@@ -5,20 +5,20 @@ namespace App\Payments;
 use App\Models\Payment;
 use App\Payments\Handlers\CardPaymentHandler;
 
-class PaymentProcessor{
-
+class PaymentProcessor
+{
     protected $strategies = [];
 
-    public function __construct(){
+    public function __construct()
+    {
         $this->strategies = [
             'Cash' => CashPaymentHandler::class,
             'Bank' => BankPaymentHandler::class,
-            'Card' => CardPaymentHandler::class,
             'Stripe' => StripePaymentHandler::class,
         ];
     }
 
-        public function process(Payment $payment): bool
+    public function process(Payment $payment): mixed
     {
         $methodName = $payment->paymentMethod->name;
 

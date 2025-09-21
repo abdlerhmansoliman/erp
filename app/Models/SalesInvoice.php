@@ -17,7 +17,8 @@ class SalesInvoice extends Model
         'status',
         'payment_status',
         'due_date',
-        'shipping_cost'
+        'shipping_cost',
+        'payment_date'
     ];
     protected static function boot()
 {

@@ -10,28 +10,31 @@ use Illuminate\Http\Request;
 
 class PaymentController extends Controller
 {
-    public function payWithStripe(Request $request)
-    {
-        $request->validate([
-            'amount' => 'required|numeric|min:1',
-        ]);
+public function payWithStripe(Request $request)
+{
+    $request->validate([
+        'amount' => 'required|numeric|min:1',
+        'payable_type' => 'required|string', 
+        'payable_id' => 'required|integer',
+        'payment_method_id' => 'required|integer', 
+    ]);
 
-        // ننشئ دفعة وهمية في قاعدة البيانات
-        $payment = Payment::create([
-            'payable_type' => SalesInvoice::class, 
-            'payable_id' => 1, // مؤقت للتجربة
-            'amount' => $request->amount,
-            'payment_method_id' => 4, // رقم طريقة الدفع Stripe
-        ]);
+    $payment = Payment::create([
+        'payable_type' => $request->payable_type,
+        'payable_id' => $request->payable_id,
+        'amount' => $request->amount,
+        'payment_method_id' => $request->payment_method_id,
+    ]);
 
-        $handler = new StripePaymentHandler();
-        $intent = $handler->pay($payment);
+    $handler = new StripePaymentHandler();
+    $intent = $handler->pay($payment);
 
-        return response()->json([
-            'client_secret' => $intent->client_secret,
-            'payment_id' => $payment->id,
-        ]);
-    }
+    return response()->json([
+        'client_secret' => $intent->client_secret,
+        'payment_id' => $payment->id,
+    ]);
+}
+
 
 public function confirmStripePayment(Request $request)
 {

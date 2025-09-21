@@ -99,6 +99,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
         Route::post('/delete-multiple', [PurchaseInvoiceController::class, 'deleteMultiple']);
         Route::get('/{id}/pdf', [PurchaseInvoiceController::class, 'downloadPdf']);
     });
+    
     Route::apiResource('purchases', PurchaseInvoiceController::class);
     
     // Purchase Returns
@@ -143,48 +144,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
         Route::post('/delete-multiple', [SupplierController::class, 'deleteMultiple']);
     });
     Route::apiResource('suppliers', SupplierController::class);
-    
-    /*
-    |--------------------------------------------------------------------------
-    | Human Resources Management
-    |--------------------------------------------------------------------------
-    */
-    
-    // Employees
-    Route::prefix('employees')->group(function () {
-        Route::get('/', [EmployerController::class, 'index']);
-        Route::post('/', [EmployerController::class, 'store']);
-        Route::get('/{id}', [EmployerController::class, 'show']);
-        Route::put('/{id}', [EmployerController::class, 'update']);
-        Route::delete('/{id}', [EmployerController::class, 'destroy']);
-        Route::get('/{id}/department', [EmployerController::class, 'getEmployeesByDepartment']);
-        Route::get('/{id}/position', [EmployerController::class, 'getEmployeesByPosition']);
-    });
-    
-    // Departments
-    Route::prefix('departments')->group(function () {
-        Route::get('/', [DepartmentController::class, 'index']);
-        Route::post('/', [DepartmentController::class, 'store']);
-        Route::get('/{id}', [DepartmentController::class, 'show']);
-        Route::put('/{id}', [DepartmentController::class, 'update']);
-        Route::delete('/{id}', [DepartmentController::class, 'destroy']);
-    });
-    
-    // Positions
-    Route::prefix('positions')->group(function () {
-        Route::get('/', [PositionController::class, 'index']);
-        Route::post('/', [PositionController::class, 'store']);
-        Route::get('/{id}', [PositionController::class, 'show']);
-        Route::put('/{id}', [PositionController::class, 'update']);
-        Route::delete('/{id}', [PositionController::class, 'destroy']);
-    });
-    
-    /*
-    |--------------------------------------------------------------------------
-    | Financial Management
-    |--------------------------------------------------------------------------
-    */
-    
+       
     // Taxes
     Route::apiResource('taxes', TaxController::class);
     
