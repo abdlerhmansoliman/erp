@@ -1,32 +1,45 @@
 <?php
-
+// app/Payments/PaymentProcessor.php
 namespace App\Payments;
 
 use App\Models\Payment;
-use App\Payments\Handlers\CardPaymentHandler;
 
 class PaymentProcessor
 {
-    protected $strategies = [];
+    protected array $strategies = [
+        'stripe' => StripePaymentHandler::class,
+        // ممكن تزود methods تانية زي cash/bank
+    ];
 
-    public function __construct()
+    protected function resolveHandler(Payment $payment): PaymentStrategy
     {
-        $this->strategies = [
-            'Cash' => CashPaymentHandler::class,
-            'Bank' => BankPaymentHandler::class,
-            'Stripe' => StripePaymentHandler::class,
-        ];
-    }
+        $methodName = strtolower($payment->paymentMethod->name ?? '');
 
-    public function process(Payment $payment): mixed
-    {
-        $methodName = $payment->paymentMethod->name;
+        $handlerClass = $this->strategies[$methodName] ?? null;
 
-        if (!isset($this->strategies[$methodName])) {
-            throw new \Exception("No handler for payment method: {$methodName}");
+        if (!$handlerClass) {
+            throw new \Exception("Unsupported payment method: {$methodName}");
         }
 
-        $strategy = new $this->strategies[$methodName]();
-        return $strategy->pay($payment);
+        return app($handlerClass);
+    }
+
+    public function pay(Payment $payment): array
+    {
+        return $this->resolveHandler($payment)->pay($payment);
+    }
+
+    public function confirm(Payment $payment, array $data): array
+    {
+        return $this->resolveHandler($payment)->confirm($payment, $data);
+    }
+
+    public function webhook(string $methodName, array $payload): void
+    {
+        $handlerClass = $this->strategies[strtolower($methodName)] ?? null;
+        if ($handlerClass) {
+            app($handlerClass)->handleWebhook($payload);
+        }
     }
 }
+

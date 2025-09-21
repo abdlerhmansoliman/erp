@@ -1,29 +1,30 @@
 <?php
-
+// app/Services/PaymentService.php
 namespace App\Services;
 
-use App\Repositories\PaymentRepository;
-use Illuminate\Support\Facades\DB;
+use App\Models\Payment;
+use App\Payments\PaymentProcessor;
 
 class PaymentService
 {
-    public function __construct(protected PaymentRepository $paymentRepo){}
+    public function __construct(protected PaymentProcessor $processor) {}
 
-    public function  addPayment(string $type, int $id, float $amount,string $dueDate,?string $paymentDate = null)
+    public function createPayment(array $data): array
     {
-    return  DB::transaction(function ()use ($type, $id,$amount ,$dueDate, $paymentDate) {
-        return $this->paymentRepo->create([
-            'payable_type' => $type,
-            'payable_id' => $id,
-            'amount' => $amount,
-            'payment_date' => $paymentDate,
-            'due_date' => $dueDate,
+        $payment = Payment::create([
+            'payable_type' => $data['payable_type'],
+            'payable_id' => $data['payable_id'],
+            'amount' => $data['amount'],
+            'payment_method_id' => $data['payment_method_id'],
+            'status' => 'pending',
         ]);
-    });
-    }
-    public function getTotalPaid(string $type, int $id): float
-    {
-        return $this->paymentRepo->getTotalPaid($type, $id);
+
+        return $this->processor->pay($payment);
     }
 
+    public function confirmPayment(Payment $payment, array $data): array
+    {
+        return $this->processor->confirm($payment, $data);
+    }
 }
+

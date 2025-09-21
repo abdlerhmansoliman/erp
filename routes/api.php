@@ -23,14 +23,17 @@ use App\Http\Controllers\WarehouseController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\PaymentController;
+use App\Http\Controllers\WebhookController;
 
 /*
 |--------------------------------------------------------------------------
 | Public Routes (No Authentication Required)
 |--------------------------------------------------------------------------
 */
-Route::post('payments/stripe', [PaymentController::class, 'payWithStripe']);
-Route::post('payments/stripe/confirm', [PaymentController::class, 'confirmStripePayment']);
+Route::post('payments/pay', [PaymentController::class, 'pay']);
+Route::post('payments/{payment}/confirm', [PaymentController::class, 'confirm']);
+Route::post('webhooks/stripe', [App\Http\Controllers\WebhookController::class, 'handleStripe']);
+// Route::post('stripe/webhook', [StripeWebhookController::class, 'handle']);
 
 Route::get('payment-methods', [PaymentController::class, 'methods']);
 Route::post('payments', [PaymentController::class, 'store']);
