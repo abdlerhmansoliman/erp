@@ -3,6 +3,7 @@
 // app/Http/Controllers/PaymentController.php
 namespace App\Http\Controllers;
 
+use App\Http\Requests\PaymentStoreRequest;
 use App\Models\Payment;
 use App\Services\PaymentService;
 use Illuminate\Http\Request;
@@ -11,14 +12,9 @@ class PaymentController extends Controller
 {
     public function __construct(protected PaymentService $service) {}
 
-    public function pay(Request $request)
+    public function pay(PaymentStoreRequest $request)
     {
-        $data = $request->validate([
-            'payable_type' => 'required|string',
-            'payable_id' => 'required|integer',
-            'amount' => 'required|numeric',
-            'payment_method_id' => 'required|integer',
-        ]);
+        $data = $request->validated();
 
         return response()->json($this->service->createPayment($data));
     }

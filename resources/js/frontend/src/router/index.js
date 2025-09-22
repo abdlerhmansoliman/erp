@@ -174,6 +174,13 @@ const routes = [
       name: 'WarehouseEdit',
       component: () => import('@/views/Warehouse/Edit.vue'),
       meta:{title:'Edit Warehouses'}
+    },
+    // Payment Testing Routes
+    {
+      path: '/payment-test',
+      name: 'PaymentTest',
+      component: () => import('@/views/Payments/PaymentTest.vue'),
+      meta: {title: 'Payment Testing'}
     }
 
   ]

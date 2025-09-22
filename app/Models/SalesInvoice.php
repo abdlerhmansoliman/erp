@@ -45,4 +45,9 @@ class SalesInvoice extends Model
         return $this->belongsTo(Warehouse::class);
     }
 
+        public function payments()
+    {
+        return $this->morphMany(Payment::class, 'payable');
+    }
+
 }

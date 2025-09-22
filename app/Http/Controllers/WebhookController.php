@@ -22,10 +22,19 @@ class WebhookController extends Controller
                 $payload, $sigHeader, $secret
             );
         } catch (SignatureVerificationException $e) {
+            Log::error('Webhook signature verification failed', [
+                'error' => $e->getMessage(),
+                'header' => $sigHeader
+            ]);
             return response()->json(['error' => 'Invalid signature'], 400);
         }
 
-        // 🔹 فلترة حسب نوع الحدث
+        // Store webhook event for testing
+        app(WebhookEventController::class)->store([
+            'type' => $event->type,
+            'data' => $event->data->object->toArray()
+        ]);
+
         switch ($event->type) {
             case 'payment_intent.succeeded':
                 $intent = $event->data->object;
@@ -36,9 +45,27 @@ class WebhookController extends Controller
                     'currency' => $intent->currency,
                 ]);
 
-                // مثال: تحديث حالة الدفع في DB
-                Payment::where('stripe_id', $intent->id)
-                    ->update(['status' => 'succeeded']);
+                Payment::where('transaction_id', $intent->id)
+                    ->update([
+                        'status' => 'succeeded',
+                        'payment_date' => now(),
+                        'provider_response' => json_encode($intent),
+                    ]);
+                break;
+
+            case 'payment_intent.payment_failed':
+                $intent = $event->data->object;
+                
+                Log::warning("❌ Payment failed", [
+                    'id' => $intent->id,
+                    'error' => $intent->last_payment_error ?? null
+                ]);
+
+                Payment::where('transaction_id', $intent->id)
+                    ->update([
+                        'status' => 'failed',
+                        'provider_response' => json_encode($intent),
+                    ]);
                 break;
 
             case 'charge.succeeded':
@@ -52,7 +79,7 @@ class WebhookController extends Controller
                 break;
 
             default:
-                Log::warning("Unhandled event type: {$event->type}");
+                Log::info("Received webhook event: {$event->type}");
         }
 
         return response()->json(['status' => 'success']);

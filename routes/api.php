@@ -18,11 +18,12 @@ use App\Http\Controllers\SalesInvoiceController;
 use App\Http\Controllers\SalesReturnController;
 use App\Http\Controllers\StockController;
 use App\Http\Controllers\SupplierController;
+use App\Http\Controllers\WebhookEventController;
+use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\UnitController;
 use App\Http\Controllers\WarehouseController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\WebhookController;
 
 /*
@@ -40,7 +41,7 @@ Route::prefix('payments')->group(function () {
 
 // Stripe webhook endpoint
 Route::post('/webhooks/stripe', [WebhookController::class, 'handleStripe']);
-// Route::post('stripe/webhook', [StripeWebhookController::class, 'handle']);
+Route::get('/webhook-events', [WebhookEventController::class, 'index']);
 
 Route::get('payment-methods', [PaymentController::class, 'methods']);
 Route::post('payments', [PaymentController::class, 'store']);
