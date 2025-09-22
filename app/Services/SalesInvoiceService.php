@@ -88,27 +88,6 @@ class SalesInvoiceService
           });
           $this->itemRepo->bulkInsert($rows->toArray());
 
-            if (in_array($data['payment_status'], ['paid','partial'])) {
-                $amount = $data['payment_status'] === 'paid'
-                    ? $data['grand_total']
-                    : ($data['paid_amount'] ?? 0);
-
-                if ($amount > 0) {
-
-                    
-                    $payment = $this->paymentService->addPayment(
-                        type: SalesInvoice::class,
-                        id: $invoice->id,
-                        amount: $amount,
-                        dueDate: $data['due_date'] ? date('Y-m-d', strtotime($data['due_date'])) : now()->toDateString(),
-                        paymentDate: isset($data['payment_date']) && $data['payment_date']
-                            ? date('Y-m-d', strtotime($data['payment_date']))
-                            : now()->toDateString()
-                        );
-                    
-                }
-            }
-
           return $invoice;
         });   
      }

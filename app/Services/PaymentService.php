@@ -26,5 +26,6 @@ class PaymentService
     {
         return $this->processor->confirm($payment, $data);
     }
+
 }
 

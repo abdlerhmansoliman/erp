@@ -14,65 +14,48 @@ class StripePaymentHandler implements PaymentStrategy
         Stripe::setApiKey(config('services.stripe.secret'));
     }
 
-    public function pay(Payment $payment): array
-    {
-$intent = PaymentIntent::create([
-    'amount' => intval($payment->amount * 100),
-    'currency' => 'usd',
-    'description' => "Payment for {$payment->payable_type} #{$payment->payable_id}",
-    'metadata' => ['payment_id' => $payment->id],
-    'payment_method_types' => ['card'], // فقط
-]);
-
+    public function pay(Payment $payment): array{
+        $intent=PaymentIntent::create([
+            'amount' => $payment->amount * 100,
+            'currency'=> 'usd',
+            'description' => "Payment for {$payment->payable_type} #{$payment->payable_id}",
+            'metadata' => ['payment_id' => $payment->id],
+            'payment_method_types' => config('services.stripe.methods', ['card']), 
+        ]);
         $payment->transaction_id = $intent->id;
         $payment->provider_response = $intent->toArray();
         $payment->save();
-
+        
         return [
             'client_secret' => $intent->client_secret,
             'payment_id' => $payment->id,
         ];
     }
 
-    public function confirm(Payment $payment, array $data): array
-    {
-        $intent = PaymentIntent::retrieve($payment->transaction_id);
+    public function confirm(Payment $payment, array $data): array{
+        $intent=PaymentIntent::retrieve($data['payment_intent']);
         $intent->confirm([
-            'payment_method' => $data['payment_method'] ?? null,
+            'payment_method' => $data['payment_method']??null,
         ]);
-
         $payment->status = $intent->status;
-        $payment->provider_response = $intent->toArray();
         $payment->save();
-
         return $payment->toArray();
     }
 
-public function handleWebhook(array $payload): void
-{
+    public function handleWebhook(array $payload): void{
+        $event=$payload['type'] ?? null;
+        $intent=$payload['data']['object'];
+        if (!$intent) return;
 
-    $event = $payload['type'] ?? null;
+        $payment=Payment::where('transaction_id', $intent['id'])->first();
 
-    if ($event === 'payment_intent.succeeded') {
-        $intent = $payload['data']['object'];
-        $payment = Payment::where('transaction_id', $intent['id'])->first();
-
-        if ($payment) {
-            $payment->status = 'succeeded';
-            $payment->save();
-        }
+        if(! $payment) return;
+        match($event){
+            'payment_intent.succeeded'=>$payment->update(['status' => 'succeeded']),
+            'payment_intent.payment_failed'=>$payment->update(['status' => 'failed']),
+            default=>null
+        };
     }
-
-    if ($event === 'payment_intent.payment_failed') {
-        $intent = $payload['data']['object'];
-        $payment = Payment::where('transaction_id', $intent['id'])->first();
-
-        if ($payment) {
-            $payment->status = 'failed';
-            $payment->save();
-        }
-    }
-}
 
 }
 

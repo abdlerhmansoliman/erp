@@ -1,45 +1,61 @@
 <?php
 
-// app/Http/Controllers/WebhookController.php
+
 namespace App\Http\Controllers;
 
 use App\Models\Payment;
-use App\Services\WebhookService;
 use Illuminate\Http\Request;
-use Stripe\Exception\SignatureVerificationException;
+use Illuminate\Support\Facades\Log;
 use Stripe\Webhook;
+use Stripe\Exception\SignatureVerificationException;
 
 class WebhookController extends Controller
 {
-    public function __construct(protected WebhookService $service) {}
+    public function handleStripe(Request $request)
+    {
+        $payload    = $request->getContent();
+        $sigHeader  = $request->header('Stripe-Signature');
+        $secret     = config('services.stripe.webhook_secret');
 
-public function handleStripe(Request $request)
-{
-    $payload = $request->all();
-
-    $event = $payload['type'] ?? null;
-
-    if ($event === 'payment_intent.succeeded') {
-        $intent = $payload['data']['object'];
-        $payment = Payment::where('transaction_id', $intent['id'])->first();
-
-        if ($payment) {
-            $payment->status = 'succeeded';
-            $payment->save();
+        try {
+            $event = Webhook::constructEvent(
+                $payload, $sigHeader, $secret
+            );
+        } catch (SignatureVerificationException $e) {
+            return response()->json(['error' => 'Invalid signature'], 400);
         }
-    }
 
-    if ($event === 'payment_intent.payment_failed') {
-        $intent = $payload['data']['object'];
-        $payment = Payment::where('transaction_id', $intent['id'])->first();
+        // 🔹 فلترة حسب نوع الحدث
+        switch ($event->type) {
+            case 'payment_intent.succeeded':
+                $intent = $event->data->object;
 
-        if ($payment) {
-            $payment->status = 'failed';
-            $payment->save();
+                Log::info("✅ PaymentIntent succeeded", [
+                    'id' => $intent->id,
+                    'amount' => $intent->amount,
+                    'currency' => $intent->currency,
+                ]);
+
+                // مثال: تحديث حالة الدفع في DB
+                Payment::where('stripe_id', $intent->id)
+                    ->update(['status' => 'succeeded']);
+                break;
+
+            case 'charge.succeeded':
+                $charge = $event->data->object;
+
+                Log::info("💳 Charge succeeded", [
+                    'id' => $charge->id,
+                    'payment_intent' => $charge->payment_intent,
+                    'amount' => $charge->amount,
+                ]);
+                break;
+
+            default:
+                Log::warning("Unhandled event type: {$event->type}");
         }
-    }
 
-    return response()->json(['status' => 'ok']);
+        return response()->json(['status' => 'success']);
+    }
 }
 
-}

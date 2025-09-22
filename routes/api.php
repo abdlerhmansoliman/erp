@@ -30,9 +30,16 @@ use App\Http\Controllers\WebhookController;
 | Public Routes (No Authentication Required)
 |--------------------------------------------------------------------------
 */
-Route::post('payments/pay', [PaymentController::class, 'pay']);
-Route::post('payments/{payment}/confirm', [PaymentController::class, 'confirm']);
-Route::post('webhooks/stripe', [App\Http\Controllers\WebhookController::class, 'handleStripe']);
+Route::prefix('payments')->group(function () {
+    // إنشاء عملية دفع
+    Route::post('/pay', [PaymentController::class, 'pay']);
+
+    // تأكيد الدفع (Stripe confirm)
+    Route::post('/{payment}/confirm', [PaymentController::class, 'confirm']);
+});
+
+// Stripe webhook endpoint
+Route::post('/webhooks/stripe', [WebhookController::class, 'handleStripe']);
 // Route::post('stripe/webhook', [StripeWebhookController::class, 'handle']);
 
 Route::get('payment-methods', [PaymentController::class, 'methods']);

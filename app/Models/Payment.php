@@ -13,6 +13,10 @@ class Payment extends Model
         'payment_date',
         'due_date',
         'payment_method_id',
+        'status',
+        'transaction_id',
+        'provider_response',
+        'stripe_id',
     ];
 
     public function payable()

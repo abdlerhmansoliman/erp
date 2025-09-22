@@ -26,6 +26,8 @@ return new class extends Migration
             $table->string('transaction_id')->nullable();
             $table->json('provider_response')->nullable();
 
+                    $table->string('stripe_id')->nullable()->unique();
+
             $table->timestamps();
         });
     }

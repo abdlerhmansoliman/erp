@@ -10,7 +10,7 @@ class Discount extends Model
         'name',
         'type',
         'is_percentage', 
-        'value', // Added to store the discount value
+        'value',
     ];
 
     public function products()
