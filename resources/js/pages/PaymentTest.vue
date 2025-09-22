@@ -2,12 +2,12 @@
   <div class="container py-5">
     <h2 class="mb-4">Payment Test Page</h2>
     
-<StripePayment
-  payable-type="App\Models\SalesInvoice"
-  :payable-id="123"
-  :payment-method-id="7"
-  @payment-success="onPaymentSuccess"
-/>
+    <StripePayment
+      payable-type="App\Models\SalesInvoice"
+      :payable-id="123"
+      :payment-method-id="1"
+      @payment-success="onPaymentSuccess"
+    />
 
     <div v-if="webhookEvents.length" class="mt-5">
       <h3>Webhook Events</h3>

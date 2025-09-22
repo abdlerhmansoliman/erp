@@ -19,6 +19,7 @@ return [
     'secret' => env('STRIPE_SECRET'),
     'webhook_secret' => env('STRIPE_WEBHOOK_SECRET'),
     'methods' => ['card'],
+     'statement_descriptor' => env('STRIPE_DESCRIPTOR'),
     ],
 
     'postmark' => [

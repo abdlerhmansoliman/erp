@@ -113,12 +113,6 @@ export default {
 
   async mounted() {
     try {
-      // Log environment variables for debugging
-      console.log('Environment:', {
-        mode: import.meta.env.MODE,
-        stripeKey: import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY ? 'Present' : 'Missing'
-      });
-
       // Initialize Stripe
       this.stripe = await loadStripe(import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY);
 

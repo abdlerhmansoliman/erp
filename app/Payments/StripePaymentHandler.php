@@ -54,7 +54,7 @@ class StripePaymentHandler implements PaymentStrategy
             return [
                 'client_secret' => $intent->client_secret,
                 'payment_id' => $payment->id,
-                'publishable_key' => env('STRIPE_KEY') // Use environment variable directly for publishable key
+                'publishable_key' => env('STRIPE_KEY') 
             ];
 
         } catch (ApiErrorException $e) {
