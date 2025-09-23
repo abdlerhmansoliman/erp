@@ -5,8 +5,8 @@ namespace Tests\Unit\Payments;
 use Tests\TestCase;
 use App\Models\Payment;
 use App\Models\PaymentMethod;
+use App\Payments\Gateways\StripePaymentHandler;
 use App\Payments\PaymentProcessor;
-use App\Payments\StripePaymentHandler;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
 class PaymentProcessorTest extends TestCase

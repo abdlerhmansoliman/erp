@@ -22,7 +22,6 @@ class SalesInvoiceService
      protected SalesItemRepository $itemRepo,
      protected CustomerService $customerService,
      protected WarehouseService $warehouseService,
-     protected PaymentService $paymentService
      )
     {
         $this->salesInvoiceRepository = $salesInvoiceRepository;

@@ -10,21 +10,17 @@ class Payment extends Model
         'payable_id',
         'payable_type',
         'amount',
-        'payment_date',
         'due_date',
-        'payment_method_id',
         'status',
-        'transaction_id',
-        'provider_response',
-        'stripe_id',
     ];
 
     public function payable()
     {
         return $this->morphTo();
     }
-    public function paymentMethod()
+
+    public function transactions()
     {
-        return $this->belongsTo(PaymentMethod::class);
+        return $this->hasMany(Transaction::class);
     }
 }

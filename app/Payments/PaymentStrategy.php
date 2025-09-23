@@ -4,10 +4,11 @@
 namespace App\Payments;
 
 use App\Models\Payment;
+use App\Models\Transaction;
 
 interface PaymentStrategy
 {
-    public function pay(Payment $payment): array;
-    public function confirm(Payment $payment, array $data): array;
+    public function pay(Transaction $transaction): array;
+    public function confirm(Transaction $transaction, array $data): Transaction;
     public function handleWebhook(array $payload): void;
 }

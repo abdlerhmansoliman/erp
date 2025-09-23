@@ -20,6 +20,7 @@ use App\Http\Controllers\StockController;
 use App\Http\Controllers\SupplierController;
 use App\Http\Controllers\WebhookEventController;
 use App\Http\Controllers\PaymentController;
+use App\Http\Controllers\TransactionController;
 use App\Http\Controllers\UnitController;
 use App\Http\Controllers\WarehouseController;
 use Illuminate\Http\Request;
@@ -31,20 +32,20 @@ use App\Http\Controllers\WebhookController;
 | Public Routes (No Authentication Required)
 |--------------------------------------------------------------------------
 */
-Route::prefix('payments')->group(function () {
+Route::prefix('transactions')->group(function () {
     // إنشاء عملية دفع
-    Route::post('/pay', [PaymentController::class, 'pay']);
+    Route::post('/pay', [TransactionController::class, 'pay']);
 
     // تأكيد الدفع (Stripe confirm)
-    Route::post('/{payment}/confirm', [PaymentController::class, 'confirm']);
+    Route::post('/{transaction}/confirm', [TransactionController::class, 'confirm']);
 });
 
 // Stripe webhook endpoint
 Route::post('/webhooks/stripe', [WebhookController::class, 'handleStripe']);
 Route::get('/webhook-events', [WebhookEventController::class, 'index']);
 
-Route::get('payment-methods', [PaymentController::class, 'methods']);
-Route::post('payments', [PaymentController::class, 'store']);
+Route::get('payment-methods', [TransactionController::class, 'methods']);
+Route::post('payments', [TransactionController::class, 'store']);
 // Authentication Routes
 Route::prefix('auth')->group(function () {
     Route::post('/register', [AuthController::class, 'register']);

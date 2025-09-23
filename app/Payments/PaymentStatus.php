@@ -10,7 +10,7 @@ class PaymentStatus
     public const FAILED = 'failed';
     public const REFUNDED = 'refunded';
     public const CANCELLED = 'cancelled';
-
+    public const PARTIAL = 'partial';
     public static function isValid(string $status): bool
     {
         return in_array($status, [
@@ -19,7 +19,8 @@ class PaymentStatus
             self::SUCCEEDED,
             self::FAILED,
             self::REFUNDED,
-            self::CANCELLED
+            self::CANCELLED,
+            self::PARTIAL
         ]);
     }
 

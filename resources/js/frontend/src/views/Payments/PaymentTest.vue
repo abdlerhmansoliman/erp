@@ -18,29 +18,6 @@
             </div>
           </div>
         </div>
-
-        <!-- Webhook Events -->
-        <div class="col-md-6">
-          <div class="card">
-            <div class="card-header">
-              <h5 class="mb-0">Webhook Events</h5>
-            </div>
-            <div class="card-body">
-              <div v-if="webhookEvents.length" class="webhook-events">
-                <div v-for="event in webhookEvents" :key="event.id" class="webhook-event mb-3">
-                  <div class="d-flex justify-content-between">
-                    <strong>{{ event.type }}</strong>
-                    <small>{{ formatDate(event.created_at) }}</small>
-                  </div>
-                  <pre class="mt-2"><code>{{ JSON.stringify(event.data, null, 2) }}</code></pre>
-                </div>
-              </div>
-              <div v-else class="text-center py-3">
-                No webhook events yet
-              </div>
-            </div>
-          </div>
-        </div>
       </div>
     </div>
   </div>
