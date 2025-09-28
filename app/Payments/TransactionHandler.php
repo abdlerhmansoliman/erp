@@ -17,7 +17,6 @@ class TransactionHandler
             'provider_response' => $providerResponse,
         ]);
 
-        // تحديث الـ Payment بناءً على مجموع Transactions
         $transaction->payment->update([
             'status' => $transaction->payment->transactions()->sum('amount') >= $transaction->payment->amount
                 ? PaymentStatus::SUCCEEDED

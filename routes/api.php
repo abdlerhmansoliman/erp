@@ -38,11 +38,19 @@ Route::prefix('transactions')->group(function () {
 
     // تأكيد الدفع (Stripe confirm)
     Route::post('/{transaction}/confirm', [TransactionController::class, 'confirm']);
+
+    // عرض حالة معاملة
+    Route::get('/{transaction}', [TransactionController::class, 'show']);
+
+    // دفع نقدي
+    Route::post('/cash', [TransactionController::class, 'cash']);
 });
 
 // Stripe webhook endpoint
 Route::post('/webhooks/stripe', [WebhookController::class, 'handleStripe']);
 Route::get('/webhook-events', [WebhookEventController::class, 'index']);
+
+// (removed custom payments API in favor of transactions module)
 
 Route::get('payment-methods', [TransactionController::class, 'methods']);
 Route::post('payments', [TransactionController::class, 'store']);

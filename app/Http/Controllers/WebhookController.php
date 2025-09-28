@@ -3,7 +3,8 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Payment;
+use App\Models\Transaction;
+use App\Payments\TransactionHandler;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use Stripe\Webhook;
@@ -35,6 +36,8 @@ class WebhookController extends Controller
             'data' => $event->data->object->toArray()
         ]);
 
+        $handler = app(TransactionHandler::class);
+
         switch ($event->type) {
             case 'payment_intent.succeeded':
                 $intent = $event->data->object;
@@ -45,12 +48,9 @@ class WebhookController extends Controller
                     'currency' => $intent->currency,
                 ]);
 
-                Payment::where('transaction_id', $intent->id)
-                    ->update([
-                        'status' => 'succeeded',
-                        'payment_date' => now(),
-                        'provider_response' => json_encode($intent),
-                    ]);
+                if ($transaction = Transaction::where('transaction_id', $intent->id)->first()) {
+                    $handler->handleSuccess($transaction, $intent->toArray());
+                }
                 break;
 
             case 'payment_intent.payment_failed':
@@ -60,12 +60,9 @@ class WebhookController extends Controller
                     'id' => $intent->id,
                     'error' => $intent->last_payment_error ?? null
                 ]);
-
-                Payment::where('transaction_id', $intent->id)
-                    ->update([
-                        'status' => 'failed',
-                        'provider_response' => json_encode($intent),
-                    ]);
+                if ($transaction = Transaction::where('transaction_id', $intent->id)->first()) {
+                    $handler->handleFailure($transaction, $intent->toArray());
+                }
                 break;
 
             case 'charge.succeeded':

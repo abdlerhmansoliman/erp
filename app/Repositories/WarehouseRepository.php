@@ -4,6 +4,8 @@ namespace App\Repositories;
 
 use App\Models\Warehouse;
 use App\Repositories\Interfaces\WarehouseRepositoryInterface;
+use Illuminate\Support\Facades\DB;
+
 class WarehouseRepository implements WarehouseRepositoryInterface
 {
 
@@ -49,7 +51,7 @@ public function getByIdWithAvailableProducts($id,$filters )
 
     $warehouse = Warehouse::withCount([
             'stocks as product_count' => function ($q) use ($search) {
-                $q->select(\DB::raw('COUNT(DISTINCT product_id)'))
+                $q->select(DB::raw('COUNT(DISTINCT product_id)'))
                   ->where('remaining', '>', 0)
                   ->when($search, fn($query) => $query->whereHas('product', fn($q) => $q->where('name', 'like', "%{$search}%")));
             }
@@ -62,15 +64,15 @@ public function getByIdWithAvailableProducts($id,$filters )
         ], 'remaining')
         ->findOrFail($id);
 
-    $products = \DB::table('stocks')
+    $products = DB::table('stocks')
         ->join('products', 'stocks.product_id', '=', 'products.id')
         ->select(
             'stocks.product_id',
             'products.name as product_name',
-            \DB::raw('SUM(stocks.qty) as qty'),
-            \DB::raw('SUM(stocks.remaining) as remaining'),
-            \DB::raw('ROUND(AVG(stocks.unit_coast), 2) as unit_price'),
-            \DB::raw('ROUND(SUM(stocks.unit_coast * stocks.remaining), 2) as total_price')
+            DB::raw('SUM(stocks.qty) as qty'),
+            DB::raw('SUM(stocks.remaining) as remaining'),
+            DB::raw('ROUND(AVG(stocks.unit_coast), 2) as unit_price'),
+            DB::raw('ROUND(SUM(stocks.unit_coast * stocks.remaining), 2) as total_price')
         )
         ->where('stocks.warehouse_id', $id)
         ->where('stocks.remaining', '>', 0)

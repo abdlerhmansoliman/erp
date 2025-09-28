@@ -200,7 +200,7 @@ export function useInvoice(invoiceType = 'purchase') {
     item.total = total;
   };
 
-const saveInvoice = async () => {
+const saveInvoice = async (options = { redirect: true }) => {
   if (!selectedSupplier.value) {
     toast.error(config.value.partyRequiredMessage);
     return;
@@ -248,8 +248,12 @@ const invoiceData = {
 
     if (data.status === 'success' || (data.data && data.data.id)) {
       toast.success(data.message || config.value.successMessage);
-      resetForm();
-      router.push(config.value.redirectPath);
+      const createdId = data.data?.id ?? data.id;
+      if (options.redirect) {
+        resetForm();
+        router.push(config.value.redirectPath);
+      }
+      return createdId || data.data || data;
     } else {
       toast.error(data.message || 'حدث خطأ أثناء حفظ الفاتورة');
     }

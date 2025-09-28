@@ -45,7 +45,6 @@ class StripePaymentHandler implements PaymentStrategy
             return [
                 'client_secret' => $intent->client_secret,
                 'transaction_id' => $transaction->id,
-                'publishable_key' => env('STRIPE_KEY')
             ];
 
         } catch (ApiErrorException $e) {
@@ -85,7 +84,7 @@ public function confirm(Transaction $transaction, array $data): Transaction
                 : PaymentStatus::PARTIAL,
         ]);
 
-        return $transaction->fresh(); // <-- ترجع Transaction فعلية
+        return $transaction->fresh(); 
     } catch (ApiErrorException $e) {
         Log::error('Stripe confirmation error', [
             'transaction_id' => $transaction->id,

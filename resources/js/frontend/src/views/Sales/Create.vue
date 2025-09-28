@@ -4,6 +4,7 @@ import InvoiceHeader from '@/components/Invoice/InvoiceHeader.vue';
 import ProductSearch from '@/components/Invoice/ProductSearch.vue';
 import InvoiceItemsTable from '@/components/Invoice/InvoiceItemsTable.vue';
 import InvoiceSummary from '@/components/Invoice/InvoiceSummary/InvoiceSummary.vue';
+import { useRouter } from 'vue-router';
 import { useInvoice } from '@/composables/useInvoice';
 import InvoicePaymentSection from '@/components/Invoice/InvoicePaymentSection.vue';
 
@@ -39,6 +40,17 @@ const {
 
 // Initialize data on component mount
 onMounted(initializeData);
+
+const router = useRouter();
+
+async function proceedToPayment() {
+  const saved = await saveInvoice({ redirect: false });
+  // Assume saveInvoice returns created invoice or id; fallback to last created in store if needed
+  const invoiceId = saved?.id || saved || null;
+  if (invoiceId) {
+    router.push({ name: 'PaymentPage', query: { invoice_id: invoiceId } });
+  }
+}
 </script>
 
 <template>
@@ -97,9 +109,9 @@ onMounted(initializeData);
       <!-- Submit Button -->
       <div class="flex justify-end mt-4">
         <button 
-          @click="saveInvoice"
-          class="bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded">
-          {{ config.saveButtonText }}
+          @click="proceedToPayment"
+          class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-4 rounded">
+          Save & Pay
         </button>
       </div>
     </div>

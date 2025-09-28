@@ -25,13 +25,12 @@ class TransactionController extends Controller
 
         $payment = Payment::findOrFail($data['payment_id']);
 
-        // إنشاء Transaction + الدفع مباشرة
         $result = $this->transactionService->createTransaction( $data);
 
         return response()->json([
             'success' => true,
-            'transaction' => $result['transaction'],
-            'payment_result' => $result['payment_result'],
+            'client_secret' => $result['client_secret'],
+            'transaction_id' => $result['transaction_id'],
         ]);
     }
 
@@ -40,6 +39,7 @@ class TransactionController extends Controller
      */
     public function confirm(Request $request, int $transactionId): JsonResponse
     {
+        
         $data = $request->validate([
             'payment_intent_id' => 'required|string',
             'status' => 'required|string',

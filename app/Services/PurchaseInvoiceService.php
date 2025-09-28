@@ -108,14 +108,13 @@ class PurchaseInvoiceService
                 if ($amount > 0) {
 
                     
-                     $ss=$this->paymentService->addPayment(
+                     $this->paymentService->addPayment(
                         type: PurchaseInvoice::class,
                         id: $invoice->id,
                         amount: $amount,
                         dueDate: $data['due_date'] ? date('Y-m-d', strtotime($data['due_date'])) : now()->toDateString(),
                         paymentDate: $data['payment_date'] ? date('Y-m-d', strtotime($data['payment_date'])) : now()->toDateString()
                     );
-                    dd($ss);    
                 }
             }
             return $this->invoiceRepo->findByIdWithItems($invoice->id);

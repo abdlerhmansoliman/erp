@@ -181,6 +181,12 @@ const routes = [
       name: 'PaymentTest',
       component: () => import('@/views/Payments/PaymentTest.vue'),
       meta: {title: 'Payment Testing'}
+    },
+    {
+      path: '/payment',
+      name: 'PaymentPage',
+      component: () => import('@/pages/PaymentPage.vue'),
+      meta: { title: 'Payment' }
     }
 
   ]

@@ -33,8 +33,8 @@ public function createTransaction(array $data)
     $paymentResult = $this->processor->pay($transaction);
 
     return [
-        'transaction' => $transaction,
-        'payment_result' => $paymentResult,
+        'client_secret' => $paymentResult['client_secret'] ?? null,
+        'transaction_id' => $transaction->id,
     ];
 }
 
