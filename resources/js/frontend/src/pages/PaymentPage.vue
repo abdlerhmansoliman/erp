@@ -28,7 +28,7 @@
             <label class="block text-sm font-medium text-gray-700 mb-1">Amount Paid</label>
             <input v-model.number="cashAmount" type="number" min="0" :max="totalAmount" step="0.01" class="w-full border rounded px-3 py-2" />
           </div>
-          <button @click="submitCash" :disabled="loading" class="px-4 py-2 bg-green-600 text-white rounded disabled:opacity-50">
+          <button @click="submitCash" :disabled="loading || !paymentId" class="px-4 py-2 bg-green-600 text-white rounded disabled:opacity-50">
             <span v-if="!loading">Confirm Cash Payment</span>
             <span v-else>Processing...</span>
           </button>
@@ -36,7 +36,7 @@
 
         <div v-if="method === 'visa'" class="space-y-4">
           <div id="card-element" class="border rounded px-3 py-2 focus-within:ring-2 focus-within:ring-indigo-500"></div>
-          <button @click="submitStripe" :disabled="loading || !stripe || !elements" class="px-4 py-2 bg-indigo-600 text-white rounded disabled:opacity-50">
+          <button @click="submitStripe" :disabled="loading || !stripe || !elements || !paymentId" class="px-4 py-2 bg-indigo-600 text-white rounded disabled:opacity-50">
             <span v-if="!loading">Pay with Card</span>
             <span v-else>Processing...</span>
           </button>
@@ -74,6 +74,7 @@ export default {
       messageType: 'info',
       pollTimer: null,
       paymentMethodId: 7,
+      transactionId: null,
     }
   },
   computed: {
@@ -89,60 +90,165 @@ export default {
     formatCurrency(v) {
       return new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(Number(v || 0))
     },
+    
     async fetchInvoice() {
-      if (!this.invoiceId) return
-      const { data } = await api.get(`/sales/${this.invoiceId}`)
-      this.totalAmount = Number(data.grand_total || 0)
-      this.cashAmount = this.totalAmount
-    },
-    async initStripe() {
-      // Use transactions module to create a transaction and get client_secret
-      const payload = {
-        payable_type: 'App\\Models\\SalesInvoice',
-        payable_id: this.invoiceId,
-        amount: this.totalAmount,
-        payment_method: 'Stripe',
+      if (!this.invoiceId) {
+        this.message = 'Invalid invoice ID'
+        this.messageType = 'error'
+        return
       }
-      const { data } = await api.post('/transactions/pay', payload)
-      this.clientSecret = data.client_secret
-      this.transactionId = data.transaction_id
-      this.stripe = await loadStripe(data.publishable_key)
-      this.elements = this.stripe.elements({ appearance: { theme: 'stripe' } })
-      if (this.cardElement) {
-        try { this.cardElement.unmount() } catch (_) {}
-        this.cardElement = null
-      }
-      this.$nextTick(() => {
-        this.cardElement = this.elements.create('card', {
-          hidePostalCode: true,
+      
+      try {
+        const { data } = await api.get(`/sales/${this.invoiceId}`)
+        
+        // The actual invoice data is nested inside data.data
+        const invoice = data.data || data
+        
+        // Debug: log the actual invoice object
+        console.log('Full invoice data:', invoice)
+        
+        // Try different possible field names for the total amount
+        this.totalAmount = Number(
+          invoice.grand_total || 
+          invoice.total_amount || 
+          invoice.grandTotal || 
+          invoice.totalAmount ||
+          invoice.total ||
+          0
+        )
+        
+        this.cashAmount = this.totalAmount
+        
+        console.log('Invoice loaded:', { 
+          id: this.invoiceId, 
+          totalAmount: this.totalAmount,
+          grand_total: invoice.grand_total,
+          total_amount: invoice.total_amount,
+          availableFields: Object.keys(invoice)
         })
-        this.cardElement.mount('#card-element')
-        // Try focusing card to allow typing immediately
-        setTimeout(() => {
-          const iframe = document.querySelector('#card-element iframe')
-          if (iframe) iframe.focus()
-        }, 50)
-      })
+        
+        if (this.totalAmount < 0.01) {
+          this.message = `Invoice amount is invalid (${this.totalAmount}). Please check the invoice data.`
+          this.messageType = 'error'
+          return
+        }
+        
+        // Get payment record for this invoice
+        await this.createPaymentRecord()
+      } catch (error) {
+        console.error('Error fetching invoice:', error)
+        this.message = 'Failed to load invoice data'
+        this.messageType = 'error'
+      }
     },
+
+    async createPaymentRecord() {
+      try {
+        // Get the payment_id for this invoice from your payment table
+        // Assuming your SaleInvoiceService creates payments similar to PurchaseInvoiceService
+        const { data } = await api.get(`/payments/by-invoice/${this.invoiceId}`)
+        this.paymentId = data.id
+        console.log('Found payment ID:', this.paymentId)
+      } catch (error) {
+        if (error.response?.status === 404) {
+          console.error('Payment not found for invoice:', this.invoiceId)
+          this.message = 'Payment record not found. Please ensure the invoice was saved with payment information.'
+          this.messageType = 'error'
+        } else {
+          console.error('Error fetching payment record:', error)
+          this.message = 'Error loading payment data'
+          this.messageType = 'error'
+        }
+      }
+    },
+
+    async initStripe() {
+      if (!this.paymentId) {
+        console.error('Payment ID is required for Stripe initialization')
+        return
+      }
+
+      if (!this.totalAmount || this.totalAmount < 0.01) {
+        console.error('Invalid amount for Stripe initialization:', this.totalAmount)
+        this.message = 'Invalid payment amount'
+        this.messageType = 'error'
+        return
+      }
+
+      try {
+        const payload = {
+          payment_id: this.paymentId,
+          amount: this.totalAmount,
+          payment_method_id: this.paymentMethodId,
+        }
+
+        console.log('Sending payload:', payload)
+
+        const { data } = await api.post('/transactions/pay', payload)
+
+        this.clientSecret = data.client_secret
+        this.transactionId = data.transaction_id
+        this.stripe = await loadStripe(data.publishable_key)
+        this.elements = this.stripe.elements({ appearance: { theme: 'stripe' } })
+
+        if (this.cardElement) {
+          try { this.cardElement.unmount() } catch (_) {}
+          this.cardElement = null
+        }
+
+        this.$nextTick(() => {
+          this.cardElement = this.elements.create('card', { hidePostalCode: true })
+          this.cardElement.mount('#card-element')
+        })
+      } catch (error) {
+        console.error('Error initializing Stripe:', error)
+        console.error('Error details:', error.response?.data)
+        this.message = error.response?.data?.message || 'Failed to initialize payment'
+        this.messageType = 'error'
+      }
+    },
+
     async submitCash() {
+      if (!this.paymentId) {
+        this.message = 'Payment ID not found'
+        this.messageType = 'error'
+        return
+      }
+
       try {
         this.loading = true
-        const { data } = await api.post('/transactions/cash', {
-          payable_type: 'App\\Models\\SalesInvoice',
-          payable_id: this.invoiceId,
+        const payload = {
+          payment_id: this.paymentId,
           amount: this.cashAmount,
-        })
-        this.message = 'Payment recorded successfully.'
+          payment_method_id: this.paymentMethodId,
+        }
+
+        const { data } = await api.post('/transactions/cash', payload)
+
+        this.message = 'Cash payment recorded successfully.'
         this.messageType = 'success'
+        
+        // Optionally redirect or update UI
+        setTimeout(() => {
+          this.$router.push('/sales') // Adjust route as needed
+        }, 2000)
+        
       } catch (e) {
+        console.error('Cash payment error:', e)
         this.message = e.response?.data?.message || 'Cash payment failed'
         this.messageType = 'error'
       } finally {
         this.loading = false
       }
     },
+
     async submitStripe() {
-      if (!this.clientSecret || !this.stripe || !this.cardElement) return
+      if (!this.clientSecret || !this.stripe || !this.cardElement) {
+        this.message = 'Payment not properly initialized'
+        this.messageType = 'error'
+        return
+      }
+      
       try {
         this.loading = true
         const { error, paymentIntent } = await this.stripe.confirmCardPayment(this.clientSecret, {
@@ -150,11 +256,13 @@ export default {
             card: this.cardElement,
           },
         })
+        
         if (error) {
           this.message = error.message || 'Payment failed'
           this.messageType = 'error'
           return
         }
+        
         // Confirm endpoint if needed by backend
         try {
           await api.post(`/transactions/${this.transactionId}/confirm`, {
@@ -162,34 +270,50 @@ export default {
             status: paymentIntent.status,
           })
         } catch (_) {}
+        
         this.message = 'Payment processing...'
         this.messageType = 'info'
         this.startPolling()
       } catch (e) {
+        console.error('Stripe payment error:', e)
         this.message = e.message || 'Payment failed'
         this.messageType = 'error'
       } finally {
         this.loading = false
       }
     },
+
     async fetchPaymentStatus() {
       if (!this.transactionId) return
-      const { data } = await api.get(`/transactions/${this.transactionId}`)
-      const status = data.status
-      if (status === 'succeeded') {
-        this.message = 'Payment Successful'
-        this.messageType = 'success'
-        this.stopPolling()
-      } else if (status === 'failed') {
-        this.message = 'Payment Failed'
-        this.messageType = 'error'
-        this.stopPolling()
+      
+      try {
+        const { data } = await api.get(`/transactions/${this.transactionId}`)
+        const status = data.status
+        
+        if (status === 'succeeded') {
+          this.message = 'Payment Successful'
+          this.messageType = 'success'
+          this.stopPolling()
+          
+          // Optionally redirect after successful payment
+          setTimeout(() => {
+            this.$router.push('/sales') // Adjust route as needed
+          }, 2000)
+        } else if (status === 'failed') {
+          this.message = 'Payment Failed'
+          this.messageType = 'error'
+          this.stopPolling()
+        }
+      } catch (error) {
+        console.error('Error fetching payment status:', error)
       }
     },
+
     startPolling() {
       this.stopPolling()
       this.pollTimer = setInterval(this.fetchPaymentStatus, 3000)
     },
+
     stopPolling() {
       if (this.pollTimer) {
         clearInterval(this.pollTimer)
@@ -197,19 +321,24 @@ export default {
       }
     }
   },
+
   watch: {
     method(newVal) {
-      if (newVal === 'visa') {
+      if (newVal === 'visa' && this.paymentId && this.totalAmount >= 0.01) {
         this.initStripe()
       }
     }
   },
+
   async mounted() {
     await this.fetchInvoice()
-    if (this.method === 'visa') {
+    
+    // Only initialize Stripe if we have valid data
+    if (this.method === 'visa' && this.paymentId && this.totalAmount >= 0.01) {
       await this.initStripe()
     }
   },
+
   beforeUnmount() {
     this.stopPolling()
     if (this.cardElement) {
@@ -221,5 +350,3 @@ export default {
 
 <style scoped>
 </style>
-
-

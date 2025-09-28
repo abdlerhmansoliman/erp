@@ -45,6 +45,7 @@ Route::prefix('transactions')->group(function () {
     // دفع نقدي
     Route::post('/cash', [TransactionController::class, 'cash']);
 });
+Route::get('/payments/by-invoice/{invoiceId}', [PaymentController::class, 'getByInvoice']);
 
 // Stripe webhook endpoint
 Route::post('/webhooks/stripe', [WebhookController::class, 'handleStripe']);

@@ -22,6 +22,7 @@ class SalesInvoiceService
      protected SalesItemRepository $itemRepo,
      protected CustomerService $customerService,
      protected WarehouseService $warehouseService,
+     protected PaymentService $paymentService
      )
     {
         $this->salesInvoiceRepository = $salesInvoiceRepository;
@@ -56,40 +57,71 @@ class SalesInvoiceService
     public function createInvoice(array $data)
     {
         return DB::transaction(function () use ($data) {
-          $invoice=$this->salesInvoiceRepository->create([
-            'customer_id' => $data['customer_id'],
-            'status' => $data['status'] ?? 'draft',
-            'sub_total' => $data['sub_total'] ?? 0,
-            'warehouse_id' => $data['warehouse_id'],
-            'discount_amount' => $data['discount_amount'] ?? 0,
-            'tax_amount' => $data['tax_amount'] ?? 0,
-            'grand_total' => $data['grand_total'] ?? 0,
-            'payment_status' => $data['payment_status'] ?? 'paid',
-            'due_date' => in_array($data['payment_status'], ['partial','due']) ? $data['due_date'] ?? null : null,
-            'shipping_cost' => $data['shipping_cost'] ?? 0,
-          ]); 
-          $rows=collect($data['items'])->map(function ($item) use ($invoice) {
-                $allocations=$this->stockService->allocateFIFOStock($item['product_id'], $invoice->warehouse_id, $item['quantity']);
-                return[
-                'sales_invoice_id' => $invoice->id,
-                'product_id'          => (int) $item['product_id'],
-                'quantity'            => (int) $item['quantity'],
-                'unit_price'          => (float) $item['unit_price'],
-                'discount_amount'     => (float) ($item['discount_amount'] ?? 0),
-                'tax_amount'          => (float) ($item['tax_amount'] ?? 0),
-                'total_price'         => (float) $item['total_price'],
-                'net_price'           => (float) $item['net_price'],
-                'stock_distribution'    => json_encode($allocations), 
-                'created_at'          => now(),
-                'updated_at'          => now(),
-                'tax_id'              => $item['tax_id']
-              ];
-          });
-          $this->itemRepo->bulkInsert($rows->toArray());
+            $invoice = $this->salesInvoiceRepository->create([
+                'customer_id'     => $data['customer_id'],
+                'status'          => $data['status'] ?? 'draft',
+                'sub_total'       => $data['sub_total'] ?? 0,
+                'warehouse_id'    => $data['warehouse_id'],
+                'discount_amount' => $data['discount_amount'] ?? 0,
+                'tax_amount'      => $data['tax_amount'] ?? 0,
+                'grand_total'     => $data['grand_total'] ?? 0,
+                'payment_status'  => $data['payment_status'] ?? 'paid',
+                'due_date'        => in_array($data['payment_status'], ['partial','due']) 
+                                        ? ($data['due_date'] ?? null) 
+                                        : null,
+                'shipping_cost'   => $data['shipping_cost'] ?? 0,
+            ]);
 
-          return $invoice;
+            $rows = collect($data['items'])->map(function ($item) use ($invoice) {
+                $allocations = $this->stockService->allocateFIFOStock(
+                    $item['product_id'], 
+                    $invoice->warehouse_id, 
+                    $item['quantity']
+                );
+
+                return [
+                    'sales_invoice_id'   => $invoice->id,
+                    'product_id'         => (int) $item['product_id'],
+                    'quantity'           => (int) $item['quantity'],
+                    'unit_price'         => (float) $item['unit_price'],
+                    'discount_amount'    => (float) ($item['discount_amount'] ?? 0),
+                    'tax_amount'         => (float) ($item['tax_amount'] ?? 0),
+                    'total_price'        => (float) $item['total_price'],
+                    'net_price'          => (float) $item['net_price'],
+                    'stock_distribution' => json_encode($allocations), 
+                    'created_at'         => now(),
+                    'updated_at'         => now(),
+                    'tax_id'             => $item['tax_id'],
+                ];
+            });
+
+            $this->itemRepo->bulkInsert($rows->toArray());
+
+            // 🔹 إضافة الدفع هنا
+            if (in_array($data['payment_status'], ['paid','partial'])) {
+                $amount = $data['payment_status'] === 'paid'
+                    ? $data['grand_total']
+                    : ($data['paid_amount'] ?? 0);
+
+                if ($amount > 0) {
+                    $this->paymentService->addPayment(
+                        type: \App\Models\SalesInvoice::class,
+                        id: $invoice->id,
+                        amount: $amount,
+                        dueDate: $data['due_date'] 
+                            ? date('Y-m-d', strtotime($data['due_date'])) 
+                            : now()->toDateString(),
+                        paymentDate: $data['payment_date'] 
+                            ? date('Y-m-d', strtotime($data['payment_date'])) 
+                            : now()->toDateString()
+                    );
+                }
+            }
+
+            return $this->salesInvoiceRepository->findByIdWithItems($invoice->id);
         });   
-     }
+    }
+
 
 
 

@@ -37,7 +37,7 @@ class TransactionController extends Controller
     /**
      * Confirm an existing transaction
      */
-    public function confirm(Request $request, int $transactionId): JsonResponse
+     public function confirm(Request $request, int $transactionId): JsonResponse
     {
         
         $data = $request->validate([
@@ -54,4 +54,5 @@ class TransactionController extends Controller
             'transaction' => $transaction,
         ]);
     }
+    
 }
