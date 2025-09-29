@@ -17,7 +17,19 @@ class TransactionService
 public function createTransaction(array $data)
 {
     // جلب الـ Payment
-    $payment = Payment::findOrFail($data['payment_id']);
+    $payment = Payment::with('transactions')->findOrFail($data['payment_id']);
+
+    // Guard against overpayment (double-check at service level)
+    $totalSucceeded = $payment->transactions()
+        ->where('status', 'succeeded')
+        ->sum('amount');
+    $remaining = max(0, ($payment->amount ?? 0) - $totalSucceeded);
+    if ($remaining <= 0) {
+        throw new \RuntimeException('Payment already completed.');
+    }
+    if ($data['amount'] > $remaining) {
+        throw new \RuntimeException('Requested amount exceeds remaining balance.');
+    }
 
     // إنشاء Transaction مرتبط بالـ Payment
     $transaction = $payment->transactions()->create([

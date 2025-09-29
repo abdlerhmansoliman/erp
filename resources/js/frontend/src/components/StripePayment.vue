@@ -56,13 +56,16 @@
 
       <!-- Submit Button -->
       <button 
-        type="submit" 
-        class="btn btn-primary w-100"
-        :disabled="loading || !stripe || !amount || cardError"
-      >
-        <span v-if="loading" class="spinner-border spinner-border-sm me-2" role="status"></span>
-        {{ loading ? 'Processing...' : `Pay $${amount || '0.00'}` }}
-      </button>
+  type="submit" 
+  class="btn btn-dark btn-lg w-100 rounded-pill shadow-sm d-flex align-items-center justify-content-center payment-button"
+  :disabled="loading || !stripe || !amount || cardError"
+>
+  <span v-if="loading" class="spinner-border spinner-border-sm me-2" role="status"></span>
+
+  <i v-else class="fas fa-credit-card me-2" aria-hidden="true"></i>
+
+  {{ loading ? 'Processing Payment...' : 'Pay with Card' }}
+</button>
     </form>
   </div>
 </template>
@@ -94,6 +97,10 @@ export default {
     presetAmount: {
       type: Number,
       default: null
+    },
+    paymentId: {
+      type: [Number, String],
+      required: true
     }
   },
 
@@ -117,6 +124,11 @@ export default {
       this.stripe = await loadStripe(import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY);
 
       const elements = this.stripe.elements();
+      
+      // Pre-fill amount if provided
+      if (this.presetAmount != null) {
+        this.amount = parseFloat(this.presetAmount);
+      }
       
       // Create card element
       this.card = elements.create('card', {
@@ -177,44 +189,43 @@ export default {
       this.cardError = null
       
       try {
-        // 1. Create payment
-        const modelName = this.payableType.replace('App\\Models\\', '');
+        // 1. Create transaction for existing payment
         const paymentData = {
-          payable_type: `App\\Models\\${modelName}`,
-          payable_id: 123, // Using the newly created test invoice ID
+          payment_id: Number(this.paymentId),
           amount: parseFloat(this.amount),
-          payment_method_id: 7 // Using the existing Stripe payment method ID
+          payment_method_id: Number(this.paymentMethodId)
         };
         
-        console.log('Payment request:', paymentData);
-
-        const response = await axios.post('/api/payments/pay', paymentData).catch(error => {
+        const txResponse = await axios.post('/api/transactions/pay', paymentData).catch(error => {
           if (error.response) {
-            throw new Error(error.response.data.message || 'Failed to create payment intent');
+            // Bubble up API errors with status and message
+            const err = new Error(error.response.data.message || 'Failed to create transaction');
+            err.status = error.response.status;
+            throw err;
           }
           throw error;
         });
 
-        const { client_secret, payment_id } = response.data;
+        const { client_secret, transaction_id } = txResponse.data;
 
         // 2. Confirm card payment
         const result = await this.stripe.confirmCardPayment(client_secret, {
           payment_method: {
             card: this.card,
             billing_details: {
-              name: 'Test Customer' // You might want to make this dynamic
+              name: 'Customer'
             }
           }
         });
 
-        // 3. Confirm with backend
+        // 3. Confirm transaction with backend
         if (result.paymentIntent && result.paymentIntent.status === 'succeeded') {
-          const backendResult = await axios.post(`/api/payments/${payment_id}/confirm`, {
+          const backendResult = await axios.post(`/api/transactions/${transaction_id}/confirm`, {
             payment_intent_id: result.paymentIntent.id,
             status: result.paymentIntent.status
           }).catch(error => {
             console.error('Backend confirmation error:', error.response?.data);
-            throw new Error(error.response?.data?.message || 'Failed to confirm payment with backend');
+            throw new Error(error.response?.data?.message || 'Failed to confirm transaction with backend');
           });
           
           this.success = true;
@@ -223,7 +234,7 @@ export default {
           // Emit success with payment details
           this.$emit('payment-success', {
             success: true,
-            payment: backendResult.data,
+            transaction: backendResult.data,
             paymentIntent: result.paymentIntent
           });
         } else if (result.error) {
@@ -231,24 +242,25 @@ export default {
         }
 
       } catch (err) {
-        if (err.response && err.response.data) {
-          // Backend error
-          this.error = err.response.data.message || 'Server error occurred';
-          console.error('Backend error:', err.response.data);
-        } else if (err.type === 'card_error' || err.type === 'validation_error') {
-          // Stripe card error
+        // Handle Stripe validation/card errors inline; stay on page
+        if (err?.type === 'card_error' || err?.type === 'validation_error') {
           this.cardError = err.message;
-        } else {
-          // Other errors
-          this.error = err.message || 'Payment failed. Please try again.';
+          return;
         }
-        
-        console.error('Payment error:', {
-          message: err.message,
-          type: err.type,
-          code: err.code,
-          response: err.response ? err.response.data : null
-        });
+
+        // Backend errors from our API
+        if (err?.status) {
+          // 409 and other API errors: show inline error and emit to parent for toast+redirect
+          this.error = err.message || 'Server error occurred';
+          this.$emit('payment-failed', {
+            success: false,
+            message: this.error
+          });
+          return;
+        }
+
+        // Fallback: unknown error inline only
+        this.error = err?.message || 'Payment failed. Please try again.';
       } finally {
         this.loading = false;
       }
@@ -348,5 +360,21 @@ export default {
   background-color: #0d6efd;
   border-color: #0d6efd;
   opacity: 0.65;
+}
+
+/* Enhanced Pay button styles */
+.btn-pay {
+  transition: transform 0.08s ease-in-out, box-shadow 0.15s ease-in-out;
+  letter-spacing: 0.3px;
+}
+
+.btn-pay:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 0.35rem 1rem rgba(13, 110, 253, 0.25);
+}
+
+.btn-pay:active {
+  transform: translateY(0);
+  box-shadow: 0 0.2rem 0.6rem rgba(13, 110, 253, 0.35);
 }
 </style>

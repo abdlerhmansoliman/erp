@@ -57,4 +57,10 @@ protected $with=['category','unit'];
         return $this->hasMany(PurchaseReturnItem::class);
     }
     
+    public function scopeSearch($query, $search)
+    {
+        return $query->when($search,function ($q) use ($search){
+            $q->where('name','like',"%$search%");
+        });
+    }
 }

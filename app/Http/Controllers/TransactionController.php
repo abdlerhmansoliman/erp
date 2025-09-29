@@ -23,15 +23,53 @@ class TransactionController extends Controller
             'payment_method_id' => 'required|exists:payment_methods,id',
         ]);
 
-        $payment = Payment::findOrFail($data['payment_id']);
+        $payment = Payment::with('transactions')->findOrFail($data['payment_id']);
 
-        $result = $this->transactionService->createTransaction( $data);
+        // Prevent paying more than due
+        $totalSucceeded = $payment->transactions()
+            ->where('status', 'succeeded')
+            ->sum('amount');
+        $remaining = max(0, ($payment->amount ?? 0) - $totalSucceeded);
+
+        if ($remaining <= 0 || ($payment->status === 'succeeded')) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Payment already completed.'
+            ], 409);
+        }
+
+        if ($data['amount'] > $remaining) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Requested amount exceeds remaining balance.',
+                'remaining' => $remaining
+            ], 409);
+        }
+
+        $result = $this->transactionService->createTransaction($data);
 
         return response()->json([
             'success' => true,
             'client_secret' => $result['client_secret'],
             'transaction_id' => $result['transaction_id'],
         ]);
+    }
+
+    /**
+     * Get transaction details
+     */
+    public function show(int $transactionId): JsonResponse
+    {
+        $transaction = Transaction::with('payment')->findOrFail($transactionId);
+        return response()->json($transaction);
+    }
+
+    /**
+     * List available payment methods
+     */
+    public function methods(): JsonResponse
+    {
+        return response()->json(\App\Models\PaymentMethod::all());
     }
 
     /**

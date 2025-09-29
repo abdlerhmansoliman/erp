@@ -42,7 +42,7 @@ class WebhookController extends Controller
             case 'payment_intent.succeeded':
                 $intent = $event->data->object;
 
-                Log::info("✅ PaymentIntent succeeded", [
+                Log::info("PaymentIntent succeeded", [
                     'id' => $intent->id,
                     'amount' => $intent->amount,
                     'currency' => $intent->currency,
@@ -56,7 +56,7 @@ class WebhookController extends Controller
             case 'payment_intent.payment_failed':
                 $intent = $event->data->object;
                 
-                Log::warning("❌ Payment failed", [
+                Log::warning("Payment failed", [
                     'id' => $intent->id,
                     'error' => $intent->last_payment_error ?? null
                 ]);
@@ -68,7 +68,7 @@ class WebhookController extends Controller
             case 'charge.succeeded':
                 $charge = $event->data->object;
 
-                Log::info("💳 Charge succeeded", [
+                Log::info("Charge succeeded", [
                     'id' => $charge->id,
                     'payment_intent' => $charge->payment_intent,
                     'amount' => $charge->amount,

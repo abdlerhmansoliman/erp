@@ -8,7 +8,8 @@ class PaymentProcessor
 {
     protected array $strategies = [
         'stripe' => StripePaymentHandler::class,
-        // cash/bank...
+        'cash' => CashPaymentHandler::class,
+        'bank' => BankPaymentHandler::class,
     ];
 
 protected function resolveHandler(Transaction $transaction): PaymentStrategy
