@@ -26,6 +26,7 @@ use App\Repositories\Interfaces\SalesRetrunItemRepositoryInterface;
 use App\Repositories\Interfaces\SalesRetrunRepositoryInterface;
 use App\Repositories\Interfaces\StockRepositoryInterface;
 use App\Repositories\Interfaces\SupplierRepositoryInterface;
+use App\Repositories\Interfaces\TransferRepositoryInterface;
 use App\Repositories\Interfaces\UnitRepositoryInterface;
 use App\Repositories\Interfaces\UserRoleRepositoryInterface;
 use App\Repositories\Interfaces\WarehouseRepositoryInterface;
@@ -42,6 +43,7 @@ use App\Repositories\SalesRetrunItemRepository;
 use App\Repositories\SalesRetrunRepository;
 use App\Repositories\StockRepository;
 use App\Repositories\SupplierRepository;
+use App\Repositories\TransferRepository;
 use App\Repositories\UnitRepository;
 use App\Repositories\UserRoleRepository;
 use App\Repositories\WarehouseRepository;
@@ -71,6 +73,8 @@ class AppServiceProvider extends ServiceProvider
         $this->app->bind(SalesRetrunItemRepositoryInterface::class,SalesRetrunItemRepository::class);
         $this->app->bind(DashbordRepositoryInterface::class,DashbordRepository::class);
         $this->app->bind(PaymentRepositoryInterface::class,PaymentRepository::class);
+        $this->app->bind(TransferRepositoryInterface::class,TransferRepository::class);
+
     }
 
     /**

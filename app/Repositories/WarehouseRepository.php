@@ -97,4 +97,5 @@ public function getByIdWithAvailableProducts($id,$filters )
 
     return $response;
 }
+
 }

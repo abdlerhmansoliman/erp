@@ -63,4 +63,8 @@ protected $with=['category','unit'];
             $q->where('name','like',"%$search%");
         });
     }
+    public function trasfers(){
+        return $this->hasMany(TransferItem::class);
+    }
+    
 }

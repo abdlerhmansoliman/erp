@@ -37,4 +37,13 @@ class Warehouse extends Model
             }])
             ->withSum('stocks as total_quantity', 'remaining');
     }
+    
+    public function transfersFrom()
+    {
+        return $this->hasMany(Transfer::class, 'from_warehouse_id');
+    }
+    public function transfersTo()
+    {
+        return $this->hasMany(Transfer::class, 'to_warehouse_id');
+    }
 }
