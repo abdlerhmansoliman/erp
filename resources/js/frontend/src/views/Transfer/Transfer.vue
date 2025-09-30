@@ -1,35 +1,30 @@
 <script setup>
-import ReusableDataTable from '@/components/BaseCrudTable.vue'
+import BaseCrudTable from '@/components/BaseCrudTable.vue'
 
-// Define headers for transfers
 const transferHeaders = [
   { text: 'ID', value: 'id', sortable: true },
   { text: 'From Warehouse', value: 'from_warehouse.name', sortable: true },
   { text: 'To Warehouse', value: 'to_warehouse.name', sortable: true },
   { text: 'Transfer Date', value: 'transfer_date', sortable: true },
-  { text: 'Items Count', value: 'items_count', sortable: false },
+  { text: 'Created By', value: 'created_by', sortable: true },
 ]
-
-// Handle custom events if needed
-
 </script>
 
 <template>
   <div>
-    <ReusableDataTable
+    <BaseCrudTable
       endpoint="/transfers"
       :headers="transferHeaders"
       resource-name="transfer"
       edit-route-name="TransferEdit"
-      create-route="/transfers/create"
+      create-route="/transfer/create"
       search-placeholder="ابحث عن تحويل..."
       empty-message="لا توجد تحويلات متاحة"
       delete-confirmation-key="id"
     >
-      <!-- Custom create button text -->
       <template #create-button-text>
         Add Transfer
       </template>
-    </ReusableDataTable>
+    </BaseCrudTable>
   </div>
 </template>

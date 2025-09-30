@@ -21,6 +21,7 @@ use App\Http\Controllers\SupplierController;
 use App\Http\Controllers\WebhookEventController;
 use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\TransactionController;
+use App\Http\Controllers\TransferController;
 use App\Http\Controllers\UnitController;
 use App\Http\Controllers\WarehouseController;
 use Illuminate\Http\Request;
@@ -32,6 +33,8 @@ use App\Http\Controllers\WebhookController;
 | Public Routes (No Authentication Required)
 |--------------------------------------------------------------------------
 */
+    Route::apiResource('transfers', TransferController::class);
+
 Route::prefix('transactions')->group(function () {
     // إنشاء عملية دفع
     Route::post('/pay', [TransactionController::class, 'pay']);

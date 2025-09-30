@@ -40,6 +40,7 @@ const menuItems = [
       children:[
         {label:'warehouses', path:'/warehouses'},
         { label: 'products', path: '/products' },
+        {label:'transfer', path:'/transfer'},
       ]
     }
 

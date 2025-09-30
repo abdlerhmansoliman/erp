@@ -76,7 +76,8 @@
     "unit_cost": "Unit Cost",
     "create_warehouse": "Create Warehouse",
     "no_products_found": "No products found",
-    "warehouse & products": "Warehouse & Products"
-    
+    "warehouse & products": "Warehouse & Products",
+    "transfer":"Transfer",
+    "delete_selected": "Delete Selected"
     
 }

@@ -187,8 +187,19 @@ const routes = [
       name: 'PaymentPage',
       component: () => import('@/pages/PaymentPage.vue'),
       meta: { title: 'Payment' }
+    },
+    {
+      path: '/transfer',
+      name: 'Transfer',
+      component: () => import('@/views/Transfer/Transfer.vue'),
+      meta: { title: 'Transfer' }
+    },
+    {
+      path: '/transfer/create',
+      name: 'TransferCreate',
+      component: () => import('@/views/Transfer/Create.vue'),
+      meta: { title: 'Create Transfer' }
     }
-
   ]
 }
 
