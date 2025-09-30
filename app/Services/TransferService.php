@@ -5,6 +5,7 @@ namespace App\Services;
 use App\Models\TransferItem;
 use App\Repositories\ProducetRepository;
 use App\Repositories\TransferRepository;
+use App\Repositories\WarehouseRepository;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 
@@ -13,8 +14,9 @@ class TransferService
         public function __construct(
         protected TransferRepository $transferRepo,
         protected StockService $stockService,
-        protected ProducetRepository $productRepo
-    ) {}
+        protected ProducetRepository $productRepo,
+        protected WarehouseRepository $warehouseRepo,
+        ) {}
 
     public function getAllTransfers(array $filters)
     {
@@ -32,6 +34,7 @@ class TransferService
                 'to_warehouse_id'=>$data['to_warehouse_id'],
                 'transfer_date'=>$data['transfer_date'],
                 // 'created_by'=>Auth::user()->id
+                'status'=>$data['status']
             ]);
             foreach ($data['items'] as $item){
                 $productId = $item['product_id'];
@@ -64,6 +67,27 @@ class TransferService
                 return $transfer->load('items.product');
 
         }));
+    }
+
+    public function prepareTransferData(?int $fromWarehouseId = null){
+        $warehouses = $this->warehouseRepo->allWarehouses();
+
+        $defaults = [
+            'transfer_date' => now()->toDateString(),
+            'status' => 'pending',
+            'created_by' => auth()->id(),
+        ];
+
+        $products = [];
+        if($fromWarehouseId){
+            $products = $this->productRepo->getAvailableProductsByWarehouse($fromWarehouseId);
+        }
+
+        return [
+            'warehouses' => $warehouses,
+            'products' => $products, // جاهز للـ Easy Table
+            'defaults' => $defaults,
+        ];
     }
 }
 

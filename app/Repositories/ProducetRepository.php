@@ -5,6 +5,7 @@ namespace App\Repositories;
 use App\Models\Product;
 use App\Models\User;
 use App\Repositories\Interfaces\ProductRepositoryInterface;
+use Illuminate\Support\Facades\DB;
 
 class ProducetRepository implements ProductRepositoryInterface
 {
@@ -50,4 +51,28 @@ class ProducetRepository implements ProductRepositoryInterface
             ->limit($limit)
             ->get();
     }
+// In your ProductRepository
+public function getAvailableProductsByWarehouse(int $warehouseId)
+{
+    return Product::whereHas('stocks', function($query) use ($warehouseId) {
+            $query->where('warehouse_id', $warehouseId)
+                  ->where('qty', '>', 0);
+        })
+        ->with(['stocks' => function($query) use ($warehouseId) {
+            $query->where('warehouse_id', $warehouseId);
+        }])
+        ->get()
+        ->map(function($product) {
+            $stock = $product->stocks->first();
+            return [
+                'id' => $product->id,
+                'name' => $product->name,
+                'code' => $product->code,
+                'unit' => $product->unit,
+                'available_qty' => $stock->qty ?? 0,
+                'unit_cost' => $stock->unit_cost ?? $product->cost,
+                'net_unit_price' => $product->price,
+            ];
+        });
+}
 }

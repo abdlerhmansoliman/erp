@@ -33,8 +33,9 @@ use App\Http\Controllers\WebhookController;
 | Public Routes (No Authentication Required)
 |--------------------------------------------------------------------------
 */
-    Route::apiResource('transfers', TransferController::class);
+    Route::get('transfers/create', [TransferController::class, 'create']);
 
+    Route::apiResource('transfers', TransferController::class);
 Route::prefix('transactions')->group(function () {
     // إنشاء عملية دفع
     Route::post('/pay', [TransactionController::class, 'pay']);

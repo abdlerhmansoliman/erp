@@ -28,6 +28,7 @@ class TransferStoreRequest extends FormRequest
             'items'             => 'required|array|min:1',
             'items.*.product_id'=> 'required|exists:products,id',
             'items.*.quantity'  => 'required|numeric|min:1',
+            'status'            => 'required|string|in:draft,ordered,received,cancelled',
         ];
     }
 }

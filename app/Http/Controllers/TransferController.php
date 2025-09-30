@@ -22,7 +22,22 @@ class TransferController extends Controller
 
         return TransferResource::collection($transfers);
     }
-
+public function create()
+{
+    try {
+        $fromWarehouseId = request()->query('from_warehouse_id');
+        $data = $this->transferService->prepareTransferData(
+            $fromWarehouseId ? (int)$fromWarehouseId : null
+        );
+        return response()->json($data);
+    } catch (\Exception $e) {
+        \Log::error('Transfer create error: ' . $e->getMessage());
+        return response()->json([
+            'message' => 'Failed to load transfer data',
+            'error' => config('app.debug') ? $e->getMessage() : null
+        ], 500);
+    }
+}
 
     public function store(TransferStoreRequest $request)
     {
