@@ -57,7 +57,7 @@ class TransferService
                         'model_type'   => get_class($transfer),
                         'model_id'     => $transfer->id,
                     ]);
-                   $dd= TransferItem::create([
+                    TransferItem::create([
                     'transfer_id' => $transfer->id,
                     'product_id'  => $productId,
                     'quantity'    => $qty,

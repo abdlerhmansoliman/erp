@@ -67,7 +67,7 @@ async function fetchData() {
     const response = await api.get(props.endpoint, {
       params: { page: currentPage.value, perPage: rowsPerPage.value, search: search.value }
     });
-
+    console.log(response.data);
     const data = response.data;
     if (data.data && Array.isArray(data.data)) {
       // إضافة category_name حسب اللغة

@@ -77,6 +77,14 @@
     "create_warehouse": "انشاء مخزن",
     "no_products_found": "لم يتم العثور على منتجات",
     "warehouse & products": "المخازن والمنتجات",
-    "transfer":"تحويل"
-
+    "transfer":"تحويل",
+    "from_warehouse": "من مخزن",
+    "to_warehouse": "الى مخزن",
+    "transfer_details": "تفاصيل التحويل",
+    "transfer_products": "منتجات التحويل",
+    "transfer_products_details": "تفاصيل منتجات التحويل",
+    "transfer_date": "تاريخ التحويل",
+    "status": "الحالة",
+    "created_by":"انشأ بواسطة",
+    "actions":"العمليات"
 }

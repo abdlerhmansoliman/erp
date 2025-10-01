@@ -1,13 +1,17 @@
 <script setup>
-import BaseCrudTable from '@/components/BaseCrudTable.vue'
+import BaseCrudTable from '@/components/BaseCrudTable.vue';
+import { computed } from 'vue';
+import { useI18n } from 'vue-i18n';
 
-const transferHeaders = [
-  { text: 'ID', value: 'id', sortable: true },
-  { text: 'From Warehouse', value: 'from_warehouse.name', sortable: true },
-  { text: 'To Warehouse', value: 'to_warehouse.name', sortable: true },
-  { text: 'Transfer Date', value: 'transfer_date', sortable: true },
-  { text: 'Created By', value: 'created_by', sortable: true },
-]
+const { t, locale } = useI18n();
+
+const transferHeaders = computed(() => [
+  { text: t('from_warehouse'), value: 'from_warehouse', sortable: true },
+  { text: t('to_warehouse'), value: 'to_warehouse', sortable: true },
+  { text: t('transfer_date'), value: 'transfer_date', sortable: true },
+  { text: t('created_by'), value: 'created_by', sortable: true },
+  { text: t('status'), value: 'status', sortable: true },
+]);
 </script>
 
 <template>
@@ -23,7 +27,7 @@ const transferHeaders = [
       delete-confirmation-key="id"
     >
       <template #create-button-text>
-        Add Transfer
+        {{ t('add') }}
       </template>
     </BaseCrudTable>
   </div>
