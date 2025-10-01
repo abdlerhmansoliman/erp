@@ -12,8 +12,19 @@ class Transfer extends Model
         'transfer_date',
         'status',
         'created_by',
+        'transfer_number'
     ];
 
+    protected static function boot(){
+        parent::boot();
+        static::creating(function ($model) {
+            if (empty($model->transfer_number)) {
+                $lastTransfer = self::latest('id')->first();
+                $nextNumber = $lastTransfer ? $lastTransfer->id + 1 : 1;
+                $model->transfer_number = 'TR-' . str_pad($nextNumber, 5, '0', STR_PAD_LEFT);
+            }
+        });
+    }
     public function items(){
         return $this->hasMany(TransferItem::class);
     }

@@ -1,15 +1,19 @@
 <script setup>
 import BaseCrudTable from '@/components/BaseCrudTable.vue';
+import { computed } from 'vue';
+import { useI18n } from 'vue-i18n';
 
-const returnHeaders = [
-  { text: 'Return Date', value: 'return_date', sortable: true },
-  { text: 'Return Number', value: 'invoice_number', sortable: true },
-  { text: 'Original Invoice', value: 'original_invoice_number', sortable: true }, 
-  { text: 'Customer', value: 'customer.name', sortable: true },
-  { text: 'Warehouse', value: 'warehouse.name', sortable: true },
-  { text: 'Grand Total', value: 'grand_total', sortable: true },
-  { text: 'Status', value: 'status', sortable: true },
-];
+const { t } = useI18n();
+
+const returnHeaders = computed(() => [
+  { text: t('return_date'), value: 'return_date' },
+  { text: t('return_numper'), value: 'invoice_number' },
+  { text: t('orginal_numper'), value: 'original_invoice_number' },
+  { text: t('customer_name'), value: 'customer_name' },
+  { text: t('warehouse'), value: 'warehouse_name' },
+  { text: t('grand_total'), value: 'grand_total' },
+  { text: t('status'), value: 'status' },
+]);
 
 </script>
 

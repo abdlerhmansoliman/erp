@@ -33,8 +33,8 @@ class TransferService
                 'from_warehouse_id'=>$data['from_warehouse_id'],
                 'to_warehouse_id'=>$data['to_warehouse_id'],
                 'transfer_date'=>$data['transfer_date'],
-                // 'created_by'=>Auth::user()->id
-                'status'=>$data['status']
+                'created_by'=>Auth::user()->id,
+                'status'=>$data['status'],
             ]);
             foreach ($data['items'] as $item){
                 $productId = $item['product_id'];

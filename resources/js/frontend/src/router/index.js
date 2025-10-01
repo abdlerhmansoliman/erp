@@ -112,7 +112,7 @@ const routes = [
       meta:{title:'Show Sales'}
     },
     {
-      path: 'returns',
+      path: 'returns/purchase',
       name: 'PurchaseReturnList', 
       component: () => import('@/views/Purchase Returns/Returns.vue'),
       meta:{title:'Returns'}

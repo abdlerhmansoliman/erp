@@ -86,5 +86,25 @@
     "transfer_date": "تاريخ التحويل",
     "status": "الحالة",
     "created_by":"انشأ بواسطة",
-    "actions":"العمليات"
+    "actions":"العمليات",
+    "eng_name":"الاسم الانجليزي",
+    "ar_name":"الاسم العربي",
+    "return_date":"تاريخ المرتجع",
+    "return_numper":"رقم المرتجع",
+    "orginal_numper":"رقم الفتاورة الاصلى",
+    "grand_total":"المجموع الكلي",
+    "customer_name":"اسم العميل",
+    "customer_email":"البريد الالكتروني للعميل",
+    "customer_phone":"رقم الهاتف للعميل",
+    "customer_address":"العنوان للعميل",
+    "supplier_name":"اسم المورد",
+    "supplier_email":"البريد الالكتروني للمورد",
+    "supplier_phone":"رقم الهاتف للمورد",
+    "supplier_address":"العنوان للمورد",
+    "transfer_from":"تحويل من",
+    "export_excel":"تصدير اكسيل",
+    "export_pdf":"تصدير PDF",
+    "invoice_date":"تاريخ الفتاورة",
+    "invoice_number":"رقم الفاتورة"
+    
 }

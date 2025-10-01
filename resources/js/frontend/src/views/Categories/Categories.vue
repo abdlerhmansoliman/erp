@@ -1,16 +1,16 @@
 <script setup>
 import BaseCrudTable from '@/components/BaseCrudTable.vue'
-import { ref } from 'vue'
+import { ref,computed } from 'vue'
 import { onMounted } from 'vue'
 import api from '@/plugins/axios'
 import { useI18n } from 'vue-i18n'
 
 const { t } = useI18n()
-const categoriesHeader=[
-    { text: 'Arabic Name', value: 'name_ar', sortable: true },
-    { text: 'English Name', value: 'name_en', sortable: true },
+const categoriesHeader= computed(() =>[
+    { text: t('ar_name'), value: 'name_ar', sortable: true },
+    { text: t('eng_name'), value: 'name_en', sortable: true },
 ]
-
+)
 const categories = ref([])
 
 onMounted(async () => {

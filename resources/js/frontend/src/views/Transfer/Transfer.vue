@@ -6,6 +6,7 @@ import { useI18n } from 'vue-i18n';
 const { t, locale } = useI18n();
 
 const transferHeaders = computed(() => [
+  
   { text: t('from_warehouse'), value: 'from_warehouse', sortable: true },
   { text: t('to_warehouse'), value: 'to_warehouse', sortable: true },
   { text: t('transfer_date'), value: 'transfer_date', sortable: true },

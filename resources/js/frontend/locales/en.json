@@ -80,6 +80,35 @@
     "transfer":"Transfer",
     "delete_selected": "Delete Selected",
     "last_7_days": "Last 7 Days",
-    "actions": "Actions"
+    "actions": "Actions",
+    "eng_name": "English Name",
+    "ar_name": "Arabic Name",
+    "return_date":"Return Date",
+    "return_numper":"Return Number",
+    "orginal_numper":"Original Number",
+    "grand_total":"Grand Total",
+    "customer_name":"Customer Name",
+    "customer_email":"Customer Email",
+    "customer_phone":"Customer Phone",
+    "customer_address":"Customer Address",
+    "supplier_name":"Supplier Name",
+    "supplier_email":"Supplier Email",
+    "supplier_phone":"Supplier Phone",
+    "supplier_address":"Supplier Address",
+    "transfer_details":"Transfer Details",
+    "transfer_products":"Transfer Products",
+    "transfer_products_details":"Transfer Products Details",
+    "transfer_date":"Transfer Date",
+    "status":"Status",
+    "created_by":"Created By",
+    "transfer_from":"Transfer From",
+    "transfer_to":"Transfer To",
+    "export_excel":"Export Excel",
+    "export_pdf":"Export PDF",
+    "invoice_date":"Invoice Date",
+    "invoice_number":"Invoice Number"
+    
+    
+    
     
 }

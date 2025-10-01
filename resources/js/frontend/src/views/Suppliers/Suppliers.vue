@@ -1,15 +1,18 @@
 <script setup>
 import ReusableDataTable from '@/components/BaseCrudTable.vue'
+import { computed } from 'vue'
+import { useI18n } from 'vue-i18n'
 
-// Define headers for transfers
-const transferHeaders = [
-  { text: 'ID', value: 'id', sortable: true },
-  { text: 'From Warehouse', value: 'from_warehouse.name', sortable: true },
-  { text: 'To Warehouse', value: 'to_warehouse.name', sortable: true },
-  { text: 'Transfer Date', value: 'transfer_date', sortable: true },
-  { text: 'Items Count', value: 'items_count', sortable: false },
+const { t } = useI18n()
+
+// Define headers for suppliers
+const supplierHeaders = computed(() => [
+  { text: t('name'), value: 'name', sortable: true },
+  { text: t('email'), value: 'email', sortable: true },
+  { text: t('phone'), value: 'phone', sortable: true },
+  { text: t('address'), value: 'address', sortable: true },
 ]
-
+)
 // Handle custom events if needed
 
 </script>
@@ -17,18 +20,19 @@ const transferHeaders = [
 <template>
   <div>
     <ReusableDataTable
-      endpoint="/transfers"
-      :headers="transferHeaders"
-      resource-name="transfer"
-      edit-route-name="TransferEdit"
-      create-route="/transfers/create"
-      search-placeholder="ابحث عن تحويل..."
-      empty-message="لا توجد تحويلات متاحة"
-      delete-confirmation-key="id"
+      endpoint="/suppliers"
+      :headers="supplierHeaders"
+      resource-name="supplier"
+      edit-route-name="SupplierEdit"
+      create-route="/suppliers/Create"
+      search-placeholder="البحث..."
+      empty-message="لا توجد بيانات متاحة"
+      delete-confirmation-key="name"
+
     >
-      <!-- Custom create button text -->
+      <!-- Custom create button text if needed -->
       <template #create-button-text>
-        Add Transfer
+        Add Supplier
       </template>
     </ReusableDataTable>
   </div>

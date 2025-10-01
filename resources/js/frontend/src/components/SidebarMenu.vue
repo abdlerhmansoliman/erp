@@ -29,7 +29,7 @@ const menuItems = [
     {
     label: 'returns',
     children: [
-      { label: 'purchase_returns', path: '/returns' },
+      { label: 'purchase_returns', path: '/returns/purchase' },
       { label: 'sales_returns', path: '/returns/sales' },
         ],
     },

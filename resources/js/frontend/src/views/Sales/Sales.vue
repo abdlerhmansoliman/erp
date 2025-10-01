@@ -1,11 +1,17 @@
 <script setup>
+import { computed } from 'vue';
+import { useI18n } from 'vue-i18n';
 import BaseCrudTable from '@/components/BaseCrudTable.vue';
-const salesHeaders = [
-    { text: 'Sales ID', value: 'id', sortable: true },
-    { text: 'Customer', value: 'customer_name', sortable: true },
-    { text: 'Date', value: 'created_at', sortable: true },
-    { text: 'Total Amount', value: 'grand_total', sortable: true },
-]
+
+const { t } = useI18n();
+
+const salesHeaders = computed(() => [
+    { text: t('id'), value: 'id', sortable: true },
+    { text: t('invoice_number'), value: 'invoice_number', sortable: true },
+    { text: t('customer_name'), value: 'customer_name', sortable: true },
+    { text: t('invoice_date'), value: 'created_at', sortable: true },
+    { text: t('grand_total'), value: 'grand_total', sortable: true },
+])
 
 </script>
 <template>

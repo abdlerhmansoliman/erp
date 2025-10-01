@@ -2,13 +2,13 @@
 import BaseCrudTable from '@/components/BaseCrudTable.vue';
 
 const returnHeaders = [
-  { text: 'Return Date', value: 'return_date', sortable: true },
-  { text: 'Return Number', value: 'invoice_number', sortable: true },
-  { text: 'Original Invoice', value: 'invoice.invoice_number', sortable: true },
-  { text: 'Supplier', value: 'invoice.supplier.name', sortable: true },
-{ text: 'Warehouse', value: 'invoice.warehouse.name', sortable: true },
-  { text: 'Grand Total', value: 'grand_total', sortable: true },
-  { text: 'Status', value: 'status', sortable: true },
+  { text: 'Return Date', value: 'return_date' },
+  { text: 'Return Number', value: 'invoice_number' },
+  { text: 'Original Invoice', value: 'original_invoice_number' },
+  { text: 'Supplier', value: 'supplier_name' },
+  { text: 'Warehouse', value: 'warehouse_name' },
+  { text: 'Grand Total', value: 'grand_total' },
+  { text: 'Status', value: 'status' },
 ];
 </script>
 

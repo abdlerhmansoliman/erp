@@ -61,7 +61,7 @@ const computedHeaders = computed(() => {
 
   const hasActions = props.showEdit || props.showDelete || props.showView || props.customActions.length > 0;
   if (hasActions && !baseHeaders.find(h => h.value === 'controller')) {
-    baseHeaders.push({ text: 'Actions', value: 'controller', sortable: false });
+    baseHeaders.push({ text: t('actions'), value: 'controller', sortable: false });
   }
 
   return baseHeaders;
@@ -76,7 +76,6 @@ async function fetchData() {
     });
     const data = response.data;
     if (data.data && Array.isArray(data.data)) {
-      // إضافة category_name حسب اللغة
       items.value = data.data.map(product => ({
         ...product,
         category_name: locale.value === 'ar'
@@ -187,7 +186,7 @@ const exportToPDF = () => {
   autoTable(doc, {
     head,
     body,
-    styles: { font: "Amiri", halign: "right" },
+    styles: { font: "Amiri", halign: "center" },
     headStyles: { font: "Amiri", fontStyle: "bold", halign: "center" }
   });
 
@@ -252,14 +251,14 @@ defineExpose({ fetchData, refresh: fetchData, selectedIds });
           @click="exportToExcel"
           class="px-4 py-2 bg-yellow-500 text-white rounded-md hover:bg-yellow-600"
         >
-          Export Excel
+           {{ t('export_excel') }}
         </button>
         <button
           v-if="showExportPDF"
           @click="exportToPDF"
           class="px-4 py-2 bg-indigo-500 text-white rounded-md hover:bg-indigo-600"
         >
-          Export PDF
+          {{ t('export_pdf') }}
         </button>
       </div>
     </div>
@@ -297,9 +296,9 @@ defineExpose({ fetchData, refresh: fetchData, selectedIds });
         <template #item-controller="item">
           <slot name="actions" :item="item">
             <div class="flex gap-2">
-              <button v-if="showView" @click="() => goToView(item)" class="px-3 py-1 bg-gray-500 text-white rounded hover:bg-gray-600">View</button>
-              <button v-if="showEdit" @click="() => goToEdit(item)" class="px-3 py-1 bg-blue-500 text-white rounded hover:bg-blue-600">Edit</button>
-              <button v-if="showDelete" @click="() => deleteItem(item)" class="px-3 py-1 bg-red-500 text-white rounded hover:bg-red-600">Delete</button>
+              <button v-if="showView" @click="() => goToView(item)" class="px-3 py-1 bg-gray-500 text-white rounded hover:bg-gray-600">{{ t('view') }}</button>
+              <button v-if="showEdit" @click="() => goToEdit(item)" class="px-3 py-1 bg-blue-500 text-white rounded hover:bg-blue-600">{{ t('edit') }}</button>
+              <button v-if="showDelete" @click="() => deleteItem(item)" class="px-3 py-1 bg-red-500 text-white rounded hover:bg-red-600">{{ t('delete') }}</button>
               <button
                 v-for="action in customActions"
                 :key="action.name"
