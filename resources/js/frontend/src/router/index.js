@@ -199,6 +199,12 @@ const routes = [
       name: 'TransferCreate',
       component: () => import('@/views/Transfer/Create.vue'),
       meta: { title: 'Create Transfer' }
+    },
+    {
+      path: '/transfer/:id',
+      name: 'TransferShow',
+      component: () => import('@/views/Transfer/Show.vue'),
+      meta: { title: 'Show Transfer' }
     }
   ]
 }

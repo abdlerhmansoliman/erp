@@ -6,6 +6,11 @@ import { useRouter } from 'vue-router';
 import { useToast } from 'vue-toastification';
 import { useConfirmDialog } from '@/composables/useConfirmDialog';
 import { useI18n } from 'vue-i18n';
+import * as XLSX from "xlsx";
+import jsPDF from "jspdf";
+import autoTable from "jspdf-autotable";
+import { amiriFont } from "@/plugins/amiri-font.js";
+import { amiriBoldFont } from "@/plugins/amiri-font-bold.js";
 
 const { t, locale } = useI18n();
 const toast = useToast();
@@ -29,7 +34,9 @@ const props = defineProps({
   showView: { type: Boolean, default: false },
   showSelect: { type: Boolean, default: true },
   emptyMessage: { type: String, default: 'لا توجد بيانات متاحة' },
-  deleteConfirmationKey: { type: String, default: 'name' }
+  deleteConfirmationKey: { type: String, default: 'name' },
+  showExportExcel: { type: Boolean, default: true },
+  showExportPDF: { type: Boolean, default: true },
 });
 
 // Emits
@@ -67,7 +74,6 @@ async function fetchData() {
     const response = await api.get(props.endpoint, {
       params: { page: currentPage.value, perPage: rowsPerPage.value, search: search.value }
     });
-    console.log(response.data);
     const data = response.data;
     if (data.data && Array.isArray(data.data)) {
       // إضافة category_name حسب اللغة
@@ -146,6 +152,47 @@ const deleteSelected = async () => {
     toast.error(`Error deleting ${props.resourceName}`);
   }
 };
+const exportToExcel = () => {
+  const exportHeaders = computedHeaders.value.filter(h => h.value !== 'select' && h.value !== 'controller');
+  const exportItems = items.value.map(item => {
+    const row = {};
+    exportHeaders.forEach(h => { row[h.text] = item[h.value]; });
+    return row;
+  });
+
+  const ws = XLSX.utils.json_to_sheet(exportItems);
+  const wb = XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(wb, ws, props.resourceName);
+  XLSX.writeFile(wb, `${props.resourceName}.xlsx`);
+};
+
+const exportToPDF = () => {
+  const doc = new jsPDF();
+
+  // تحميل الخط Amiri (Regular)
+  doc.addFileToVFS("Amiri-Regular.ttf", amiriFont);
+  doc.addFont("Amiri-Regular.ttf", "Amiri", "normal");
+
+  // تحميل الخط Amiri (Bold)
+  doc.addFileToVFS("Amiri-Bold.ttf", amiriBoldFont);
+  doc.addFont("Amiri-Bold.ttf", "Amiri", "bold");
+
+  doc.setFont("Amiri", "normal");
+  doc.setFontSize(12);
+
+  const exportHeaders = computedHeaders.value.filter(h => h.value !== 'select' && h.value !== 'controller');
+  const head = [exportHeaders.map(h => h.text)];
+  const body = items.value.map(item => exportHeaders.map(h => item[h.value]));
+
+  autoTable(doc, {
+    head,
+    body,
+    styles: { font: "Amiri", halign: "right" },
+    headStyles: { font: "Amiri", fontStyle: "bold", halign: "center" }
+  });
+
+  doc.save(`${props.resourceName}.pdf`);
+};
 
 // Edit, Create, View
 function goToEdit(item) { if (props.editRouteName) router.push({ name: props.editRouteName, params: { id: item.id } }); else emit('item-selected', { action: 'edit', item }); }
@@ -199,6 +246,20 @@ defineExpose({ fetchData, refresh: fetchData, selectedIds });
           @click="deleteSelected"
         >
           {{ t('delete_selected') }}  ({{ selectedIds.length }})
+        </button>
+          <button
+          v-if="showExportExcel"
+          @click="exportToExcel"
+          class="px-4 py-2 bg-yellow-500 text-white rounded-md hover:bg-yellow-600"
+        >
+          Export Excel
+        </button>
+        <button
+          v-if="showExportPDF"
+          @click="exportToPDF"
+          class="px-4 py-2 bg-indigo-500 text-white rounded-md hover:bg-indigo-600"
+        >
+          Export PDF
         </button>
       </div>
     </div>

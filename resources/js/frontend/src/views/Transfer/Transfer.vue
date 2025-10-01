@@ -22,6 +22,8 @@ const transferHeaders = computed(() => [
       resource-name="transfer"
       edit-route-name="TransferEdit"
       create-route="/transfer/create"
+      :show-view="true"
+      show-route-name="TransferShow"
       search-placeholder="ابحث عن تحويل..."
       empty-message="لا توجد تحويلات متاحة"
       delete-confirmation-key="id"
