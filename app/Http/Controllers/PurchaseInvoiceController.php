@@ -3,95 +3,94 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\PurchaseInvoiceRequest;
-use App\Http\Requests\UpdatePurchaseRequest;
 use App\Http\Resources\PurchaseInvoiceResource;
-use App\Http\Resources\SalesInvoiceResource;
 use App\Services\PurchaseInvoiceService;
 use Barryvdh\DomPDF\Facade\Pdf;
-use Illuminate\Http\Request;
 
 class PurchaseInvoiceController extends Controller
 {
-    public function __construct(protected PurchaseInvoiceService $purchaseInvoiceService){}
-   public function index()
-{
-    $filters = request()->only(['search', 'sortBy', 'sortDir', 'perPage', 'page']);
+    public function __construct(protected PurchaseInvoiceService $purchaseInvoiceService) {}
 
-    $invoices = $this->purchaseInvoiceService->getAllInvoices($filters);
-        
-        
-    return PurchaseInvoiceResource::collection($invoices);
+    public function index()
+    {
+        $filters = request()->only(['search', 'sortBy', 'sortDir', 'perPage', 'page']);
+
+        $invoices = $this->purchaseInvoiceService->getAllInvoices($filters);
+
+        return PurchaseInvoiceResource::collection($invoices);
     }
+
     public function show($id)
     {
         try {
             $invoice = $this->purchaseInvoiceService->getInvoiceByIdWithItems($id);
-            if(!$invoice) {
+            if (! $invoice) {
                 return response()->json([
                     'status' => 'error',
                     'message' => 'Purchase invoice not found',
                 ], 404);
             }
+
             return response()->json([
                 'status' => 'success',
-                'data' => new PurchaseInvoiceResource($invoice)
+                'data' => new PurchaseInvoiceResource($invoice),
             ]);
 
         } catch (\Throwable $e) {
             return response()->json([
-            'status' => 'error',
-            'message' => 'Failed to fetch purchase invoice',
-            'errors' => [$e->getMessage()],
-        ], 500);
+                'status' => 'error',
+                'message' => 'Failed to fetch purchase invoice',
+                'errors' => [$e->getMessage()],
+            ], 500);
         }
     }
+
     public function create()
     {
         $data = $this->purchaseInvoiceService->getCreateData();
 
         return response()->json([
             'status' => 'success',
-            'data' => $data
+            'data' => $data,
         ]);
     }
-public function store(PurchaseInvoiceRequest $request)
-{
-    try {
-        $invoice = $this->purchaseInvoiceService->createInvoice($request->validated())
-            ->load(['supplier', 'items', 'warehouse']);
-        
-        return response()->json([
-            'status' => 'success',
-            'message' => 'Purchase invoice created successfully',
-            'data' => new PurchaseInvoiceResource($invoice)
-        ], 201);
-    } catch (\Exception $e) {
-        return response()->json([
-            'status' => 'error',
-            'message' => 'Failed to create purchase invoice',
-            'errors' => [$e->getMessage()]
-        ], 500);
-    }
-}
 
+    public function store(PurchaseInvoiceRequest $request)
+    {
+        try {
+            $invoice = $this->purchaseInvoiceService->createInvoice($request->validated())
+                ->load(['supplier', 'items', 'warehouse']);
+
+            return response()->json([
+                'status' => 'success',
+                'message' => 'Purchase invoice created successfully',
+                'data' => new PurchaseInvoiceResource($invoice),
+            ], 201);
+        } catch (\Exception $e) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Failed to create purchase invoice',
+                'errors' => [$e->getMessage()],
+            ], 500);
+        }
+    }
 
     public function downloadPdf($id)
     {
 
         $invoice = $this->purchaseInvoiceService->getInvoiceByIdWithItems($id);
-        if (!$invoice) {
+        if (! $invoice) {
             return response()->json(['message' => 'Invoice not found'], 404);
         }
         try {
             $pdf = Pdf::loadView('invoices.pdf', ['invoice' => $invoice]);
+
             return response($pdf->output(), 200)
                 ->header('Content-Type', 'application/pdf')
                 ->header('Content-Disposition', 'attachment; filename="Invoice-'.$invoice->invoice_number.'.pdf"');
         } catch (\Exception $e) {
 
             $e->getMessage();
-            }
         }
-
-
+    }
 }

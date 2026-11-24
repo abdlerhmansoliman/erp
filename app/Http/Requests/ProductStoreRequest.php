@@ -28,7 +28,7 @@ class ProductStoreRequest extends FormRequest
             'category_id' => 'required|exists:categories,id',
             'purchase_price' => 'required|numeric',
             'unit_id' => 'required|exists:units,id',
-            'tax_id' => 'nullable|exists:taxes,id'
+            'tax_id' => 'nullable|exists:taxes,id',
         ];
     }
 }

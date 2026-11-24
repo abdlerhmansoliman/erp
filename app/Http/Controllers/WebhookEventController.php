@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
 
 class WebhookEventController extends Controller
@@ -19,12 +18,12 @@ class WebhookEventController extends Controller
             'id' => uniqid(),
             'type' => $event['type'],
             'data' => $event['data'],
-            'created_at' => now()
+            'created_at' => now(),
         ]);
 
         // Keep only last 10 events
         $events = array_slice($events, 0, 10);
-        
+
         Cache::put('webhook_events', $events, now()->addDay());
     }
 }

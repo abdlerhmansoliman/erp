@@ -7,7 +7,7 @@ use App\Repositories\Interfaces\PaymentRepositoryInterface;
 
 class PaymentRepository implements PaymentRepositoryInterface
 {
-public function create(array $data)
+    public function create(array $data)
     {
         return Payment::create($data);
     }

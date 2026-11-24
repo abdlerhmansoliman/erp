@@ -21,13 +21,13 @@ class UpdatePurchaseRequest extends FormRequest
      */
     public function rules(): array
     {
-  return [
-        'supplier_id' => 'sometimes|exists:suppliers,id',
-        'items' => 'sometimes|array|min:1',
-        'status' => 'nullable|string|in:draft,ordered,received',
-        'grand_total' => 'nullable|numeric|min:0',
-        'sub_total' => 'nullable|numeric|min:0',
-        'tax_amount' => 'nullable|numeric|min:0',
-    ];
+        return [
+            'supplier_id' => 'sometimes|exists:suppliers,id',
+            'items' => 'sometimes|array|min:1',
+            'status' => 'nullable|string|in:draft,ordered,received',
+            'grand_total' => 'nullable|numeric|min:0',
+            'sub_total' => 'nullable|numeric|min:0',
+            'tax_amount' => 'nullable|numeric|min:0',
+        ];
     }
 }

@@ -50,14 +50,16 @@ class StockService
             $remaining = $quantity;
 
             foreach ($stocks as $stock) {
-                if ($remaining <= 0) break;
+                if ($remaining <= 0) {
+                    break;
+                }
                 $takeQty = min($remaining, $stock->remaining);
                 $this->stockRepository->decrementRemaining($stock->id, $takeQty);
 
                 $allocations[] = [
                     'stock_id' => $stock->id,
                     'quantity' => $takeQty,
-                    'cost'     => $stock->unit_coast,
+                    'cost' => $stock->unit_coast,
                     'net_unit_price' => $stock->net_unit_price,
                 ];
 
@@ -69,7 +71,7 @@ class StockService
             }
         });
 
-        return $allocations;        
+        return $allocations;
     }
 
     public function getAvailableStock(int $productId, int $warehouseId)
@@ -89,19 +91,17 @@ class StockService
     {
         $stock = $this->findStockForPurchase($purchaseInvoiceId, $productId);
 
-        if (!$stock || $stock->remaining < $quantity) {
+        if (! $stock || $stock->remaining < $quantity) {
             throw new \Exception('Not enough remaining quantity to return.');
         }
 
         $stock->decrement('remaining', $quantity);
     }
 
-
     public function decrementStockForTransfer(int $productId, int $warehouseId, float $quantity)
     {
         return $this->stockRepository->decrementRemainingByProduct($productId, $warehouseId, $quantity);
     }
-
 
     public function getLastCost(int $productId, int $warehouseId): float
     {

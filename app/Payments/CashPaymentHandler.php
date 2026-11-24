@@ -38,5 +38,3 @@ class CashPaymentHandler implements PaymentStrategy
         // No webhooks for cash payments
     }
 }
-
-

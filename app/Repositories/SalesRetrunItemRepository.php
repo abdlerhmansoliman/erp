@@ -7,11 +7,11 @@ use App\Repositories\Interfaces\SalesRetrunItemRepositoryInterface;
 
 class SalesRetrunItemRepository implements SalesRetrunItemRepositoryInterface
 {
-
     public function createItem(array $data)
     {
         SalesReturnItem::create($data);
     }
+
     public function all()
     {
         // TODO: implement

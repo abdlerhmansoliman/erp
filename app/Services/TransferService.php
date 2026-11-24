@@ -11,32 +11,34 @@ use Illuminate\Support\Facades\DB;
 
 class TransferService
 {
-        public function __construct(
+    public function __construct(
         protected TransferRepository $transferRepo,
         protected StockService $stockService,
         protected ProducetRepository $productRepo,
         protected WarehouseRepository $warehouseRepo,
-        ) {}
+    ) {}
 
     public function getAllTransfers(array $filters)
     {
         return $this->transferRepo->all($filters);
     }
+
     public function find($id)
     {
         return $this->transferRepo->find($id);
     }
-    public function create (array $data)
+
+    public function create(array $data)
     {
-        return DB::transaction((function () use ($data){
-            $transfer=$this->transferRepo->create([
-                'from_warehouse_id'=>$data['from_warehouse_id'],
-                'to_warehouse_id'=>$data['to_warehouse_id'],
-                'transfer_date'=>$data['transfer_date'],
-                'created_by'=>Auth::user()->id,
-                'status'=>$data['status'],
+        return DB::transaction((function () use ($data) {
+            $transfer = $this->transferRepo->create([
+                'from_warehouse_id' => $data['from_warehouse_id'],
+                'to_warehouse_id' => $data['to_warehouse_id'],
+                'transfer_date' => $data['transfer_date'],
+                'created_by' => Auth::user()->id,
+                'status' => $data['status'],
             ]);
-            foreach ($data['items'] as $item){
+            foreach ($data['items'] as $item) {
                 $productId = $item['product_id'];
                 $qty = $item['quantity'];
 
@@ -44,32 +46,34 @@ class TransferService
                     $productId,
                     $data['from_warehouse_id'],
                     $qty,
-                    
+
                 );
-                    foreach ($allocations as $allocation) {
+                foreach ($allocations as $allocation) {
                     $this->stockService->create([
-                        'product_id'   => $productId,
+                        'product_id' => $productId,
                         'warehouse_id' => $data['to_warehouse_id'],
-                        'qty'     => $allocation['quantity'],
-                        'remaining'    => $allocation['quantity'],
-                        'unit_coast'   => $allocation['cost'],
+                        'qty' => $allocation['quantity'],
+                        'remaining' => $allocation['quantity'],
+                        'unit_coast' => $allocation['cost'],
                         'net_unit_price' => $allocation['net_unit_price'],
-                        'model_type'   => get_class($transfer),
-                        'model_id'     => $transfer->id,
+                        'model_type' => get_class($transfer),
+                        'model_id' => $transfer->id,
                     ]);
                     TransferItem::create([
-                    'transfer_id' => $transfer->id,
-                    'product_id'  => $productId,
-                    'quantity'    => $qty,
-                ]);
+                        'transfer_id' => $transfer->id,
+                        'product_id' => $productId,
+                        'quantity' => $qty,
+                    ]);
                 }
             }
-                return $transfer->load('items.product');
+
+            return $transfer->load('items.product');
 
         }));
     }
 
-    public function prepareTransferData(?int $fromWarehouseId = null){
+    public function prepareTransferData(?int $fromWarehouseId = null)
+    {
         $warehouses = $this->warehouseRepo->allWarehouses();
 
         $defaults = [
@@ -79,7 +83,7 @@ class TransferService
         ];
 
         $products = [];
-        if($fromWarehouseId){
+        if ($fromWarehouseId) {
             $products = $this->productRepo->getAvailableProductsByWarehouse($fromWarehouseId);
         }
 
@@ -90,5 +94,3 @@ class TransferService
         ];
     }
 }
-
-

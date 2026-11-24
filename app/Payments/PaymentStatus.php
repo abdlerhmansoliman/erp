@@ -5,12 +5,19 @@ namespace App\Payments;
 class PaymentStatus
 {
     public const PENDING = 'pending';
+
     public const PROCESSING = 'processing';
+
     public const SUCCEEDED = 'succeeded';
+
     public const FAILED = 'failed';
+
     public const REFUNDED = 'refunded';
+
     public const CANCELLED = 'cancelled';
+
     public const PARTIAL = 'partial';
+
     public static function isValid(string $status): bool
     {
         return in_array($status, [
@@ -20,7 +27,7 @@ class PaymentStatus
             self::FAILED,
             self::REFUNDED,
             self::CANCELLED,
-            self::PARTIAL
+            self::PARTIAL,
         ]);
     }
 
@@ -30,7 +37,7 @@ class PaymentStatus
             self::SUCCEEDED,
             self::FAILED,
             self::REFUNDED,
-            self::CANCELLED
+            self::CANCELLED,
         ]);
     }
 }

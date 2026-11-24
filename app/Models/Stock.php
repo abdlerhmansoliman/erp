@@ -15,8 +15,9 @@ class Stock extends Model
         'qty',
         'remaining',
         'net_unit_price',
-        'unit_coast'
+        'unit_coast',
     ];
+
     public function product()
     {
         return $this->belongsTo(Product::class);
@@ -32,5 +33,4 @@ class Stock extends Model
     {
         return $this->morphTo();
     }
-    
 }

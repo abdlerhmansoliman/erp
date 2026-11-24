@@ -22,10 +22,10 @@ class SupplierUpdateRequest extends FormRequest
     public function rules(): array
     {
         return [
-        'name' => 'sometimes|string|max:255',
-        'email' => 'nullable|email',
-        'phone' => 'nullable|string|max:20',
-        'address' => 'nullable|string|max:255',
+            'name' => 'sometimes|string|max:255',
+            'email' => 'nullable|email',
+            'phone' => 'nullable|string|max:20',
+            'address' => 'nullable|string|max:255',
         ];
     }
 }

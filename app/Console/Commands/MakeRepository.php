@@ -2,13 +2,13 @@
 
 namespace App\Console\Commands;
 
-use Illuminate\Console\Command;
-use Illuminate\Support\Str;
 use File;
+use Illuminate\Console\Command;
 
 class MakeRepository extends Command
 {
     protected $signature = 'make:repository {name}';
+
     protected $description = 'Create a new interface and repository class';
 
     public function handle()
@@ -20,21 +20,21 @@ class MakeRepository extends Command
         $repoDir = app_path('Repositories');
 
         // Ensure directories exist
-        if (!File::exists($interfaceDir)) {
+        if (! File::exists($interfaceDir)) {
             File::makeDirectory($interfaceDir, 0755, true);
         }
-        if (!File::exists($repoDir)) {
+        if (! File::exists($repoDir)) {
             File::makeDirectory($repoDir, 0755, true);
         }
 
-        $interfaceName = $name . 'RepositoryInterface';
-        $repoName = $name . 'Repository';
+        $interfaceName = $name.'RepositoryInterface';
+        $repoName = $name.'Repository';
 
-        $interfacePath = $interfaceDir . '/' . $interfaceName . '.php';
-        $repoPath = $repoDir . '/' . $repoName . '.php';
+        $interfacePath = $interfaceDir.'/'.$interfaceName.'.php';
+        $repoPath = $repoDir.'/'.$repoName.'.php';
 
         // Create interface
-        if (!File::exists($interfacePath)) {
+        if (! File::exists($interfacePath)) {
             $interfaceTemplate = "<?php
 
 namespace App\Repositories\Interfaces;
@@ -55,7 +55,7 @@ interface {$interfaceName}
         }
 
         // Create repository class
-        if (!File::exists($repoPath)) {
+        if (! File::exists($repoPath)) {
             $repoTemplate = "<?php
 
 namespace App\Repositories;

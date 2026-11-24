@@ -3,7 +3,6 @@
 namespace App\Http\Middleware;
 
 use Closure;
-use Stripe\WebhookSignature;
 use Illuminate\Http\Request;
 use Stripe\Exception\SignatureVerificationException;
 

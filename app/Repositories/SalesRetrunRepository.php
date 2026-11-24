@@ -2,31 +2,30 @@
 
 namespace App\Repositories;
 
-use App\Models\SalesReturnItem;
 use App\Models\SalesReturn;
+use App\Models\SalesReturnItem;
 use App\Repositories\Interfaces\SalesRetrunRepositoryInterface;
 
 class SalesRetrunRepository implements SalesRetrunRepositoryInterface
 {
-        public function all(array $filters)
-        {
-            $in = SalesReturn::query()
-                ->with(['items', 'customer', 'warehouse', 'invoice'])
-                ->when($filters['search'] ?? null, function($q, $search){
-                    $q->where('invoice_number', 'like', "%$search%")
-                    ->orWhereHas('customer', function($q2) use ($search){
+    public function all(array $filters)
+    {
+        $in = SalesReturn::query()
+            ->with(['items', 'customer', 'warehouse', 'invoice'])
+            ->when($filters['search'] ?? null, function ($q, $search) {
+                $q->where('invoice_number', 'like', "%$search%")
+                    ->orWhereHas('customer', function ($q2) use ($search) {
                         $q2->where('name', 'like', "%$search%");
                     })
-                    ->orWhereHas('invoice', function($q3) use ($search) {
+                    ->orWhereHas('invoice', function ($q3) use ($search) {
                         $q3->where('invoice_number', 'like', "%$search%");
                     });
-                })
-                ->orderBy($filters['sortBy'] ?? 'id', $filters['sortDir'] ?? 'desc')
-                ->paginate($filters['perPage'] ?? 10);
+            })
+            ->orderBy($filters['sortBy'] ?? 'id', $filters['sortDir'] ?? 'desc')
+            ->paginate($filters['perPage'] ?? 10);
 
-
-                        return $in;
-        }
+        return $in;
+    }
 
     public function find($id)
     {
@@ -35,9 +34,9 @@ class SalesRetrunRepository implements SalesRetrunRepositoryInterface
 
     public function create(array $data)
     {
-       return SalesReturn::create($data);
+        return SalesReturn::create($data);
     }
-    
+
     public function update($id, array $data)
     {
         // TODO: implement
@@ -47,11 +46,13 @@ class SalesRetrunRepository implements SalesRetrunRepositoryInterface
     {
         return SalesReturn::with(['items.product', 'warehouse', 'customer'])->find($id);
     }
-    public function sumReturnedQuantity($invoiceId , $productId){
-        return SalesReturnItem::whereHas('salesReturn',function($q) use ($invoiceId){
+
+    public function sumReturnedQuantity($invoiceId, $productId)
+    {
+        return SalesReturnItem::whereHas('salesReturn', function ($q) use ($invoiceId) {
             $q->where('sales_invoice_id', $invoiceId);
         })
-        ->where('product_id', $productId)
-        ->sum('quantity');
+            ->where('product_id', $productId)
+            ->sum('quantity');
     }
 }

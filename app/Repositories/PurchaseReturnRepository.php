@@ -7,19 +7,19 @@ use App\Models\PurchaseReturnItem;
 
 class PurchaseReturnRepository
 {
-public function all(array $filters)
-{
-    return PurchaseReturn::query()
-        ->with(['items', 'invoice', 'invoice.supplier'])
-        ->when($filters['search'] ?? null, function ($q, $search) {
-            $q->where('invoice_number', 'like', "%{$search}%") 
-              ->orWhereHas('invoice', function ($q2) use ($search) {
-                  $q2->where('invoice_number', 'like', "%{$search}%"); 
-              });
-        })
-        ->orderBy($filters['sortBy'] ?? 'id', $filters['sortDir'] ?? 'desc')
-        ->paginate($filters['perPage'] ?? 10);
-}
+    public function all(array $filters)
+    {
+        return PurchaseReturn::query()
+            ->with(['items', 'invoice', 'invoice.supplier'])
+            ->when($filters['search'] ?? null, function ($q, $search) {
+                $q->where('invoice_number', 'like', "%{$search}%")
+                    ->orWhereHas('invoice', function ($q2) use ($search) {
+                        $q2->where('invoice_number', 'like', "%{$search}%");
+                    });
+            })
+            ->orderBy($filters['sortBy'] ?? 'id', $filters['sortDir'] ?? 'desc')
+            ->paginate($filters['perPage'] ?? 10);
+    }
 
     public function create(array $data)
     {
@@ -51,12 +51,13 @@ public function all(array $filters)
     {
         return PurchaseReturnItem::insert($rows);
     }
-    public function sumReturnedQuantity($invoiceId , $productId){
-        return PurchaseReturnItem::whereHas('return',function($q) use ($invoiceId){
+
+    public function sumReturnedQuantity($invoiceId, $productId)
+    {
+        return PurchaseReturnItem::whereHas('return', function ($q) use ($invoiceId) {
             $q->where('purchase_invoice_id', $invoiceId);
         })
-        ->where('product_id', $productId)
-        ->sum('quantity');
+            ->where('product_id', $productId)
+            ->sum('quantity');
     }
-    }
-    
+}

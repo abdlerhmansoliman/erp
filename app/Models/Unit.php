@@ -6,12 +6,14 @@ use Illuminate\Database\Eloquent\Model;
 
 class Unit extends Model
 {
-    protected $fillable = ['name','symbol'];
+    protected $fillable = ['name', 'symbol'];
 
-    public function products(){
+    public function products()
+    {
         return $this->hasMany(Product::class);
     }
-        public function stocks()
+
+    public function stocks()
     {
         return $this->hasMany(Stock::class);
     }

@@ -3,7 +3,6 @@
 namespace App\Services;
 
 use App\Models\Warehouse;
-
 use App\Repositories\WarehouseRepository;
 
 class WarehouseService
@@ -12,36 +11,44 @@ class WarehouseService
      * Create a new class instance.
      */
     protected $warehouseRepository;
-    public function __construct( WarehouseRepository $warehouse)
+
+    public function __construct(WarehouseRepository $warehouse)
     {
-        $this->warehouseRepository=$warehouse;
+        $this->warehouseRepository = $warehouse;
     }
-    public function getAllWarehouses(array $filters){
+
+    public function getAllWarehouses(array $filters)
+    {
         return $this->warehouseRepository->getAllWarehouses($filters);
     }
 
-    public function getById($id){
+    public function getById($id)
+    {
         return $this->warehouseRepository->getById($id);
     }
 
-    public function create(array $data){
+    public function create(array $data)
+    {
         return $this->warehouseRepository->create($data);
     }
 
-    public function update(Warehouse $warehouse, array $data){
-        return $this->warehouseRepository->update($warehouse,$data);
+    public function update(Warehouse $warehouse, array $data)
+    {
+        return $this->warehouseRepository->update($warehouse, $data);
     }
-    
-    public function delete(Warehouse $warehouse){
+
+    public function delete(Warehouse $warehouse)
+    {
         return $this->warehouseRepository->delete($warehouse);
     }
+
     public function getWarehouses()
     {
         return $this->warehouseRepository->allWarehouses();
     }
 
-    public function getByIdWithAvailableProducts($id, $filters )
+    public function getByIdWithAvailableProducts($id, $filters)
     {
-     return $this->warehouseRepository->getByIdWithAvailableProducts($id, $filters);
+        return $this->warehouseRepository->getByIdWithAvailableProducts($id, $filters);
     }
 }

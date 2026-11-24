@@ -2,10 +2,10 @@
 
 namespace App\Payments;
 
-use App\Models\Transaction;
-use App\Events\PaymentSucceeded;
-use App\Events\PaymentFailed;
 use App\Events\PaymentCancelled;
+use App\Events\PaymentFailed;
+use App\Events\PaymentSucceeded;
+use App\Models\Transaction;
 
 class TransactionHandler
 {

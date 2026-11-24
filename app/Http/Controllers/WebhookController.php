@@ -1,22 +1,21 @@
 <?php
 
-
 namespace App\Http\Controllers;
 
 use App\Models\Transaction;
 use App\Payments\TransactionHandler;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
-use Stripe\Webhook;
 use Stripe\Exception\SignatureVerificationException;
+use Stripe\Webhook;
 
 class WebhookController extends Controller
 {
     public function handleStripe(Request $request)
     {
-        $payload    = $request->getContent();
-        $sigHeader  = $request->header('Stripe-Signature');
-        $secret     = config('services.stripe.webhook_secret');
+        $payload = $request->getContent();
+        $sigHeader = $request->header('Stripe-Signature');
+        $secret = config('services.stripe.webhook_secret');
 
         try {
             $event = Webhook::constructEvent(
@@ -25,15 +24,16 @@ class WebhookController extends Controller
         } catch (SignatureVerificationException $e) {
             Log::error('Webhook signature verification failed', [
                 'error' => $e->getMessage(),
-                'header' => $sigHeader
+                'header' => $sigHeader,
             ]);
+
             return response()->json(['error' => 'Invalid signature'], 400);
         }
 
         // Store webhook event for testing
         app(WebhookEventController::class)->store([
             'type' => $event->type,
-            'data' => $event->data->object->toArray()
+            'data' => $event->data->object->toArray(),
         ]);
 
         $handler = app(TransactionHandler::class);
@@ -42,7 +42,7 @@ class WebhookController extends Controller
             case 'payment_intent.succeeded':
                 $intent = $event->data->object;
 
-                Log::info("PaymentIntent succeeded", [
+                Log::info('PaymentIntent succeeded', [
                     'id' => $intent->id,
                     'amount' => $intent->amount,
                     'currency' => $intent->currency,
@@ -55,10 +55,10 @@ class WebhookController extends Controller
 
             case 'payment_intent.payment_failed':
                 $intent = $event->data->object;
-                
-                Log::warning("Payment failed", [
+
+                Log::warning('Payment failed', [
                     'id' => $intent->id,
-                    'error' => $intent->last_payment_error ?? null
+                    'error' => $intent->last_payment_error ?? null,
                 ]);
                 if ($transaction = Transaction::where('transaction_id', $intent->id)->first()) {
                     $handler->handleFailure($transaction, $intent->toArray());
@@ -68,7 +68,7 @@ class WebhookController extends Controller
             case 'charge.succeeded':
                 $charge = $event->data->object;
 
-                Log::info("Charge succeeded", [
+                Log::info('Charge succeeded', [
                     'id' => $charge->id,
                     'payment_intent' => $charge->payment_intent,
                     'amount' => $charge->amount,
@@ -82,4 +82,3 @@ class WebhookController extends Controller
         return response()->json(['status' => 'success']);
     }
 }
-

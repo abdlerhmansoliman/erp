@@ -9,12 +9,12 @@ class Discount extends Model
     protected $fillable = [
         'name',
         'type',
-        'is_percentage', 
+        'is_percentage',
         'value',
     ];
 
     public function products()
     {
         return $this->belongsToMany(Product::class, 'product_discount');
-    }   
+    }
 }

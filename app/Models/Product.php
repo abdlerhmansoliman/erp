@@ -8,7 +8,8 @@ use Illuminate\Database\Eloquent\Model;
 class Product extends Model
 {
     use HasFactory;
-    protected $fillable=[
+
+    protected $fillable = [
         'name',
         'description',
         'price',
@@ -17,54 +18,68 @@ class Product extends Model
         'category_id',
         'unit_id',
         'product_code',
-        'tax_id'
+        'tax_id',
     ];
+
     protected static function booted()
     {
         static::creating(function ($product) {
             $latestId = self::max('id') + 1;
-            $product->product_code = 'PRD-' . str_pad($latestId, 4, '0', STR_PAD_LEFT);
+            $product->product_code = 'PRD-'.str_pad($latestId, 4, '0', STR_PAD_LEFT);
         });
     }
-protected $with=['category','unit'];
-    public function stocks() {
+
+    protected $with = ['category', 'unit'];
+
+    public function stocks()
+    {
         return $this->hasMany(Stock::class);
     }
-    public function category(){
+
+    public function category()
+    {
         return $this->belongsTo(Category::class);
     }
 
-    public function unit(){
+    public function unit()
+    {
         return $this->belongsTo(Unit::class);
     }
+
     public function purchaseInvoiceItems()
     {
         return $this->hasMany(PurchaseItems::class);
     }
+
     public function SalesItems()
     {
         return $this->hasMany(SalesItem::class);
     }
+
     public function tax()
     {
         return $this->belongsTo(Tax::class);
     }
+
     public function discounts()
     {
         return $this->belongsToMany(Discount::class, 'product_discount');
     }
-    public function returns(){
+
+    public function returns()
+    {
         return $this->hasMany(PurchaseReturnItem::class);
     }
-    
+
     public function scopeSearch($query, $search)
     {
-        return $query->when($search,function ($q) use ($search){
-            $q->where('name','like',"%$search%");
+        return $query->when($search, function ($q) use ($search) {
+            $q->where('name', 'like', "%$search%");
         });
     }
-    public function trasfers(){
+
+    public function trasfers()
+    {
         return $this->hasMany(TransferItem::class);
     }
-    
 }

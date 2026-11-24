@@ -5,9 +5,10 @@ namespace App\Payments\Exceptions;
 class PaymentException extends \Exception
 {
     protected $payment;
+
     protected $errorCode;
 
-    public function __construct(string $message, $payment = null, string $code = null)
+    public function __construct(string $message, $payment = null, ?string $code = null)
     {
         parent::__construct($message);
         $this->payment = $payment;

@@ -3,7 +3,6 @@
 namespace App\Repositories;
 
 use App\Models\Tax;
-use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Pagination\LengthAwarePaginator;
 
 class TaxRepository
@@ -21,7 +20,7 @@ class TaxRepository
 
         if (isset($filters['search'])) {
             $query->where('name', 'like', "%{$filters['search']}%")
-                  ->orWhere('rate', 'like', "%{$filters['search']}%");
+                ->orWhere('rate', 'like', "%{$filters['search']}%");
         }
 
         $sortBy = $filters['sortBy'] ?? 'created_at';
@@ -46,8 +45,10 @@ class TaxRepository
         $tax = $this->findById($id);
         if ($tax) {
             $tax->update($data);
+
             return $tax;
         }
+
         return null;
     }
 
@@ -57,6 +58,7 @@ class TaxRepository
         if ($tax) {
             return $tax->delete();
         }
+
         return false;
     }
 }

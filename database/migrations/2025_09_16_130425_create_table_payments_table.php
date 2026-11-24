@@ -14,10 +14,10 @@ return new class extends Migration
         Schema::create('payments', function (Blueprint $table) {
             $table->id();
 
-            $table->morphs('payable'); 
+            $table->morphs('payable');
             $table->decimal('amount', 15, 2);
             $table->date('due_date')->nullable();
-            $table->string('status')->default('pending'); 
+            $table->string('status')->default('pending');
 
             $table->timestamps();
         });

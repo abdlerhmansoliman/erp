@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class SalesReturnItem extends Model
 {
-    protected $fillable=[
+    protected $fillable = [
         'sales_return_id',
         'product_id',
         'tax_id',
@@ -15,14 +15,16 @@ class SalesReturnItem extends Model
         'total_price',
         'tax_amount',
         'discount_amount',
-        'net_price'
+        'net_price',
     ];
 
-    public function salesReturn(){
+    public function salesReturn()
+    {
         return $this->belongsTo(SalesReturn::class);
     }
-    public function product(){
+
+    public function product()
+    {
         return $this->belongsTo(Product::class);
     }
-    
 }

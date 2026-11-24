@@ -8,7 +8,9 @@ use Exception;
 class PaymentProviderException extends Exception
 {
     protected $payment;
+
     protected $providerCode;
+
     protected $providerResponse;
 
     public function __construct(string $message, Payment $payment, ?string $providerCode = null, $providerResponse = null)

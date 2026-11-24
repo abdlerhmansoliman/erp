@@ -17,7 +17,4 @@ class Tax extends Model
     {
         return $this->hasMany(PurchaseItems::class);
     }
-
-    
-
 }

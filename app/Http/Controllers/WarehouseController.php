@@ -16,10 +16,12 @@ class WarehouseController extends Controller
      * Display a listing of the resource.
      */
     public function __construct(protected WarehouseService $warehouseService) {}
+
     public function index(Request $request)
     {
         $filters = $request->only(['search', 'sortBy', 'sortDir', 'perPage', 'page']);
         $warehouses = $this->warehouseService->getAllWarehouses($filters);
+
         return WarehouseResource::collection($warehouses);
     }
 
@@ -28,8 +30,9 @@ class WarehouseController extends Controller
      */
     public function store(WarehouseStoreRequest $request)
     {
-        $data=$request->validated();
-        $warehouse=$this->warehouseService->create($data);
+        $data = $request->validated();
+        $warehouse = $this->warehouseService->create($data);
+
         return new WarehouseResource($warehouse);
 
     }
@@ -37,36 +40,40 @@ class WarehouseController extends Controller
     /**
      * Display the specified resource.
      */
-        public function show(string $id)
-        {
-            $filters = request()->only(['search', 'sortBy', 'sortDirection', 'perPage']);
-            
-            // Get basic warehouse info
-            $warehouse = $this->warehouseService->getById($id);
-            // Get products with pagination
-            $productsData = $this->warehouseService->getByIdWithAvailableProducts($id, $filters);
-            
-            // Combine them
-            $warehouse->products_data = $productsData;
-            return new WarehouseShowResource($warehouse);  // ← Use the new resource
-        }
+    public function show(string $id)
+    {
+        $filters = request()->only(['search', 'sortBy', 'sortDirection', 'perPage']);
+
+        // Get basic warehouse info
+        $warehouse = $this->warehouseService->getById($id);
+        // Get products with pagination
+        $productsData = $this->warehouseService->getByIdWithAvailableProducts($id, $filters);
+
+        // Combine them
+        $warehouse->products_data = $productsData;
+
+        return new WarehouseShowResource($warehouse);  // ← Use the new resource
+    }
 
     /**
      * Update the specified resource in storage.
      */
     public function edit(string $id)
     {
-        $warehouse=$this->warehouseService->getById($id);
+        $warehouse = $this->warehouseService->getById($id);
+
         return new WarehouseResource($warehouse);
     }
-    public function update(WarehouseUpdateRequest $request,$id)
+
+    public function update(WarehouseUpdateRequest $request, $id)
     {
-        $data=$request->validated();
-        $warehouse=$this->warehouseService->getById($id);
-        if(!$warehouse){
+        $data = $request->validated();
+        $warehouse = $this->warehouseService->getById($id);
+        if (! $warehouse) {
             return response()->json(['message' => 'Warehouse not found'], 404);
         }
-        $updatedWarehouse=$this->warehouseService->update($warehouse,$data);
+        $updatedWarehouse = $this->warehouseService->update($warehouse, $data);
+
         return new WarehouseResource($updatedWarehouse);
     }
 
@@ -75,8 +82,9 @@ class WarehouseController extends Controller
      */
     public function destroy(string $id)
     {
-        $warehouse=$this->warehouseService->getById($id);
+        $warehouse = $this->warehouseService->getById($id);
         $this->warehouseService->delete($warehouse);
+
         return response()->json(['message' => 'Warehouse deleted successfully']);
     }
 }

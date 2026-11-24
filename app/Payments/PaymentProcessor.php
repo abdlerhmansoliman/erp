@@ -12,26 +12,24 @@ class PaymentProcessor
         'bank' => BankPaymentHandler::class,
     ];
 
-protected function resolveHandler(Transaction $transaction): PaymentStrategy
-{
-    if (!$transaction->paymentMethod) {
-        throw new \Exception("Transaction {$transaction->id} has no payment method assigned.");
+    protected function resolveHandler(Transaction $transaction): PaymentStrategy
+    {
+        if (! $transaction->paymentMethod) {
+            throw new \Exception("Transaction {$transaction->id} has no payment method assigned.");
+        }
+
+        $methodName = strtolower($transaction->paymentMethod->name);
+        $handlerClass = $this->strategies[$methodName] ?? null;
+
+        if (! $handlerClass) {
+            throw new \Exception("Unsupported payment method: {$methodName}");
+        }
+
+        return app($handlerClass);
     }
-
-    $methodName = strtolower($transaction->paymentMethod->name);
-    $handlerClass = $this->strategies[$methodName] ?? null;
-
-    if (!$handlerClass) {
-        throw new \Exception("Unsupported payment method: {$methodName}");
-    }
-
-    return app($handlerClass);
-}
-
 
     public function pay(Transaction $transaction): array
     {
-        
 
         return $this->resolveHandler($transaction)->pay($transaction);
     }

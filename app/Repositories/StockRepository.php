@@ -1,4 +1,4 @@
-<?php 
+<?php
 
 namespace App\Repositories;
 
@@ -12,14 +12,14 @@ class StockRepository implements StockRepositoryInterface
         return Stock::query()
             ->with(['product:id,name', 'warehouse:id,name'])
             ->when($filters['search'] ?? null, function ($q, $search) {
-                $q->where(function($query) use ($search) {
-                    $query->where('id', 'like', "%$search%") 
-                          ->orWhereHas('product', function($q2) use ($search) {
-                              $q2->where('name', 'like', "%$search%");
-                          })
-                          ->orWhereHas('warehouse', function($q3) use ($search) {
-                              $q3->where('name', 'like', "%$search%");
-                          });
+                $q->where(function ($query) use ($search) {
+                    $query->where('id', 'like', "%$search%")
+                        ->orWhereHas('product', function ($q2) use ($search) {
+                            $q2->where('name', 'like', "%$search%");
+                        })
+                        ->orWhereHas('warehouse', function ($q3) use ($search) {
+                            $q3->where('name', 'like', "%$search%");
+                        });
                 });
             })
             ->orderBy($filters['sortBy'] ?? 'id', $filters['sortDirection'] ?? 'desc')
@@ -39,6 +39,7 @@ class StockRepository implements StockRepositoryInterface
     public function update(Stock $stock, array $data)
     {
         $stock->update($data);
+
         return $stock;
     }
 
@@ -50,11 +51,11 @@ class StockRepository implements StockRepositoryInterface
     public function getAvailableFIFO($product_id, $warehouse_id)
     {
         return Stock::where('product_id', $product_id)
-                    ->where('warehouse_id', $warehouse_id)
-                    ->where('remaining', '>', 0)
-                    ->orderBy('created_at', 'asc')
-                    ->lockForUpdate()
-                    ->get();
+            ->where('warehouse_id', $warehouse_id)
+            ->where('remaining', '>', 0)
+            ->orderBy('created_at', 'asc')
+            ->lockForUpdate()
+            ->get();
     }
 
     public function decrementRemaining($stockId, $quantity)
@@ -65,8 +66,8 @@ class StockRepository implements StockRepositoryInterface
     public function getAvailableStock(int $productId, int $warehouseId): int
     {
         return Stock::where('product_id', $productId)
-                    ->where('warehouse_id', $warehouseId)
-                    ->sum('remaining');
+            ->where('warehouse_id', $warehouseId)
+            ->sum('remaining');
     }
 
     /**
@@ -78,7 +79,9 @@ class StockRepository implements StockRepositoryInterface
         $remaining = $quantity;
 
         foreach ($stocks as $stock) {
-            if ($remaining <= 0) break;
+            if ($remaining <= 0) {
+                break;
+            }
 
             $takeQty = min($remaining, $stock->remaining);
             $stock->decrement('remaining', $takeQty);
@@ -97,8 +100,8 @@ class StockRepository implements StockRepositoryInterface
     public function getLastCost(int $productId, int $warehouseId): float
     {
         return Stock::where('product_id', $productId)
-                    ->where('warehouse_id', $warehouseId)
-                    ->orderByDesc('created_at')
-                    ->value('unit_coast') ?? 0;
+            ->where('warehouse_id', $warehouseId)
+            ->orderByDesc('created_at')
+            ->value('unit_coast') ?? 0;
     }
 }

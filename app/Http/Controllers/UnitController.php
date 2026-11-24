@@ -5,11 +5,10 @@ namespace App\Http\Controllers;
 use App\Http\Requests\UnitStoreRequest;
 use App\Http\Requests\UnitUpdateRequest;
 use App\Services\UnitService;
-use Illuminate\Http\Request;
 
 class UnitController extends Controller
 {
-     protected $unitService;
+    protected $unitService;
 
     public function __construct(UnitService $unitService)
     {
@@ -20,7 +19,7 @@ class UnitController extends Controller
     {
         return response()->json([
             'status' => 'success',
-            'data' => $this->unitService->getAllUnits()
+            'data' => $this->unitService->getAllUnits(),
         ]);
     }
 
@@ -28,16 +27,17 @@ class UnitController extends Controller
     {
         return response()->json([
             'status' => 'success',
-            'data' => $this->unitService->getUnitById($id)
+            'data' => $this->unitService->getUnitById($id),
         ]);
     }
 
     public function store(UnitStoreRequest $request)
     {
         $data = $request->validated();
+
         return response()->json([
             'status' => 'success',
-            'data' => $this->unitService->createUnit($data)
+            'data' => $this->unitService->createUnit($data),
         ]);
     }
 
@@ -47,16 +47,17 @@ class UnitController extends Controller
 
         return response()->json([
             'status' => 'success',
-            'data' => $this->unitService->updateUnit($id, $data)
+            'data' => $this->unitService->updateUnit($id, $data),
         ]);
     }
 
     public function destroy($id)
     {
         $this->unitService->deleteUnit($id);
+
         return response()->json([
             'status' => 'success',
-            'message' => 'Unit deleted successfully'
+            'message' => 'Unit deleted successfully',
         ]);
     }
 }

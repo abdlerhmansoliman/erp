@@ -1,10 +1,10 @@
 <?php
+
 namespace App\Repositories\Interfaces;
 
-use App\Models\User;
 interface ProductRepositoryInterface
 {
-    public function getAllProducts(array $filters );
+    public function getAllProducts(array $filters);
 
     public function getProductById($id);
 
@@ -15,5 +15,6 @@ interface ProductRepositoryInterface
     public function deleteProduct($id);
 
     public function deleteMultipleProducts(array $ids);
+
     public function search($query, $limit = 20);
 }

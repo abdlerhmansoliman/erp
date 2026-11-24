@@ -19,8 +19,8 @@ class WarehouseResource extends JsonResource
             'address' => $this->address,
             'email' => $this->email,
             'phone' => $this->phone,
-            'product_count'=>$this->product_count ?? 0,
-            'total_quantity'=>$this->total_quantity?? 0
+            'product_count' => $this->product_count ?? 0,
+            'total_quantity' => $this->total_quantity ?? 0,
         ];
     }
 }

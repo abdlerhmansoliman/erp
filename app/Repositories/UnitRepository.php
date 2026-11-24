@@ -26,6 +26,7 @@ class UnitRepository implements UnitRepositoryInterface
     {
         $unit = Unit::findOrFail($id);
         $unit->update($data);
+
         return $unit;
     }
 
