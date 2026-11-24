@@ -22,7 +22,6 @@ return new class extends Migration
             $table->decimal('discount_amount', 10, 2)->default(0);
             $table->decimal('net_price', 10, 2)->nullable();
             $table->decimal('total_price', 10, 2);
-            $table->decimal('net_price', 10, 2)->nullable();
             $table->timestamps();
         });
     }

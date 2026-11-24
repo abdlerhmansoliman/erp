@@ -1,0 +1,10 @@
+        $mainCategory = auth()->user()->categories()->first();
+        $allowedIntervals = [30, 60];
+        if ($mainCategory) {
+            $extra = $mainCategory->extra;
+            $extra =  json_decode($extra, true);
+
+            if (!empty($extra['has_15_minutes_sessions']) && $extra['has_15_minutes_sessions'] === 'on') {
+                $allowedIntervals[] = 15;
+            }
+        }
