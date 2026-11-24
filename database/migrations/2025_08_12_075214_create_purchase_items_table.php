@@ -11,7 +11,7 @@ return new class extends Migration
      */
     public function up(): void
     {
-     Schema::create('purchase_items', callback: function (Blueprint $table) {
+        Schema::create('purchase_items', callback: function (Blueprint $table) {
             $table->id();
             $table->foreignId('purchase_invoice_id')->constrained()->onDelete('cascade');
             $table->foreignId('product_id')->constrained()->onDelete('cascade');
@@ -19,12 +19,12 @@ return new class extends Migration
             $table->decimal('unit_price', 10, 2);
             $table->decimal('tax_amount', 5, 2)->default(0.00);
             $table->decimal('discount_amount', 5, 2)->default(0.00);
-            $table->decimal('total_price', 10, 2); 
-            $table->decimal('net_price', 10, 2)->nullable(); 
+            $table->decimal('total_price', 10, 2);
+            $table->decimal('net_price', 10, 2)->nullable();
             $table->foreignId('tax_id')->nullable()->constrained('taxes')->onDelete('cascade');
             $table->timestamps();
         });
-        
+
     }
 
     /**

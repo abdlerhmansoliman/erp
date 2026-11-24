@@ -4,9 +4,6 @@ namespace App\Services;
 
 use App\Models\Supplier;
 use App\Repositories\Interfaces\SupplierRepositoryInterface;
-use App\Repositories\SupplierRepository;
-use Illuminate\Container\Attributes\Auth;
-use Illuminate\Support\Facades\Hash;
 
 class SupplierService
 {
@@ -14,11 +11,13 @@ class SupplierService
      * Create a new class instance.
      */
     protected $supplierRepository;
+
     public function __construct(SupplierRepositoryInterface $supplierRepository)
     {
-        $this->supplierRepository=$supplierRepository;
+        $this->supplierRepository = $supplierRepository;
     }
-      public function getAll(array $filters)
+
+    public function getAll(array $filters)
     {
         return $this->supplierRepository->all($filters);
     }
@@ -38,7 +37,6 @@ class SupplierService
         return $this->supplierRepository->update($supplier, $data);
     }
 
-
     public function delete(Supplier $supplier)
     {
         return $this->supplierRepository->delete($supplier);
@@ -48,6 +46,7 @@ class SupplierService
     {
         return $this->supplierRepository->deleteMultiple($ids);
     }
+
     public function getSuppliers()
     {
         return $this->supplierRepository->allSuppliers();

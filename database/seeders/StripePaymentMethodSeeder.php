@@ -2,8 +2,8 @@
 
 namespace Database\Seeders;
 
-use Illuminate\Database\Seeder;
 use App\Models\PaymentMethod;
+use Illuminate\Database\Seeder;
 
 class StripePaymentMethodSeeder extends Seeder
 {
@@ -13,7 +13,7 @@ class StripePaymentMethodSeeder extends Seeder
             'name' => 'Stripe',
             'description' => 'Credit card payment via Stripe',
             'is_active' => true,
-            'code' => 'stripe'
+            'code' => 'stripe',
         ]);
     }
 }

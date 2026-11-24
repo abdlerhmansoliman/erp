@@ -1,6 +1,6 @@
 <?php
-namespace App\Helpers;
 
+namespace App\Helpers;
 
 class InvoiceCalculatorHelper
 {
@@ -20,6 +20,4 @@ class InvoiceCalculatorHelper
     {
         return ($total + $tax) - $discount;
     }
-    
-
 }

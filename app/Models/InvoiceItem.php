@@ -6,11 +6,12 @@ use Illuminate\Database\Eloquent\Model;
 
 class InvoiceItem extends Model
 {
-    protected $table = 'purchase_items'; 
+    protected $table = 'purchase_items';
+
     protected $fillable = [
         'purchase_invoice_id',
         'product_id',
-        'warehouse_id', 
+        'warehouse_id',
         'quantity',
         'unit_price',
         'total_price',
@@ -26,4 +27,3 @@ class InvoiceItem extends Model
         return $this->belongsTo(\App\Models\Product::class);
     }
 }
-

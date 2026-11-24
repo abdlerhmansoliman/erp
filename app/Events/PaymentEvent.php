@@ -10,9 +10,5 @@ abstract class PaymentEvent
 {
     use Dispatchable, SerializesModels;
 
-    public function __construct(public Payment $payment)
-    {
-    }
+    public function __construct(public Payment $payment) {}
 }
-
-

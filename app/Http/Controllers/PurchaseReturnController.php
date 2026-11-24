@@ -4,96 +4,87 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\PurchaseReturnRequest;
 use App\Http\Resources\PurchaseReturnResource;
-use App\Models\PurchaseInvoice;
-use App\Models\PurchaseReturn;
 use App\Services\PurchaseReturnsService;
-use Illuminate\Http\Request;
 
 class PurchaseReturnController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
-    public function __construct(protected PurchaseReturnsService $returnService){}
-public function index()
-{
-    try {
-        $filters = request()->only(['search', 'sortBy', 'sortDir', 'perPage', 'page']);
-        $returns = $this->returnService->getAllReturns($filters);
-        return PurchaseReturnResource::collection($returns)
-            ->response()
-            ->setStatusCode(200);
-    } catch (\Throwable $e) {
-        return response()->json([
-            'message' => $e->getMessage(),
-            'file' => $e->getFile(),
-            'line' => $e->getLine(),
-            'trace' => $e->getTraceAsString(),
-        ], 500);
+    public function __construct(protected PurchaseReturnsService $returnService) {}
+
+    public function index()
+    {
+        try {
+            $filters = request()->only(['search', 'sortBy', 'sortDir', 'perPage', 'page']);
+            $returns = $this->returnService->getAllReturns($filters);
+
+            return PurchaseReturnResource::collection($returns)
+                ->response()
+                ->setStatusCode(200);
+        } catch (\Throwable $e) {
+            return response()->json([
+                'message' => $e->getMessage(),
+                'file' => $e->getFile(),
+                'line' => $e->getLine(),
+                'trace' => $e->getTraceAsString(),
+            ], 500);
+        }
     }
-}
-
-
-
 
     /**
      * Store a newly created resource in storage.
      */
+    public function store(PurchaseReturnRequest $request)
+    {
+        $data = $request->validated();
 
-public function store(PurchaseReturnRequest $request)
-{
-    $data = $request->validated();
+        try {
+            $purchaseReturn = $this->returnService->createReturn($data);
 
-    try {
-        $purchaseReturn = $this->returnService->createReturn($data);
+            return response()->json([
+                'success' => true,
+                'message' => 'Purchase return created successfully',
+                'data' => $purchaseReturn,
+            ], 201);
 
-        return response()->json([
-            'success' => true,
-            'message' => 'Purchase return created successfully',
-            'data' => $purchaseReturn
-        ], 201);
-
-    } catch (\Exception $e) {
-        return response()->json([
-            'success' => false,
-            'message' => $e->getMessage()
-        ], 400);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => $e->getMessage(),
+            ], 400);
+        }
     }
-}
 
     public function show($id)
     {
         $invoice = $this->returnService->showReturn($id);
-        if (!$invoice) {
+        if (! $invoice) {
             return response()->json([
                 'success' => false,
-                'message' => 'Invoice not found'
+                'message' => 'Invoice not found',
             ], 404);
         }
 
         return response()->json([
             'success' => true,
-            'data' => new PurchaseReturnResource($invoice)
+            'data' => new PurchaseReturnResource($invoice),
         ]);
     }
-
 
     public function createPurchaseReturn($id)
     {
         $invoice = $this->returnService->prepareReturnData($id);
-        if (!$invoice) {
+        if (! $invoice) {
             return response()->json([
                 'success' => false,
-                'message' => 'Invoice not found'
+                'message' => 'Invoice not found',
             ], 404);
         }
 
         return response()->json([
             'success' => true,
-            'data' => $invoice
+            'data' => $invoice,
         ]);
     }
-
-
-
 }

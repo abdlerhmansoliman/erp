@@ -13,22 +13,26 @@ class Warehouse extends Model
         'email',
     ];
 
-    public function stocks(){
+    public function stocks()
+    {
         return $this->hasMany(Stock::class);
     }
+
     public function purchaseInvoices()
     {
         return $this->hasMany(PurchaseInvoice::class);
     }
+
     public function returns()
     {
         return $this->hasMany(PurchaseReturn::class);
     }
+
     public function sales()
     {
         return $this->hasMany(SalesInvoice::class);
     }
-    
+
     public function scopeWithStockSummary($query)
     {
         return $query
@@ -37,11 +41,12 @@ class Warehouse extends Model
             }])
             ->withSum('stocks as total_quantity', 'remaining');
     }
-    
+
     public function transfersFrom()
     {
         return $this->hasMany(Transfer::class, 'from_warehouse_id');
     }
+
     public function transfersTo()
     {
         return $this->hasMany(Transfer::class, 'to_warehouse_id');

@@ -23,13 +23,13 @@ class TransferStoreRequest extends FormRequest
     {
         return [
             'from_warehouse_id' => 'required|exists:warehouses,id',
-            'to_warehouse_id'   => 'required|exists:warehouses,id|different:from_warehouse_id',
-            'transfer_date'     => 'required|date',
-            'items'             => 'required|array|min:1',
-            'items.*.product_id'=> 'required|exists:products,id',
-            'items.*.quantity'  => 'required|numeric|min:1',
-            'status'            => 'required|string|in:draft,ordered,received,cancelled',
-            'transfer_number'   => 'sometimes|string|max:255|unique:transfers,transfer_number',
+            'to_warehouse_id' => 'required|exists:warehouses,id|different:from_warehouse_id',
+            'transfer_date' => 'required|date',
+            'items' => 'required|array|min:1',
+            'items.*.product_id' => 'required|exists:products,id',
+            'items.*.quantity' => 'required|numeric|min:1',
+            'status' => 'required|string|in:draft,ordered,received,cancelled',
+            'transfer_number' => 'sometimes|string|max:255|unique:transfers,transfer_number',
         ];
     }
 }

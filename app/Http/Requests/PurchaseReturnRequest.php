@@ -16,14 +16,14 @@ class PurchaseReturnRequest extends FormRequest
     {
         return [
             'purchase_invoice_id' => 'required|exists:purchase_invoices,id',
-            "note" => "nullable|string",
+            'note' => 'nullable|string',
             'items' => 'required|array|min:1',
             'items.*.product_id' => 'required|exists:products,id',
             'items.*.quantity' => 'required|integer|min:1',
             'items.*.total_price' => 'required|numeric|min:0',
             'items.*.tax_amount' => 'nullable|numeric|min:0',
-            'items.*.discount_amount' => 'nullable|numeric|min:0', 
-            'items.*.tax_id' => 'nullable|exists:taxes,id',   
+            'items.*.discount_amount' => 'nullable|numeric|min:0',
+            'items.*.tax_id' => 'nullable|exists:taxes,id',
             'sub_total' => 'required|numeric|min:0',
             'tax_amount' => 'required|numeric|min:0',
             'grand_total' => 'required|numeric|min:0',

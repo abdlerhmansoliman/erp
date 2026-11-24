@@ -8,8 +8,8 @@ use App\Repositories\DashbordRepository;
 
 class DashbordService
 {
-    public function __construct(protected DashbordRepository $dashbordRepository){}
-   
+    public function __construct(protected DashbordRepository $dashbordRepository) {}
+
     public function getOverviewData()
     {
         return [

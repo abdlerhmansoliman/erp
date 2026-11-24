@@ -28,24 +28,28 @@ class TaxController extends Controller
     public function store(TaxStoreRequest $request)
     {
         $tax = $this->taxService->createTax($request->validated());
+
         return new TaxResource($tax);
     }
 
     public function show($id)
     {
         $tax = $this->taxService->getTaxById($id);
+
         return new TaxResource($tax);
     }
 
     public function update(TaxUpdateRequest $request, $id)
     {
         $tax = $this->taxService->updateTax($id, $request->validated());
+
         return new TaxResource($tax);
     }
 
     public function destroy($id)
     {
         $this->taxService->deleteTax($id);
+
         return response()->json(['message' => 'Tax deleted successfully']);
     }
 }

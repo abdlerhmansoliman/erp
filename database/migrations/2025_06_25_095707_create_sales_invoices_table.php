@@ -18,10 +18,10 @@ return new class extends Migration
             $table->decimal('sub_total', 10, 2)->default(0);
             $table->decimal('tax_amount', 10, 2)->default(0);
             $table->decimal('grand_total', 10, 2)->default(0);
-            $table->decimal('discount_amount', 15, 2)->default(0); 
+            $table->decimal('discount_amount', 15, 2)->default(0);
             $table->decimal('shipping_cost', 10, 2)->default(0);
             $table->foreignId('warehouse_id')->constrained('warehouses')->onDelete('cascade');
-            $table->enum('status', ['draft', 'ordered', 'received', 'cancelled'])->default('draft') ;
+            $table->enum('status', ['draft', 'ordered', 'received', 'cancelled'])->default('draft');
             $table->enum('payment_status', ['paid', 'due', 'partial'])->default('paid');
             $table->date('due_date')->nullable();
             $table->timestamps();

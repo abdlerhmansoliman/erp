@@ -19,8 +19,8 @@ return new class extends Migration
             $table->decimal('unit_price', 10, 2);
             $table->decimal('tax_amount', 5, 2)->default(0.00);
             $table->decimal('discount_amount', 5, 2)->default(0.00);
-            $table->decimal('total_price', 10, 2); 
-            $table->decimal('net_price', 10, 2)->nullable(); 
+            $table->decimal('total_price', 10, 2);
+            $table->decimal('net_price', 10, 2)->nullable();
             $table->json('stock_distribution')->nullable();
 
             $table->timestamps();

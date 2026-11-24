@@ -15,11 +15,11 @@ return [
     */
 
     'stripe' => [
-    'key' => env('STRIPE_KEY'),
-    'secret' => env('STRIPE_SECRET'),
-    'webhook_secret' => env('STRIPE_WEBHOOK_SECRET'),
-    'methods' => ['card'],
-     'statement_descriptor' => env('STRIPE_DESCRIPTOR'),
+        'key' => env('STRIPE_KEY'),
+        'secret' => env('STRIPE_SECRET'),
+        'webhook_secret' => env('STRIPE_WEBHOOK_SECRET'),
+        'methods' => ['card'],
+        'statement_descriptor' => env('STRIPE_DESCRIPTOR'),
     ],
 
     'postmark' => [

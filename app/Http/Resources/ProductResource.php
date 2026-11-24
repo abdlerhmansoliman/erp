@@ -30,15 +30,15 @@ class ProductResource extends JsonResource
                 'name_en' => $this->category?->name_en,
             ],
             'unit_name' => $this->unit?->name,
-            'tax' => $this->whenLoaded('tax', function() {
+            'tax' => $this->whenLoaded('tax', function () {
                 return [
                     'id' => $this->tax->id,
                     'name' => $this->tax->name,
-                    'rate' => $this->tax->rate
+                    'rate' => $this->tax->rate,
                 ];
             }),
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,
         ];
-        }
+    }
 }

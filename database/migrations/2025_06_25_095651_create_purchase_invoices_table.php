@@ -18,7 +18,7 @@ return new class extends Migration
             $table->enum('status', ['draft', 'ordered', 'received', 'cancelled'])->default('draft');
             $table->decimal('sub_total', 10, 2)->default(0);
             $table->decimal('tax_amount', 10, 2)->default(0);
-            $table->decimal('discount_amount', 15, 2)->default(0);  
+            $table->decimal('discount_amount', 15, 2)->default(0);
             $table->decimal('grand_total', 10, 2)->default(0);
             $table->foreignId('warehouse_id')->constrained()->onDelete('cascade');
             $table->decimal('shipping_cost', 10, 2)->default(0);

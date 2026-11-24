@@ -6,8 +6,6 @@ use App\Models\PurchaseReturnItem;
 
 class PurchaseReturnItemRepository
 {
-
-
     public function create(array $data)
     {
         return PurchaseReturnItem::create($data);
@@ -16,6 +14,7 @@ class PurchaseReturnItemRepository
     public function update(PurchaseReturnItem $item, array $data)
     {
         $item->update($data);
+
         return $item;
     }
 

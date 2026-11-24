@@ -8,20 +8,28 @@ use App\Services\AuthService;
 use Illuminate\Http\Request;
 
 class AuthController extends Controller
-{   
+{
     public function __construct(protected AuthService $authService) {}
-    public function register(RegisterRequest $request){
+
+    public function register(RegisterRequest $request)
+    {
         return $this->authService->register($request->validated());
     }
-    public function login(LoginRequest $request){
+
+    public function login(LoginRequest $request)
+    {
         return $this->authService->login($request->validated());
     }
-    public function logout(Request $request){
-         $this->authService->logout($request->user());
+
+    public function logout(Request $request)
+    {
+        $this->authService->logout($request->user());
+
         return response()->json([
-            'message' => 'Logged out successfully'
+            'message' => 'Logged out successfully',
         ]);
     }
+
     public function user(Request $request)
     {
         return response()->json([
@@ -29,14 +37,17 @@ class AuthController extends Controller
             'data' => $request->user(),
         ]);
     }
-    public function loginWithGoogle(Request $request){
+
+    public function loginWithGoogle(Request $request)
+    {
         $request->validate([
-            'id_token' => 'required'
+            'id_token' => 'required',
         ]);
-        $result=$this->authService->loginWithGoogle(($request->id_token));
-        if(! $result){
-        return response()->json(['message' => 'Invalid Google token'], 401);
+        $result = $this->authService->loginWithGoogle(($request->id_token));
+        if (! $result) {
+            return response()->json(['message' => 'Invalid Google token'], 401);
         }
+
         return response()->json($result);
 
     }

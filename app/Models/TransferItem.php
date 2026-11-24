@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 class TransferItem extends Model
 {
     protected $table = 'warehouse_transfer_items';
+
     protected $fillable = [
         'transfer_id',
         'product_id',

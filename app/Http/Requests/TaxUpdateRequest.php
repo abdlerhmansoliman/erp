@@ -20,7 +20,7 @@ class TaxUpdateRequest extends FormRequest
                 'required',
                 'string',
                 'max:255',
-                Rule::unique('taxes', 'name')->ignore($this->route('id'))
+                Rule::unique('taxes', 'name')->ignore($this->route('id')),
             ],
             'rate' => 'sometimes|required|numeric|min:0|max:100',
         ];

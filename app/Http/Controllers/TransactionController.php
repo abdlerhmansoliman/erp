@@ -5,8 +5,8 @@ namespace App\Http\Controllers;
 use App\Models\Payment;
 use App\Models\Transaction;
 use App\Services\TransactionService;
-use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
 
 class TransactionController extends Controller
 {
@@ -34,7 +34,7 @@ class TransactionController extends Controller
         if ($remaining <= 0 || ($payment->status === 'succeeded')) {
             return response()->json([
                 'success' => false,
-                'message' => 'Payment already completed.'
+                'message' => 'Payment already completed.',
             ], 409);
         }
 
@@ -42,7 +42,7 @@ class TransactionController extends Controller
             return response()->json([
                 'success' => false,
                 'message' => 'Requested amount exceeds remaining balance.',
-                'remaining' => $remaining
+                'remaining' => $remaining,
             ], 409);
         }
 
@@ -61,6 +61,7 @@ class TransactionController extends Controller
     public function show(int $transactionId): JsonResponse
     {
         $transaction = Transaction::with('payment')->findOrFail($transactionId);
+
         return response()->json($transaction);
     }
 
@@ -75,9 +76,9 @@ class TransactionController extends Controller
     /**
      * Confirm an existing transaction
      */
-     public function confirm(Request $request, int $transactionId): JsonResponse
+    public function confirm(Request $request, int $transactionId): JsonResponse
     {
-        
+
         $data = $request->validate([
             'payment_intent_id' => 'required|string',
             'status' => 'required|string',
@@ -92,5 +93,4 @@ class TransactionController extends Controller
             'transaction' => $transaction,
         ]);
     }
-    
 }
